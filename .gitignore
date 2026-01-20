@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+*.DS_Store
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Images/Outputs-Linear
+*.png
+*.pdf
+*.jpeg
+*.jpg
+*.txt
+*.zip
+*.pkl
+
+# Txt exceptions
+!requirements.txt
+
+## Data
+Data/*
+*.csv
+*.numbers
+*.xlsx
+*.dot
+*.doc
+*.sav
+*.dta
+
+#Results-NOimpute
+Results-NOimpute/*
+
+#Outputs-Linear
+Outputs-Linear/*
+Outputs/*
+
+# C extensions
+*.so
+
+# Ignore Python virtual environments
+venv/
+.env/
+*.pyc
+__pycache__/
