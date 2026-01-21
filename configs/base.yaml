@@ -1,0 +1,16 @@
+run:
+  seed: 93
+  test_run: false
+  train_models: true
+  interpret_models: false
+  run_shap: false
+  run_pfi: false
+
+parallel:
+  enabled: false
+  max_workers: 4
+
+paths:
+  data_dir: Data
+  results_dir: Results
+  outputs_dir: Outputs
