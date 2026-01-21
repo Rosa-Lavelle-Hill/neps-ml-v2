@@ -45,6 +45,7 @@ remove_vars = [
 "t400280_g1D", # Father's father: Country of birth (Germany/abroad)
 "t400260_g1D", # Father's mother: country of birth (Germany/abroad)
 "t400090_g1D", #Father: Country of birth (Germany/abroad)
+"teacher_predominant_state", #  Highly correlated with students' state of residence
 # Redundant DOB info:
 "t70004m", # dob month (redundant info)
 "t70004y", # dob year (redundant info)
@@ -54,7 +55,6 @@ remove_vars = [
 "tx8050",  # redundant dob var date
 # Other:
 "Unnamed:0", # Incase index creeps in
-"teacher_predominant_state", #  Highly correlated with students' state of residence
 "t262000_g1"] # Type of sports (too many categories, not relevant)
 keep_vars = ["p731702", "e229820_D", "p751001_g1", "p410000_g1D", "p414040"] + [school_track] + [target_id] + [institution_id] #IDs removed later
             # ^ i.e., vars that should not be dropped due to multicollinearity or other reasons

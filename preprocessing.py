@@ -25,8 +25,9 @@ import seaborn as sns
 create_corr_drop_list = True # (True/False) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
 check_mutual_information = True # (True/False) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
 # make the manual changes?
-merge_categories = False # (True/False) whether to merge some categories in categorical variables due to small category sizes
-create_new_vars = False # (True/False) whether to create new variables from existing ones due to high multicollinearity
+merge_categories = True # (True/False) whether to merge some categories in categorical variables due to small category sizes
+create_new_vars = True # (True/False) whether to create new variables from existing ones due to high multicollinearity
+remove_manual = True # (True/False) whether to remove the manually decided variables due to high multicollinearity
 # Re-run R script or use the output of previously ran file?
 run_R = False # Run preprocessing R script first? (True/False)
 #  -----------------------------------------------------------------------------------------
@@ -348,10 +349,25 @@ for var in id_vars:
     df.drop(var, axis=1, inplace=True)
 
 # Remove unwanted vars (duplicates and high multicollinearity):
-for var in remove_vars:
-    if var in df.columns:
-        print('dropping ' + var)
-        df.drop(var, axis=1, inplace=True)
+if remove_manual == True:
+    for var in remove_vars:
+        if var in df.columns:
+            print('dropping ' + var)
+            df.drop(var, axis=1, inplace=True)
+else:
+    # just remove IDs and redundant dob vars:
+    remove_vars_basic = ["Unnamed:0", # Incase index creeps in
+                         "t262000_g1", # Type of sports (too many categories, not relevant)
+                         "t70004m", # dob month (redundant info)
+                        "t70004y", # dob year (redundant info)
+                        "t70004", # dob date (redundant info)
+                        "tx8050y", # redundant dob var year
+                        "tx8050m", # redundant dob var month
+                        "tx8050"] # redundant dob var date
+    for var in remove_vars_basic:
+        if var in df.columns:
+            print('dropping ' + var)
+            df.drop(var, axis=1, inplace=True)
 #  -----------------------------------------------------------------------------------------
 # COUNT MISSING
 # for now, code all -100, -200, and -300 as missing
