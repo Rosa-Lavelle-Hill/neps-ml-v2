@@ -53,7 +53,7 @@ def run_pipeline(cfg: dict):
     # Global Boolean run params (the same across all subset runs):
     TEST_RUN = True # runs test run of code (fixed grid)
     count_categories = False # counts min categories and notes where <25
-    train_models = True # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
+    train_models = False # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
     test_models = False # runs evaluation of model performance
     interpret_models = False # runs model interpretation, if False then neither SHAP nor permutation importance will run
     run_permutation = False # runs permutation importance, otherwise loads results and plots
@@ -69,36 +69,31 @@ def run_pipeline(cfg: dict):
 
     def make_run_dirs(cfg):
         run_id = cfg.get("run", {}).get("id", "no_run_id")
-
         results_root = Path("Results") / "runs" / run_id
-        outputs_root = Path("Outputs") / "runs" / run_id
-
         results_root.mkdir(parents=True, exist_ok=True)
-        outputs_root.mkdir(parents=True, exist_ok=True)
+        return results_root
 
-        return str(results_root), str(outputs_root)
-
-    results_dir, outputs_dir = make_run_dirs(cfg)
-    print("Saving to:", results_dir, outputs_dir)
+    results_dir = make_run_dirs(cfg)
+    print("Saving to:", results_dir)
 
     # run-scoped save paths
     results_path = Path(results_dir)
-    outputs_path = Path(outputs_dir)
 
     params_save = results_path / "Prediction" / "Best_Params"
     plot_save = results_path / "Prediction" / "Plots"
     all_models_save = results_path / "Prediction" / "All_Models"
+    outputs_path = Path("Outputs")
 
     # ensure directories exist
     params_save.mkdir(parents=True, exist_ok=True)
     plot_save.mkdir(parents=True, exist_ok=True)
-    outputs_path.mkdir(parents=True, exist_ok=True)
     all_models_save.mkdir(parents=True, exist_ok=True)
 
     # Read data
     X_and_y = pd.read_csv("Data/Preprocessed/X_and_y.csv", index_col=[0])
     X = X_and_y.drop("y", axis=1)
     y = X_and_y["y"]
+    print("Initial X shape is: " + str(X.shape))
 
     # Import variable information & meta data:
     var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=None, engine="python")
@@ -116,7 +111,8 @@ def run_pipeline(cfg: dict):
         cat_name_dict = json.load(file)
 
     # Define subset using yaml
-    X = apply_subset(X, var_info, cfg)   # cfg is the loaded yaml config
+    X = apply_subset(X, var_info, cfg)
+    X_and_y = apply_subset(X_and_y, var_info, cfg)   # cfg is the loaded yaml config
     print("After applying subset, X shape is: " + str(X.shape))
     #======================================================================================================= 
     if TEST_RUN == True:
@@ -137,6 +133,8 @@ def run_pipeline(cfg: dict):
 
     # used ONLY for loading previous results
     load_label = source_run_id
+    params_load = Path("Results") / "runs" / load_label / "Prediction" / "Best_Params"
+    all_models_load = Path("Results") / "runs" / load_label / "Prediction" / "All_Models"
 
     # Assign data types
     categorical_features = list(categorical_features['0'])
@@ -207,7 +205,8 @@ def run_pipeline(cfg: dict):
         save_file = results_path / f"Prediction/{run_label}_{model_name}{run}.txt"
 
         if train_models == True:
-            print("{}: ".format(model_name), file=open(save_file, "w"))
+            print("{}: X_train = {}; X_test = {}".format(run_label, X_train.shape, X_test.shape), file=open(save_file, "w"))
+            print("{}: ".format(model_name), file=open(save_file, "a"))
             print("Running {} model".format(model_name))
 
             # Perform CV on train data to tune model hyper-parameters
@@ -240,7 +239,8 @@ def run_pipeline(cfg: dict):
 
             best_params_dict[model_name] = best_params
         else:
-            best_params = joblib.load(params_save + f'{load_label}_{model_name}.pkl')
+            filename = f'{load_label}_{model_name}.pkl'
+            best_params = joblib.load(params_load / filename )
 
         # set pipeline to use best params
         pipe.set_params(**best_params)
@@ -476,7 +476,6 @@ def run_pipeline(cfg: dict):
             else:
                 method_type = "interventional" # todo: check if we want to include "tree path dependent"
                 shap_values_df = pd.read_csv(save_path + f"{load_label}_SHAP_{model_name}-{method_type}{run}.csv")
-
                 save_path_p = Path(save_path)
                 save_path_p.mkdir(parents=True, exist_ok=True)
                 filename_pkl = f"{load_label}_SHAP_{model_name}{run}.pkl"
@@ -552,12 +551,13 @@ def run_pipeline(cfg: dict):
 
     if test_models == True:
         results_df = pd.DataFrame.from_dict(test_scores)   
-        filename = f"all_test_scores_{run_label}.csv"
+        filename = f"all_test_scores_{run_label}{run}.csv"
         results_df.to_csv(all_models_save / filename)
 
     if test_models == False:
-        filename = f"all_test_scores_{load_label}{run}.csv"
-        results_df = pd.read_csv(all_models_save / filename, index_col=[0])
+        # filename = f"all_test_scores_{load_label}{run}.csv"
+        filename = f"all_test_scores_{load_label}.csv"
+        results_df = pd.read_csv(all_models_load / filename, index_col=[0])
         print(f"Loading test results data from: {all_models_save / filename}")
 
     print("Plotting test performance to compare all models...")

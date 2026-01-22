@@ -6,5 +6,7 @@ subset:
     - pCourseClass
   exclude_groups: []
 load:
-  enabled: false # set to true to load existing results
-  run_id: null   # e.g. "2026-01-22_102249__prior_reading__student"
+  # enabled: false # set to true to load existing results
+  # run_id: null   # e.g. "2026-01-22_102249__prior_reading__student"
+  enabled: true # set to true to load existing results
+  run_id: 2026-01-22_121654__prior_reading__student   # e.g. "2026-01-22_121654__prior_reading__student"
