@@ -1,5 +1,6 @@
 
 def run_pipeline(cfg: dict):
+
     import os
     from pathlib import Path        
     import pickle
@@ -30,19 +31,36 @@ def run_pipeline(cfg: dict):
                             decimal_places, plot_n_features, smallest_category_count, remove_vars, test_imputer_max_iter,
                             test_cv, test_n_permutations, dv_t1_name, var_info_sheet, school_track)
 
-    categorical_features = list(categorical_features['0'])
+    
+    script_start = dt.datetime.now()
 
-    # Global Boolean run params:
+
+    # Extract run and load configs
+    run_cfg = cfg.get("run", {})
+    load_cfg = cfg.get("load", {})
+
+    current_run_id = run_cfg["id"]  # where new outputs go
+    load_enabled = load_cfg.get("enabled", False) # where inputs can be loaded from
+
+    if load_enabled:
+        source_run_id = load_cfg.get("run_id")
+        if not source_run_id:
+            raise ValueError("load.enabled=True but load.run_id is not set")
+    else:
+        source_run_id = current_run_id
+
+    # ================================= Define global parameters ==============================================
+    # Global Boolean run params (the same across all subset runs):
     TEST_RUN = True # runs test run of code (fixed grid)
     count_categories = False # counts min categories and notes where <25
     train_models = True # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
-    test_models = True # runs evaluation of model performance
-    interpret_models = True # runs model interpretation, if False then neither SHAP nor permutation importance will run
-    run_permutation = True # runs permutation importance, otherwise loads results and plots
-    run_grouped_permutation = True # calculates and plots grouped permutation importance
-    run_SHAP = True # runs SHAP, otherwise loads results and plots
-    run_grouped_SHAP = True # calculates and plots grouped SHAP
-    plot_nice_names = True
+    test_models = False # runs evaluation of model performance
+    interpret_models = False # runs model interpretation, if False then neither SHAP nor permutation importance will run
+    run_permutation = False # runs permutation importance, otherwise loads results and plots
+    run_grouped_permutation = False # calculates and plots grouped permutation importance
+    run_SHAP = False # runs SHAP, otherwise loads results and plots
+    run_grouped_SHAP = False # calculates and plots grouped SHAP
+    plot_nice_names = True # plots with nice variable names where possible
 
     # todo: UserWarning: Found unknown categories in columns [23] during transform. These unknown categories will be encoded as all zeros -- I think do do with NAs -- what happens in this case?
     # todo: RA - newly created variables and others need a "nice plot names"
@@ -69,11 +87,13 @@ def run_pipeline(cfg: dict):
 
     params_save = results_path / "Prediction" / "Best_Params"
     plot_save = results_path / "Prediction" / "Plots"
+    all_models_save = results_path / "Prediction" / "All_Models"
 
     # ensure directories exist
     params_save.mkdir(parents=True, exist_ok=True)
     plot_save.mkdir(parents=True, exist_ok=True)
     outputs_path.mkdir(parents=True, exist_ok=True)
+    all_models_save.mkdir(parents=True, exist_ok=True)
 
     # Read data
     X_and_y = pd.read_csv("Data/Preprocessed/X_and_y.csv", index_col=[0])
@@ -112,17 +132,16 @@ def run_pipeline(cfg: dict):
         param_list = [dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid]
         run = ""
 
-    # start signature
-    script_start = dt.datetime.now()
-    if train_models == True:
-        start_string = script_start.strftime('%d_%b_%Y__%H.%M{}'.format(run))
-    else:
-        start_string = '26_Nov_2024__16.45' # <-- declare start string here depending on what model run want to test and evaluate
+    # used ONLY for saving filenames (optional)
+    run_label = current_run_id
+
+    # used ONLY for loading previous results
+    load_label = source_run_id
 
     # Assign data types
+    categorical_features = list(categorical_features['0'])
     numerical_df, numerical_features = drop_cols(categorical_features, X)
     categorical_features = [c for c in categorical_features if c in X.columns]
-
 
     # Redefine data types
     X[categorical_features] = X[categorical_features].astype('category')
@@ -185,7 +204,7 @@ def run_pipeline(cfg: dict):
     for model_name, pipe, params in zip(model_names, pipes, param_list):
         model_train_start = dt.datetime.now()
 
-        save_file = results_path / f"Prediction/{start_string}_{model_name}{run}.txt"
+        save_file = results_path / f"Prediction/{run_label}_{model_name}{run}.txt"
 
         if train_models == True:
             print("{}: ".format(model_name), file=open(save_file, "w"))
@@ -212,7 +231,7 @@ def run_pipeline(cfg: dict):
 
             # Store best hyper-paramters:
             best_params = grid_search.best_params_
-            joblib.dump(best_params, params_save / f'{start_string}_{model_name}{run}.pkl', compress=1)
+            joblib.dump(best_params, params_save / f'{run_label}_{model_name}{run}.pkl', compress=1)
             best_train_score = round(abs(grid_search.best_score_), decimal_places)
             print("params tried:\n{}\n".format(params), file=open(save_file, "a"))
 
@@ -221,7 +240,7 @@ def run_pipeline(cfg: dict):
 
             best_params_dict[model_name] = best_params
         else:
-            best_params = joblib.load(params_save + f'{start_string}_{model_name}.pkl')
+            best_params = joblib.load(params_save + f'{load_label}_{model_name}.pkl')
 
         # set pipeline to use best params
         pipe.set_params(**best_params)
@@ -284,11 +303,11 @@ def run_pipeline(cfg: dict):
             # plot distribution of predictions:
             plot_scat(x=y_test, y=y_pred, x_lab="actual", y_lab="predicted",
                     save_path=plot_save,
-                    save_name=f"{start_string}_{model_name}_predicted_actual{run}")
+                    save_name=f"{run_label}_{model_name}_predicted_actual{run}")
 
             plot_label_reg_sns(x=y_test, y=y_pred, x_lab="actual", y_lab="predicted",
                             save_path=plot_save,
-                            save_name=f"{start_string}_{model_name}_predicted_actual_cor{run}", anov_var=None,
+                            save_name=f"{run_label}_{model_name}_predicted_actual_cor{run}", anov_var=None,
                             cor=True, ano=False, print_cor=False, same_axis=True)
 
             model_test_end = dt.datetime.now()
@@ -360,11 +379,11 @@ def run_pipeline(cfg: dict):
         
                 save_path_p = Path(save_path)
                 save_path_p.mkdir(parents=True, exist_ok=True)
-                filename = f"{start_string}_{model_name}_permutation_importance{run}.csv"
+                filename = f"{run_label}_{model_name}_permutation_importance{run}.csv"
                 perm_imp_df.to_csv(save_path_p / filename)
 
             else:
-                perm_imp_df = pd.read_csv(save_path + f"{start_string}_{model_name}_permutation_importance{run}.csv",
+                perm_imp_df = pd.read_csv(save_path + f"{load_label}_{model_name}_permutation_importance{run}.csv",
                                         index_col=[0])
                 if plot_nice_names == True:
                     perm_imp_df["Original Feature Name"] = perm_imp_df["Feature"].copy()
@@ -377,11 +396,11 @@ def run_pipeline(cfg: dict):
 
             plot_permutation(perm_imp_df=perm_imp_df,
                             save_path=save_path / "PLots/",
-                            save_name=f"{start_string}_{model_name}_permutation{run}")
+                            save_name=f"{run_label}_{model_name}_permutation{run}")
 
             if n_permutations > 1:
                 plot_permutation_bars(perm_imp_df=perm_imp_df, save_path=save_path + "PLots/",
-                                    save_name=f"{start_string}_{model_name}_MULTIpermutation{run}",
+                                    save_name=f"{run_label}_{model_name}_MULTIpermutation{run}",
                                     plot_n_features=plot_n_features)
 
             if run_grouped_permutation == True:
@@ -401,11 +420,11 @@ def run_pipeline(cfg: dict):
                 
                 save_path_p = Path(save_path)
                 save_path_p.mkdir(parents=True, exist_ok=True)
-                filename = f"Grouped_{start_string}_{model_name}{run}.csv"
+                filename = f"Grouped_{run_label}_{model_name}{run}.csv"
                 result_df.to_csv(save_path_p / filename)
 
                 plot_group_perm_importance(result, save_path=save_path_p / "PLots/",
-                                        save_name=f"Grouped_{start_string}_{model_name}{run}"
+                                        save_name=f"Grouped_{run_label}_{model_name}{run}"
                                         )
 
             # 2) SHAP importance ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -444,23 +463,23 @@ def run_pipeline(cfg: dict):
                     shap_values_df = pd.DataFrame(shap_values, columns=names)
                     save_path_p = Path(save_path)
                     save_path_p.mkdir(parents=True, exist_ok=True)
-                    filename = f"{start_string}_SHAP_{model_name}-{method_type}{run}.csv"   
+                    filename = f"{run_label}_SHAP_{model_name}-{method_type}{run}.csv"   
 
                     shap_values_df.to_csv(save_path_p / filename)
                     shap_results_dict[method_type] = shap_dict
 
-                    filename_pkl = f"{start_string}_SHAP_{model_name}{run}.pkl"
+                    filename_pkl = f"{run_label}_SHAP_{model_name}{run}.pkl"
                     file_path = save_path_p / filename_pkl
                     with open(file_path, 'wb') as handle:
                         pickle.dump(shap_results_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             else:
                 method_type = "interventional" # todo: check if we want to include "tree path dependent"
-                shap_values_df = pd.read_csv(save_path + f"{start_string}_SHAP_{model_name}-{method_type}{run}.csv")
+                shap_values_df = pd.read_csv(save_path + f"{load_label}_SHAP_{model_name}-{method_type}{run}.csv")
 
                 save_path_p = Path(save_path)
                 save_path_p.mkdir(parents=True, exist_ok=True)
-                filename_pkl = f"{start_string}_SHAP_{model_name}{run}.pkl"
+                filename_pkl = f"{load_label}_SHAP_{model_name}{run}.pkl"
                 file_path = save_path_p / filename_pkl
                 with open(file_path, 'rb') as handle:
                     shap_results_dict = pickle.load(handle)
@@ -481,12 +500,12 @@ def run_pipeline(cfg: dict):
                     plot_SHAP(shap_dict, col_list=names, data=X_test_p,
                             n_features=plot_n_features, plot_type=plot_type,
                             save_path=shap_plot_save_path, title="SHAP importance (test set)",
-                            save_name=f"{start_string}_{model_name}_SHAP_{plot_type}_{method}{run}.png")
+                            save_name=f"{run_label}_{model_name}_SHAP_{plot_type}_{method}{run}.png")
                     if plot_type == "summary":
                         plot_SHAP(shap_dict, col_list=names, data=X_test_p,
                                 n_features=plot_n_features, plot_type=None,
                                 save_path=shap_plot_save_path, title="SHAP importance (test set)",
-                                save_name=f"{start_string}_{model_name}_SHAP_{plot_type}_{method}{run}.png")
+                                save_name=f"{run_label}_{model_name}_SHAP_{plot_type}_{method}{run}.png")
 
             if run_grouped_SHAP == True:
                 print('running grouped SHAP importance...')
@@ -518,44 +537,52 @@ def run_pipeline(cfg: dict):
                 # Save values
                 group_shap_values_df = pd.DataFrame(group_shap_values, columns=["Importance"])
                 group_shap_values_df.sort_values(by="Importance", ascending=False, inplace=True, axis=0)
-                group_shap_values_df.to_csv("Results/Interpretation/SHAP/Grouped/" +
-                                        f"Grouped_{start_string}_{model_name}_{method_type}{run}.csv")
+                filename = f"Grouped_{run_label}_{model_name}_{method_type}{run}.csv"
+                save_path= "Results/Interpretation/SHAP/Grouped/Plots/"                
+                save_path_p = Path(save_path)
+                save_path_p.mkdir(parents=True, exist_ok=True)
+                group_shap_values_df.to_csv(save_path_p / filename)
                 # Plot
-                plot_group_SHAP_importance(group_shap_values, f"Grouped_{start_string}_{model_name}_{method_type}{run}",
-                                        save_path= "Results/Interpretation/SHAP/Grouped/Plots/")
+                plot_group_SHAP_importance(group_shap_values, f"Grouped_{run_label}_{model_name}_{method_type}{run}",
+                                        save_path=save_path_p, save_name=filename)
 
             model_interpretation_end = dt.datetime.now()
             model_interpretation_time = model_interpretation_end - model_interpretation_start
             print(f"Model interpretation time for {model_name}: {model_interpretation_time}")
 
     if test_models == True:
-        results_df = pd.DataFrame.from_dict(test_scores)
-        results_df.to_csv(f"Results/Prediction/All_models/all_test_scores_{start_string}.csv")
+        results_df = pd.DataFrame.from_dict(test_scores)   
+        filename = f"all_test_scores_{run_label}.csv"
+        results_df.to_csv(all_models_save / filename)
 
     if test_models == False:
-        results_df = pd.read_csv(f"Results/Prediction/All_Models/all_test_scores_{start_string}{run}.csv", index_col=[0])
-        print(f"Loading test results data from: Results/Prediction/All_models/all_test_scores_{start_string}{run}.csv")
+        filename = f"all_test_scores_{load_label}{run}.csv"
+        results_df = pd.read_csv(all_models_save / filename, index_col=[0])
+        print(f"Loading test results data from: {all_models_save / filename}")
 
     print("Plotting test performance to compare all models...")
 
-    print(f"Loading test results data from: Results/Prediction/All_Models/all_test_scores_{start_string}{run}.csv")
+    print(f"Loading test results data from: {all_models_save / filename}")
     x_ticks = ["Prior Achieve.", "Prior Ach.+ School Track" "Decision Tree", "Random Forest", "Hist Grad. Boost.", "XGBoost"]
 
+    save_path_plots = all_models_save / "Plots"
+    save_path_plots = Path(save_path_plots)
+    save_path_plots.mkdir(parents=True, exist_ok=True)
     plot_results(y="R2", data=results_df, colour='Model',
-                save_path="Results/Prediction/All_Models/Plots/",
-                save_name=f"test_summary_all_R2_{start_string}{run}",
+                save_path=save_path_plots,
+                save_name=f"test_summary_all_R2_{run_label}{run}",
                 xlab="Prediction Models", ylab="Prediction R Squared",
                 title="",
                 x_ticks=x_ticks)
     plot_results(y="MAE", data=results_df, colour='Model',
-                save_path="Results/Prediction/All_Models/Plots/",
-                save_name=f"test_summary_all_MAE_{start_string}{run}",
+                save_path=save_path_plots,
+                save_name=f"test_summary_all_MAE_{run_label}{run}",
                 xlab="Prediction Models", ylab="MAE",
                 title="",
                 x_ticks=x_ticks)
     plot_results(y="RMSE", data=results_df, colour='Model',
-                save_path="Results/Prediction/All_Models/Plots/",
-                save_name=f"test_summary_all_RMSE_{start_string}{run}",
+                save_path=save_path_plots,
+                save_name=f"test_summary_all_RMSE_{run_label}{run}",
                 xlab="Prediction Models", ylab="RMSE",
                 title="",
                 x_ticks=x_ticks)

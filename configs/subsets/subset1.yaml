@@ -4,3 +4,6 @@ subset:
     - Baseline
     - pTarget
   exclude_groups: []
+load:
+  enabled: true # set to true to load existing results
+  run_id: 2026-01-22_121411__prior_reading__student   # e.g. "2026-01-22_121411__prior_reading__student"
