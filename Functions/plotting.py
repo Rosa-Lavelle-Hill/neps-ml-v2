@@ -1,3 +1,4 @@
+from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -82,17 +83,26 @@ def plot_scatt(x, y, save_path, save_name, xlab, ylab, data=None, fontsize=12, j
 
 
 
-def plot_scat(x, y, x_lab, y_lab,
-                    save_path, save_name):
-    plt.figure(figsize=(20, 20))
+def plot_scat(x, y, x_lab, y_lab, save_path, save_name):
+   
+    save_path = Path(save_path)
+    # Ensure directory exists
+    save_path.mkdir(parents=True, exist_ok=True)
+    save_name = str(save_name)
+    if save_name.lower().endswith(".png"):
+        filename = save_name
+    else:
+        filename = f"{save_name}.png"
+
     fig, ax = plt.subplots()
     plt.scatter(x, y)
     plt.xlabel(x_lab)
     plt.ylabel(y_lab)
-    fig.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
+    fig.tight_layout() 
+    
+    fig.savefig(save_path / filename, dpi=300, bbox_inches="tight")
+    plt.close(fig)
     return
-
 
 
 def plot_label_reg_sns(x, y, x_lab, y_lab,
@@ -134,8 +144,9 @@ def plot_label_reg_sns(x, y, x_lab, y_lab,
             title = "Pearson r Correlation = {}".format(corr)
         plt.title(title, fontsize=12)
     fig.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
-    return
+    filename = str(save_name) + ".png"
+    plt.savefig(save_path / filename, dpi=300, bbox_inches="tight")
+    plt.close(fig)
 # todo: check the correlation...^^^^^
 
 
@@ -148,7 +159,10 @@ def plot_permutation(perm_imp_df, save_path, save_name, figsize=(8, 6)):
     ax.set_title("Permutation Importance (test set)")
     ax.set_xlabel("Permutation Importance")
     fig.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
+    filename = str(save_name) + ".png"
+    save_path_p = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path_p / filename, dpi=300, bbox_inches="tight")
     plt.clf()
     plt.cla()
     plt.close()
@@ -222,7 +236,9 @@ def plot_SHAP(shap_dict, col_list, plot_type, n_features, data,
                       plot_type=plot_type, max_display=n_features)
     plt.title(title)
     plt.tight_layout()
-    plt.savefig(save_path + save_name, bbox_inches='tight')
+    save_path_p = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path_p / save_name, bbox_inches='tight')
     plt.clf()
     plt.cla()
     plt.close()
@@ -287,7 +303,10 @@ def plot_group_perm_importance(group_importance, save_path,
     plt.ylabel("Group", fontsize=14)
     plt.grid(axis='x', linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
+    filename = str(save_name) + ".png"
+    save_path_p = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path_p / filename, dpi=300, bbox_inches="tight")
     plt.clf()
     plt.cla()
     plt.close()

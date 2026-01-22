@@ -121,8 +121,7 @@ def run_pipeline(cfg: dict):
 
     # Assign data types
     numerical_df, numerical_features = drop_cols(categorical_features, X)
-    categorical_features_list = categorical_features.values.flatten().tolist()
-    categorical_features = [c for c in categorical_features_list if c in X.columns]
+    categorical_features = [c for c in categorical_features if c in X.columns]
 
 
     # Redefine data types
@@ -160,12 +159,12 @@ def run_pipeline(cfg: dict):
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=seed, test_size=test_size, shuffle=True)
 
     # Count category distributions across train and test data sets
-    save_path = outputs_path + "category_distributions/"
+    cat_save_path = outputs_path / "category_distributions"
     if count_categories == True:
-        count_categories_to_file(X_train, output_file=save_path+"X_train_counts.txt", categorical_columns=categorical_features_in_data,
+        count_categories_to_file(X_train, output_file=cat_save_path+"X_train_counts.txt", categorical_columns=categorical_features_in_data,
                                 var_name_dict=var_names_dict, min_cat=round((smallest_category_count/100)*80, 0),
                                 cat_name_dict=cat_name_dict, data_name="X_train")
-        count_categories_to_file(X_test, output_file=save_path+"X_test_counts.txt", categorical_columns=categorical_features_in_data,
+        count_categories_to_file(X_test, output_file=cat_save_path+"X_test_counts.txt", categorical_columns=categorical_features_in_data,
                                 var_name_dict=var_names_dict, min_cat=round((smallest_category_count/100)*20, 0),
                                 cat_name_dict=cat_name_dict, data_name="X_test")
 
@@ -186,7 +185,7 @@ def run_pipeline(cfg: dict):
     for model_name, pipe, params in zip(model_names, pipes, param_list):
         model_train_start = dt.datetime.now()
 
-        save_file = results_path + f"/Prediction/{start_string}_{model_name}{run}.txt"
+        save_file = results_path / f"Prediction/{start_string}_{model_name}{run}.txt"
 
         if train_models == True:
             print("{}: ".format(model_name), file=open(save_file, "w"))
@@ -213,7 +212,7 @@ def run_pipeline(cfg: dict):
 
             # Store best hyper-paramters:
             best_params = grid_search.best_params_
-            joblib.dump(best_params, params_save + f'{start_string}_{model_name}{run}.pkl', compress=1)
+            joblib.dump(best_params, params_save / f'{start_string}_{model_name}{run}.pkl', compress=1)
             best_train_score = round(abs(grid_search.best_score_), decimal_places)
             print("params tried:\n{}\n".format(params), file=open(save_file, "a"))
 
@@ -302,7 +301,7 @@ def run_pipeline(cfg: dict):
         if interpret_models == True:
 
             model_interpretation_start = dt.datetime.now()
-            save_path = results_path + "Interpretation/Permutation/"
+            save_path = results_path / "Interpretation/Permutation/"
 
             # Fit the preprocessor
             opt_model = pipe.named_steps.regressor
@@ -357,8 +356,12 @@ def run_pipeline(cfg: dict):
                 })
 
                 # take top n features and then flip so most important at top on graph
-                perm_imp_df.sort_values(by="importance_mean", ascending=False, inplace=True, axis=0)
-                perm_imp_df.to_csv(save_path+f"{start_string}_{model_name}_permutation_importance{run}.csv")
+                perm_imp_df.sort_values(by="importance_mean", ascending=False, inplace=True, axis=0)\
+        
+                save_path_p = Path(save_path)
+                save_path_p.mkdir(parents=True, exist_ok=True)
+                filename = f"{start_string}_{model_name}_permutation_importance{run}.csv"
+                perm_imp_df.to_csv(save_path_p / filename)
 
             else:
                 perm_imp_df = pd.read_csv(save_path + f"{start_string}_{model_name}_permutation_importance{run}.csv",
@@ -373,7 +376,7 @@ def run_pipeline(cfg: dict):
             perm_imp_df.sort_values(by="importance_mean", ascending=True, inplace=True, axis=0)
 
             plot_permutation(perm_imp_df=perm_imp_df,
-                            save_path=save_path + "PLots/",
+                            save_path=save_path / "PLots/",
                             save_name=f"{start_string}_{model_name}_permutation{run}")
 
             if n_permutations > 1:
@@ -384,7 +387,7 @@ def run_pipeline(cfg: dict):
             if run_grouped_permutation == True:
                 print("Starting grouped permutation importance")
 
-                save_path = results_path + "Interpretation/Permutation/Grouped/"
+                save_path = results_path / "Interpretation/Permutation/Grouped/"
                 result = group_permutation_analysis_avg(X_train, y_train,
                                                     X_test, y_test,
                                                     pipeline=pipe,
@@ -395,15 +398,19 @@ def run_pipeline(cfg: dict):
 
                 result_df = pd.DataFrame.from_dict(result, orient='index', columns=["Importance"])
                 result_df.sort_values(by="Importance", ascending=False, inplace=True, axis=0)
-                result_df.to_csv(save_path + f"Grouped_{start_string}_{model_name}{run}.csv")
+                
+                save_path_p = Path(save_path)
+                save_path_p.mkdir(parents=True, exist_ok=True)
+                filename = f"Grouped_{start_string}_{model_name}{run}.csv"
+                result_df.to_csv(save_path_p / filename)
 
-                plot_group_perm_importance(result, save_path=save_path + "PLots/",
+                plot_group_perm_importance(result, save_path=save_path_p / "PLots/",
                                         save_name=f"Grouped_{start_string}_{model_name}{run}"
                                         )
 
             # 2) SHAP importance ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            save_path= results_path + "Interpretation/SHAP/"
+            save_path= results_path / "Interpretation/SHAP/"
             if run_SHAP == True:
 
                 print("Starting SHAP importance for {}".format(model_name))
@@ -435,17 +442,26 @@ def run_pipeline(cfg: dict):
 
                     # save
                     shap_values_df = pd.DataFrame(shap_values, columns=names)
-                    shap_values_df.to_csv(save_path + f"{start_string}_SHAP_{model_name}-{method_type}{run}.csv")
+                    save_path_p = Path(save_path)
+                    save_path_p.mkdir(parents=True, exist_ok=True)
+                    filename = f"{start_string}_SHAP_{model_name}-{method_type}{run}.csv"   
+
+                    shap_values_df.to_csv(save_path_p / filename)
                     shap_results_dict[method_type] = shap_dict
 
-                    file_path = save_path + f"{start_string}_SHAP_{model_name}{run}.pkl"
+                    filename_pkl = f"{start_string}_SHAP_{model_name}{run}.pkl"
+                    file_path = save_path_p / filename_pkl
                     with open(file_path, 'wb') as handle:
                         pickle.dump(shap_results_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             else:
                 method_type = "interventional" # todo: check if we want to include "tree path dependent"
                 shap_values_df = pd.read_csv(save_path + f"{start_string}_SHAP_{model_name}-{method_type}{run}.csv")
-                file_path = save_path + f"{start_string}_SHAP_{model_name}{run}.pkl"
+
+                save_path_p = Path(save_path)
+                save_path_p.mkdir(parents=True, exist_ok=True)
+                filename_pkl = f"{start_string}_SHAP_{model_name}{run}.pkl"
+                file_path = save_path_p / filename_pkl
                 with open(file_path, 'rb') as handle:
                     shap_results_dict = pickle.load(handle)
 
@@ -455,7 +471,9 @@ def run_pipeline(cfg: dict):
                 X_test_p.rename(columns=processed_rename_dict, inplace=True)
                 names = list(X_test_p.columns)
 
-            shap_plot_save_path = save_path + "Plots/"
+            save_path_p = Path(save_path)
+            save_path_p.mkdir(parents=True, exist_ok=True)
+            shap_plot_save_path = save_path_p / "Plots"
             for method, shap_dict in shap_results_dict.items():
                 plot_types = ["bar", "summary", "violin"]
                 for plot_type in plot_types:
