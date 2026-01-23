@@ -1,10 +1,13 @@
 import sys
 import glob
 import yaml
+import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
 from copy import deepcopy
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
 
 from ml_pipeline import run_pipeline  
 
@@ -43,7 +46,51 @@ def git_commit_hash():
     except Exception:
         return None
 
+
 def main():
+    base = load_yaml("configs/base.yaml")
+    subset_files = sorted(glob.glob("configs/subsets/*.yaml"))
+
+    jobs = []
+
+    for f in subset_files:
+        subset_cfg = load_yaml(f)
+        cfg = deep_merge(base, subset_cfg)
+
+        subset = cfg.get("subset", {})
+        subset_name = subset.get("name", "unknown")
+
+        stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        run_id = f"{stamp}__{subset_name}"
+
+        cfg.setdefault("run", {})
+        cfg["run"]["id"] = run_id
+        cfg["run"]["subset_name"] = subset_name
+
+        save_run_config(cfg, run_id)
+
+        jobs.append(cfg)
+
+    # --- PARALLEL OR SERIAL ---
+    parallel_cfg = base.get("parallel", {})
+    parallel_enabled = parallel_cfg.get("enabled", False)
+    max_workers = parallel_cfg.get("max_workers", os.cpu_count())
+
+    if parallel_enabled:
+        print(f"Running {len(jobs)} subsets in PARALLEL (max_workers={max_workers})")
+
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(run_one_subset, cfg) for cfg in jobs]
+
+            for future in as_completed(futures):
+                future.result()  # raises error if any run fails
+    else:
+        print(f"Running {len(jobs)} subsets SERIAL")
+
+        for cfg in jobs:
+            run_one_subset(cfg)
+
+def main_no_parallel():
     base = load_yaml("configs/base.yaml")
     subset_files = sorted(glob.glob("configs/subsets/*.yaml"))
 
@@ -70,6 +117,10 @@ def main():
         save_run_config(cfg, run_id)
 
         run_pipeline(cfg)
+
+def run_one_subset(cfg):
+    from ml_pipeline import run_pipeline
+    run_pipeline(cfg)
 
 if __name__ == "__main__":
     main()

@@ -74,6 +74,7 @@ def run_pipeline(cfg: dict):
     test_size = cfg_get(cfg, ["modelling", "test_size"])
     scoring = cfg_get(cfg, ["modelling", "scoring"])
     cv = cfg_get(cfg, ["modelling", "cv"])
+    skl_n_jobs = cfg_get(cfg, ["modelling", "skl_n_jobs"])
 
     # interpretation:
     plot_n_features = cfg_get(cfg, ["interpretation", "plot_n_features"])
@@ -230,7 +231,7 @@ def run_pipeline(cfg: dict):
                                     scoring=scoring,
                                     refit=False,
                                     verbose=2,
-                                    n_jobs=2,
+                                    n_jobs=skl_n_jobs,
                                     error_score='raise')
 
             # start timer
@@ -379,7 +380,7 @@ def run_pipeline(cfg: dict):
                 # 1) Permutation importance
                 print("Starting permutation importance for {}".format(model_name))
                 result = permutation_importance(pipe, X_test, y_test, n_repeats=n_permutations,
-                                                random_state=seed, n_jobs=2, scoring=scoring)
+                                                random_state=seed, n_jobs=skl_n_jobs, scoring=scoring)
                 perm_importances_mean = result.importances_mean
                 vars=list(X_test.columns)
                 perm_imp_df = pd.DataFrame({

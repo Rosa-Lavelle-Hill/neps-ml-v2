@@ -1,5 +1,5 @@
 params:
-  seed: 93
+  seed: 93 # random seed for reproducibility
   decimal_places: 3 # for rounding of results
 
 run:
@@ -12,18 +12,17 @@ run:
   run_SHAP: true # runs SHAP, otherwise loads results and plots
   run_grouped_SHAP: true # calculates and plots grouped SHAP
   plot_nice_names: true # plots with nice variable names where possible
-  count_categories: false # counts min categories and notes where <25
+  count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
   
-
 parallel:
-  enabled: false
-  max_workers: 4
+  enabled: true # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
+  max_workers: 4 # number of parallel workers 
 
 paths:
-  data_raw: "Data/Pilot_data_without_validT2_2026_01_13.csv"
-  preprocessed_data: "Data/Preprocessed/X_and_y.csv"
-  var_info_csv: Data/Meta/variable_info_agreed_Jan_21_2026.csv
-  categorical_features_csv: Data/Meta/categorical_variables.csv
+  data_raw: "Data/Pilot_data_without_validT2_2026_01_13.csv" # raw data path
+  preprocessed_data: "Data/Preprocessed/X_and_y.csv" # preprocessed data path
+  var_info_csv: Data/Meta/variable_info_agreed_Jan_21_2026.csv # variable information path
+  categorical_features_csv: Data/Meta/categorical_variables.csv # categorical variables path
 
 preprocessing:
   missing_thresh_col: 0.5 # threshold for missing data (column wise), above threshold col dropped 
@@ -36,12 +35,12 @@ modelling:
   test_size: 0.2 # proportion of data for testing
   scoring: r2 # metric to select and score the final model
   cv: 5 # number of folds in cross-validation (***increase to 10 in final run)
+  kl_n_jobs: 1 # number of parallel jobs for sklearn ---> set to 1 when using parallel processing of subsets
 
 interpretation:
   plot_n_features: 20 # number of features to inspect on SHAP plot
   n_permutations: 2 # ***10 for actual run
 
 test_run_params:
-  test_imputer_max_iter: 1
-  test_cv: 2
-  test_n_permutations: 1
+  test_cv: 2 # number of folds in cross-validation for test run
+  test_n_permutations: 1 # number of permutations for permutation importance in test run
