@@ -1,20 +1,16 @@
 import pandas as pd
 
-# ---- run settings ----
-seed = 93
-
 # ---- meta data ----
 var_info_sheet = "Data/Meta/variable_info_agreed_Jan_21_2026.csv"
 target_id = "ID_t"
 school_track = "tx80106"
 institution_id = "ID_i"
-dv_t1_name = "reg5_sc1u" # name of dv at time 1; in actual script replace with dv_name
+dv_t1_name = "reg5_sc1u" # name of dv at time 1
 dob_var = "p70012"
 date_variables = ["tx8602", "tx8610", "tx8611", "tx8620", "p40603", "p71202", "p71203",
                   "p72802", "p40003", "p40113", "p73191", "p73111", "p40403", "p73195"]
 
-# *Note that this list is not comprehensive; further variables are removed at other stages
-# such as when creating new variables due to multicollinearity.
+# ---- variable removal ----
 remove_vars = [
 # Used in creation of teacher_changed_state and teacher_predominant_state:
 "e537030_D", # Federal state higher education entrance qualification (West/East)
@@ -56,29 +52,16 @@ remove_vars = [
 # Other:
 "Unnamed:0", # Incase index creeps in
 "t262000_g1"] # Type of sports (too many categories, not relevant)
+
+# *Note that this list is not comprehensive; further variables are removed at other stages
+# such as when creating new variables due to multicollinearity and iteratively removing high collinear variables
+
 keep_vars = ["p731702", "e229820_D", "p751001_g1", "p410000_g1D", "p414040"] + [school_track] + [target_id] + [institution_id] #IDs removed later
             # ^ i.e., vars that should not be dropped due to multicollinearity or other reasons
-categorical_features = pd.read_csv("Data/Meta/categorical_variables.csv", index_col=[0]) # import list of categorical variables
 
-# ---- preprocessing ----
+# ---- preprocessing params ----
 missing_thresh_col = 0.5 # threshold for missing data (column wise), above threshold col dropped
 missing_thresh_row = 0.5 # threshold for missing data (row-wise), above threshold row dropped
 variance_feature_selection_threshold = 0.02 # will remove variables which, for binary variables >98% are 1 or 0
 smallest_category_count = 30 # number of instances in smallest category for categorical variables
 IV_cor_threshold = 0.7 # below threshold, bivariate correlations are allowed
-
-# ---- prediction modelling ----
-test_size = 0.2 # proportion of data for testing
-scoring = "r2" # metric to select and score the final model
-decimal_places = 2 # for rounding of results
-imputer_max_iter = 10 # number of iterations in imputer (increase to 100 in final run)
-cv = 5  # number of folds in cross-validation (increase to 10 in final run?)
-
-# ---- model interpretation ----
-plot_n_features = 20 # number of features to inspect on SHAP plot
-n_permutations = 2 #********10 # for permutation importance
-
-# ---- test run params ----
-test_imputer_max_iter = 1
-test_cv = 2
-test_n_permutations = 1
