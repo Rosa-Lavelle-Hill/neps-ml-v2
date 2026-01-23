@@ -12,24 +12,20 @@ def run_pipeline(cfg: dict):
     import pandas as pd
     import shap
     import matplotlib.pyplot as plt
+
     from sklearn.linear_model import LinearRegression
     from sklearn import metrics
     from sklearn.inspection import permutation_importance
     from sklearn.model_selection import train_test_split, GridSearchCV
-    from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
-    from Functions.subsets import load_var_info, apply_subset
+    from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
+    from Functions.subsets import apply_subset
 
-    from Functions.grouped_importance import group_permutation_analysis, group_permutation_analysis_avg
+    from Functions.grouped_importance import group_permutation_analysis_avg
     from Functions.plotting import plot_label_reg_sns, plot_scat, plot_permutation, plot_SHAP, plot_permutation_bars, \
         plot_results, plot_group_perm_importance, plot_group_SHAP_importance
-    from Functions.pipeline import get_preprocessed_col_names, construct_pipelines_no_imputation, construct_pipelines, \
-        construct_pipelines_all_no_imputation, get_preprocessed_data
+    from Functions.pipeline import construct_pipelines_all_no_imputation, get_preprocessed_data
     from Functions.preprocessing_functions import drop_cols, count_categories_to_file, remove_variables
-
-    # import fixed params:
-    from fixed_params import (categorical_features, seed, n_permutations, test_n_permutations, test_size, cv, scoring,
-                            decimal_places, plot_n_features, smallest_category_count, remove_vars, test_imputer_max_iter,
-                            test_cv, test_n_permutations, dv_t1_name, var_info_sheet, school_track)
+    from fixed_params import (remove_vars, school_track, dv_t1_name)
 
     
     script_start = dt.datetime.now()
@@ -51,34 +47,77 @@ def run_pipeline(cfg: dict):
 
     # ================================= Define global parameters ==============================================
     # Global Boolean run params (the same across all subset runs):
-    TEST_RUN = True # runs test run of code (fixed grid)
-    count_categories = False # counts min categories and notes where <25
-    train_models = False # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
-    test_models = False # runs evaluation of model performance
-    interpret_models = False # runs model interpretation, if False then neither SHAP nor permutation importance will run
-    run_permutation = False # runs permutation importance, otherwise loads results and plots
-    run_grouped_permutation = False # calculates and plots grouped permutation importance
-    run_SHAP = False # runs SHAP, otherwise loads results and plots
-    run_grouped_SHAP = False # calculates and plots grouped SHAP
-    plot_nice_names = True # plots with nice variable names where possible
+    # TEST_RUN = True # runs test run of code (fixed grid)
+    # count_categories = False # counts min categories and notes where <25
+    # train_models = True # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
+    # test_models = True # runs evaluation of model performance
+    # interpret_models = True # runs model interpretation, if False then neither SHAP nor permutation importance will run
+    # run_permutation = True # runs permutation importance, otherwise loads results and plots
+    # run_grouped_permutation = True # calculates and plots grouped permutation importance
+    # run_SHAP = True # runs SHAP, otherwise loads results and plots
+    # run_grouped_SHAP = True # calculates and plots grouped SHAP
+    # plot_nice_names = True # plots with nice variable names where possible
 
     # todo: UserWarning: Found unknown categories in columns [23] during transform. These unknown categories will be encoded as all zeros -- I think do do with NAs -- what happens in this case?
     # todo: RA - newly created variables and others need a "nice plot names"
     # todo: clean up grids.py, and try come up up with final reasonable suggestions
-
 
     def make_run_dirs(cfg):
         run_id = cfg.get("run", {}).get("id", "no_run_id")
         results_root = Path("Results") / "runs" / run_id
         results_root.mkdir(parents=True, exist_ok=True)
         return results_root
+    
+    def cfg_get(cfg, path):
+        cur = cfg
+        for key in path:
+            if not isinstance(cur, dict) or key not in cur:
+                raise KeyError(f"Missing config key: {'.'.join(path)}")
+            cur = cur[key]
+        return cur
 
-    results_dir = make_run_dirs(cfg)
-    print("Saving to:", results_dir)
+    # =======================================================================================================
+    # import fixed params from base yaml:
+    seed = cfg_get(cfg, ["params", "seed"])
+    decimal_places = cfg_get(cfg, ["params", "decimal_places"])
+
+    # run option flags:
+    TEST_RUN = cfg_get(cfg, ["run", "test_run"])
+    train_models = cfg_get(cfg, ["run", "train_models"])
+    test_models = cfg_get(cfg, ["run", "test_models"])
+    interpret_models = cfg_get(cfg, ["run", "interpret_models"])
+    run_permutation = cfg_get(cfg, ["run", "run_permutation"])
+    run_grouped_permutation = cfg_get(cfg, ["run", "run_grouped_permutation"])
+    run_SHAP = cfg_get(cfg, ["run", "run_SHAP"])
+    run_grouped_SHAP = cfg_get(cfg, ["run", "run_grouped_SHAP"])
+    plot_nice_names = cfg_get(cfg, ["run", "plot_nice_names"])
+    count_categories = cfg_get(cfg, ["run", "count_categories"])
+
+    # paths:
+    var_info_sheet = cfg_get(cfg, ["paths", "var_info_csv"])
+    categorical_features_csv = cfg_get(cfg, ["paths", "categorical_features_csv"])
+
+    # preprocessing:
+    smallest_category_count = cfg_get(cfg, ["preprocessing", "smallest_category_count"])
+
+    # modelling:
+    test_size = cfg_get(cfg, ["modelling", "test_size"])
+    scoring = cfg_get(cfg, ["modelling", "scoring"])
+    cv = cfg_get(cfg, ["modelling", "cv"])
+
+    # interpretation:
+    plot_n_features = cfg_get(cfg, ["interpretation", "plot_n_features"])
+    n_permutations = cfg_get(cfg, ["interpretation", "n_permutations"])
+
+    # test run params:
+    test_imputer_max_iter = cfg_get(cfg, ["test_run_params", "test_imputer_max_iter"])
+    test_cv = cfg_get(cfg, ["test_run_params", "test_cv"])
+    test_n_permutations = cfg_get(cfg, ["test_run_params", "test_n_permutations"])
 
     # run-scoped save paths
+    results_dir = make_run_dirs(cfg)
+    print("Saving to:", results_dir)   
     results_path = Path(results_dir)
-
     params_save = results_path / "Prediction" / "Best_Params"
     plot_save = results_path / "Prediction" / "Plots"
     all_models_save = results_path / "Prediction" / "All_Models"
@@ -88,6 +127,7 @@ def run_pipeline(cfg: dict):
     params_save.mkdir(parents=True, exist_ok=True)
     plot_save.mkdir(parents=True, exist_ok=True)
     all_models_save.mkdir(parents=True, exist_ok=True)
+    # =======================================================================================================
 
     # Read data
     X_and_y = pd.read_csv("Data/Preprocessed/X_and_y.csv", index_col=[0])
@@ -128,6 +168,8 @@ def run_pipeline(cfg: dict):
         param_list = [dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid]
         run = ""
 
+    # ========================================
+    # Define run and load labels
     # used ONLY for saving filenames (optional)
     run_label = current_run_id
 
@@ -135,8 +177,10 @@ def run_pipeline(cfg: dict):
     load_label = source_run_id
     params_load = Path("Results") / "runs" / load_label / "Prediction" / "Best_Params"
     all_models_load = Path("Results") / "runs" / load_label / "Prediction" / "All_Models"
+    # ========================================
 
     # Assign data types
+    categorical_features = pd.read_csv(categorical_features_csv, index_col=[0]) # i
     categorical_features = list(categorical_features['0'])
     numerical_df, numerical_features = drop_cols(categorical_features, X)
     categorical_features = [c for c in categorical_features if c in X.columns]
@@ -399,7 +443,8 @@ def run_pipeline(cfg: dict):
                             save_name=f"{run_label}_{model_name}_permutation{run}")
 
             if n_permutations > 1:
-                plot_permutation_bars(perm_imp_df=perm_imp_df, save_path=save_path + "PLots/",
+                save_path_p = Path(save_path) / "PLots/"
+                plot_permutation_bars(perm_imp_df=perm_imp_df, save_path=save_path_p,
                                     save_name=f"{run_label}_{model_name}_MULTIpermutation{run}",
                                     plot_n_features=plot_n_features)
 
@@ -542,7 +587,7 @@ def run_pipeline(cfg: dict):
                 save_path_p.mkdir(parents=True, exist_ok=True)
                 group_shap_values_df.to_csv(save_path_p / filename)
                 # Plot
-                plot_group_SHAP_importance(group_shap_values, f"Grouped_{run_label}_{model_name}_{method_type}{run}",
+                plot_group_SHAP_importance(group_shap_values,
                                         save_path=save_path_p, save_name=filename)
 
             model_interpretation_end = dt.datetime.now()

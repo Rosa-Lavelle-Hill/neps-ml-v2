@@ -212,7 +212,10 @@ def plot_permutation_bars(perm_imp_df, save_path, save_name, plot_n_features):
     plt.xlabel('Importance')
     plt.title(f'Permutation Importance (test set)')
     plt.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
+    save_path_p = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    filename = str(save_name) + ".png"
+    plt.savefig(save_path_p / filename, dpi=300, bbox_inches="tight")
     plt.clf()
     plt.cla()
     plt.close()
@@ -328,7 +331,10 @@ def plot_group_SHAP_importance(group_shap_values, save_name, save_path):
     plt.title('SHAP Value Importance by Group')
     plt.grid(axis='x', linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.savefig(save_path + save_name + ".png")
+    filename = str(save_name) + ".png"
+    save_path_p = Path(save_path)
+    save_path_p.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path_p / filename, dpi=300, bbox_inches="tight")
     plt.clf()
     plt.cla()
     plt.close()

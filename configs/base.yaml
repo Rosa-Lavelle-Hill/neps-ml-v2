@@ -1,16 +1,45 @@
-run:
+params:
   seed: 93
-  test_run: false
-  train_models: true
-  interpret_models: false
-  run_shap: false
-  run_pfi: false
+  decimal_places: 3 # for rounding of results
+
+run:
+  test_run: false # runs test run of code (fixed grid)
+  train_models: true # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
+  test_models: true # runs evaluation of model performance
+  interpret_models: true # runs model interpretation, if False then neither SHAP nor permutation importance will run
+  run_permutation: true # runs permutation importance, otherwise loads results and plots
+  run_grouped_permutation: true # calculates and plots grouped permutation importance
+  run_SHAP: true # runs SHAP, otherwise loads results and plots
+  run_grouped_SHAP: true # calculates and plots grouped SHAP
+  plot_nice_names: true # plots with nice variable names where possible
+  count_categories: false # counts min categories and notes where <25
+  
 
 parallel:
   enabled: false
   max_workers: 4
 
 paths:
-  data_dir: Data
-  results_dir: Results
-  outputs_dir: Outputs
+  var_info_csv: Data/Meta/variable_info_agreed_Jan_21_2026.csv
+  categorical_features_csv: Data/Meta/categorical_variables.csv
+
+preprocessing:
+  missing_thresh_col: 0.5 # threshold for missing data (column wise), above threshold col dropped 
+  missing_thresh_row: 0.5 # threshold for missing data (row wise), above threshold row dropped
+  variance_feature_selection_threshold: 0.02 # will remove variables which, for binary variables >98% are 1 or 0
+  smallest_category_count: 30 # number of instances in smallest category for categorical variables
+  IV_cor_threshold: 0.7 # below threshold, bivariate correlations are allowed
+
+modelling:
+  test_size: 0.2 # proportion of data for testing
+  scoring: r2 # metric to select and score the final model
+  cv: 5 # number of folds in cross-validation (***increase to 10 in final run)
+
+interpretation:
+  plot_n_features: 20 # number of features to inspect on SHAP plot
+  n_permutations: 2 # ***10 for actual run
+
+test_run_params:
+  test_imputer_max_iter: 1
+  test_cv: 2
+  test_n_permutations: 1
