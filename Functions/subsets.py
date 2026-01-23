@@ -44,3 +44,17 @@ def apply_subset(X, var_info: pd.DataFrame, subset_cfg: dict):
 
     return X.loc[:, cols_in_X]
 
+def cfg_get(cfg, path):
+        cur = cfg
+        for key in path:
+            if not isinstance(cur, dict) or key not in cur:
+                raise KeyError(f"Missing config key: {'.'.join(path)}")
+            cur = cur[key]
+        return cur
+
+def make_run_dirs(cfg):
+    run_id = cfg.get("run", {}).get("id", "no_run_id")
+    results_root = Path("Results") / "runs" / run_id
+    results_root.mkdir(parents=True, exist_ok=True)
+    return results_root
+

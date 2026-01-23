@@ -1,6 +1,7 @@
+# fixed data coding parameters
 import pandas as pd
 
-# ---- meta data ----
+# ---- meta data coding ----
 var_info_sheet = "Data/Meta/variable_info_agreed_Jan_21_2026.csv"
 target_id = "ID_t"
 school_track = "tx80106"
@@ -10,7 +11,7 @@ dob_var = "p70012"
 date_variables = ["tx8602", "tx8610", "tx8611", "tx8620", "p40603", "p71202", "p71203",
                   "p72802", "p40003", "p40113", "p73191", "p73111", "p40403", "p73195"]
 
-# ---- variable removal ----
+# ---- variable removal coding ----
 remove_vars = [
 # Used in creation of teacher_changed_state and teacher_predominant_state:
 "e537030_D", # Federal state higher education entrance qualification (West/East)
@@ -58,10 +59,3 @@ remove_vars = [
 
 keep_vars = ["p731702", "e229820_D", "p751001_g1", "p410000_g1D", "p414040"] + [school_track] + [target_id] + [institution_id] #IDs removed later
             # ^ i.e., vars that should not be dropped due to multicollinearity or other reasons
-
-# ---- preprocessing params ----
-missing_thresh_col = 0.5 # threshold for missing data (column wise), above threshold col dropped
-missing_thresh_row = 0.5 # threshold for missing data (row-wise), above threshold row dropped
-variance_feature_selection_threshold = 0.02 # will remove variables which, for binary variables >98% are 1 or 0
-smallest_category_count = 30 # number of instances in smallest category for categorical variables
-IV_cor_threshold = 0.7 # below threshold, bivariate correlations are allowed

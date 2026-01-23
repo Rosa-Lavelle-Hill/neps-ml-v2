@@ -20,6 +20,8 @@ parallel:
   max_workers: 4
 
 paths:
+  data_raw: "Data/Pilot_data_without_validT2_2026_01_13.csv"
+  preprocessed_data: "Data/Preprocessed/X_and_y.csv"
   var_info_csv: Data/Meta/variable_info_agreed_Jan_21_2026.csv
   categorical_features_csv: Data/Meta/categorical_variables.csv
 

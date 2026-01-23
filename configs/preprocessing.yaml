@@ -1,0 +1,21 @@
+paths:
+  raw_input_csv: Data/Pilot_data_without_validT2_2026_01_13.csv
+  df_r_processed_csv: Data/Preprocessed/df_R_processed.csv
+  outputs_folder: Outputs
+
+preprocessing:
+  missing_thresh_col: 0.5
+  missing_thresh_row: 0.5
+  variance_feature_selection_threshold: 0.02
+  smallest_category_count: 30
+  IV_cor_threshold: 0.7
+  missing_values_to_na: [-100, -200, -300]
+
+switches:
+  run_R: false # Run preprocessing R script first? (true/false)
+  create_corr_drop_list: true # (true/false) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
+  check_mutual_information: false # (true/false) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
+  # make manual changes?
+  merge_categories: true #(true/false) whether to merge some categories in categorical variables due to small category sizes
+  create_new_vars: true # (true/false) whether to create new variables from existing ones due to high multicollinearity
+  remove_manual: true # (true/false) whether to remove the manually decided variables due to high multicollinearity

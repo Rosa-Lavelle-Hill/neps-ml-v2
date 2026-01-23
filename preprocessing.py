@@ -3,6 +3,9 @@ import json
 import subprocess
 import pandas as pd
 import numpy as np
+import yaml
+import shutil
+from pathlib import Path
 from sklearn.metrics import r2_score
 from sklearn.feature_selection import mutual_info_regression
 from itertools import combinations
@@ -13,28 +16,42 @@ from sklearn.linear_model import LinearRegression
 from Functions.preprocessing_functions import get_top_abs_correlations, remove_highly_correlated_columns, \
     check_condition, get_top_abs_phi, find_matching_rows, count_categories_to_file
 from Functions.stat_checks import is_binary, phi_coefficient
-from fixed_params import (missing_thresh_col, missing_thresh_row, date_variables, keep_vars, remove_vars, \
-                          variance_feature_selection_threshold, IV_cor_threshold, dv_t1_name, school_track, target_id,
-                          institution_id, dob_var, smallest_category_count, var_info_sheet)
+from fixed_params import (date_variables, keep_vars, remove_vars, dv_t1_name, school_track, target_id,
+                          institution_id, dob_var)
 from Functions.gen_data import add_noise
+from Functions.subsets import cfg_get
 from sklearn.feature_selection import VarianceThreshold
 import matplotlib.pyplot as plt
 import seaborn as sns
 #  -----------------------------------------------------------------------------------------
-# rerun additional checks?
-create_corr_drop_list = True # (True/False) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
-check_mutual_information = True # (True/False) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
-# make the manual changes?
-merge_categories = True # (True/False) whether to merge some categories in categorical variables due to small category sizes
-create_new_vars = True # (True/False) whether to create new variables from existing ones due to high multicollinearity
-remove_manual = True # (True/False) whether to remove the manually decided variables due to high multicollinearity
-# Re-run R script or use the output of previously ran file?
-run_R = False # Run preprocessing R script first? (True/False)
+with open("configs/preprocessing.yaml", "r") as f:
+    cfg = yaml.safe_load(f) or {}
+with open("configs/base.yaml", "r") as f:
+    cfg_base = yaml.safe_load(f) or {}
 #  -----------------------------------------------------------------------------------------
-outputs_folder = "Outputs"
+var_info_sheet = cfg_get(cfg_base, ["paths", "var_info_csv"])
+data_raw = cfg_get(cfg_base, ["paths", "data_raw"])
 
+outputs_folder = cfg_get(cfg, ["paths", "outputs_folder"])
+missing_thresh_col = cfg_get(cfg, ["preprocessing", "missing_thresh_col"])
+missing_thresh_row = cfg_get(cfg, ["preprocessing", "missing_thresh_row"])
+variance_feature_selection_threshold = cfg_get(cfg, ["preprocessing", "variance_feature_selection_threshold"])
+smallest_category_count = cfg_get(cfg, ["preprocessing", "smallest_category_count"])
+IV_cor_threshold = cfg_get(cfg, ["preprocessing", "IV_cor_threshold"])
+
+run_R = cfg_get(cfg, ["switches", "run_R"])
+create_corr_drop_list = cfg_get(cfg, ["switches", "create_corr_drop_list"])
+check_mutual_information = cfg_get(cfg, ["switches", "check_mutual_information"])
+merge_categories = cfg_get(cfg, ["switches", "merge_categories"])
+create_new_vars = cfg_get(cfg, ["switches", "create_new_vars"])
+remove_manual = cfg_get(cfg, ["switches", "remove_manual"])
+
+# save a copy of the config params in outputs folder
+Path(outputs_folder).mkdir(parents=True, exist_ok=True)
+shutil.copy("configs/preprocessing.yaml", Path(outputs_folder) / "preprocessing_config.yaml")
+#  -----------------------------------------------------------------------------------------
 # check shape before R script:
-df_pre_R = pd.read_csv("Data/Pilot_data_without_validT2_2026_01_13.csv", low_memory=False, index_col=[0])
+df_pre_R = pd.read_csv(data_raw, low_memory=False, index_col=[0])
 print(f"Data shape before R preprocessing: {df_pre_R.shape[1]} columns, {df_pre_R.shape[0]} rows")
 
 ## PREPROCESSING IN R

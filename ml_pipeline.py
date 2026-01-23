@@ -18,19 +18,20 @@ def run_pipeline(cfg: dict):
     from sklearn.inspection import permutation_importance
     from sklearn.model_selection import train_test_split, GridSearchCV
     from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
-    from Functions.subsets import apply_subset
 
+    from Functions.subsets import apply_subset
+    from Functions.subsets import cfg_get, make_run_dirs
     from Functions.grouped_importance import group_permutation_analysis_avg
     from Functions.plotting import plot_label_reg_sns, plot_scat, plot_permutation, plot_SHAP, plot_permutation_bars, \
-        plot_results, plot_group_perm_importance, plot_group_SHAP_importance
+                                    plot_results, plot_group_perm_importance, plot_group_SHAP_importance
     from Functions.pipeline import construct_pipelines_all_no_imputation, get_preprocessed_data
     from Functions.preprocessing_functions import drop_cols, count_categories_to_file, remove_variables
+
     from fixed_params import (remove_vars, school_track, dv_t1_name)
-
     
+    # =======================================================================================================
     script_start = dt.datetime.now()
-
-
+    # =======================================================================================================
     # Extract run and load configs
     run_cfg = cfg.get("run", {})
     load_cfg = cfg.get("load", {})
@@ -44,38 +45,6 @@ def run_pipeline(cfg: dict):
             raise ValueError("load.enabled=True but load.run_id is not set")
     else:
         source_run_id = current_run_id
-
-    # ================================= Define global parameters ==============================================
-    # Global Boolean run params (the same across all subset runs):
-    # TEST_RUN = True # runs test run of code (fixed grid)
-    # count_categories = False # counts min categories and notes where <25
-    # train_models = True # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
-    # test_models = True # runs evaluation of model performance
-    # interpret_models = True # runs model interpretation, if False then neither SHAP nor permutation importance will run
-    # run_permutation = True # runs permutation importance, otherwise loads results and plots
-    # run_grouped_permutation = True # calculates and plots grouped permutation importance
-    # run_SHAP = True # runs SHAP, otherwise loads results and plots
-    # run_grouped_SHAP = True # calculates and plots grouped SHAP
-    # plot_nice_names = True # plots with nice variable names where possible
-
-    # todo: UserWarning: Found unknown categories in columns [23] during transform. These unknown categories will be encoded as all zeros -- I think do do with NAs -- what happens in this case?
-    # todo: RA - newly created variables and others need a "nice plot names"
-    # todo: clean up grids.py, and try come up up with final reasonable suggestions
-
-    def make_run_dirs(cfg):
-        run_id = cfg.get("run", {}).get("id", "no_run_id")
-        results_root = Path("Results") / "runs" / run_id
-        results_root.mkdir(parents=True, exist_ok=True)
-        return results_root
-    
-    def cfg_get(cfg, path):
-        cur = cfg
-        for key in path:
-            if not isinstance(cur, dict) or key not in cur:
-                raise KeyError(f"Missing config key: {'.'.join(path)}")
-            cur = cur[key]
-        return cur
-
     # =======================================================================================================
     # import fixed params from base yaml:
     seed = cfg_get(cfg, ["params", "seed"])
@@ -96,6 +65,7 @@ def run_pipeline(cfg: dict):
     # paths:
     var_info_sheet = cfg_get(cfg, ["paths", "var_info_csv"])
     categorical_features_csv = cfg_get(cfg, ["paths", "categorical_features_csv"])
+    preprocessed_data = cfg_get(cfg, ["paths", "preprocessed_data"])
 
     # preprocessing:
     smallest_category_count = cfg_get(cfg, ["preprocessing", "smallest_category_count"])
@@ -130,7 +100,7 @@ def run_pipeline(cfg: dict):
     # =======================================================================================================
 
     # Read data
-    X_and_y = pd.read_csv("Data/Preprocessed/X_and_y.csv", index_col=[0])
+    X_and_y = pd.read_csv(preprocessed_data, index_col=[0])
     X = X_and_y.drop("y", axis=1)
     y = X_and_y["y"]
     print("Initial X shape is: " + str(X.shape))
