@@ -27,6 +27,8 @@ def run_pipeline(cfg: dict):
     from Functions.pipeline import construct_pipelines_all_no_imputation, get_preprocessed_data
     from Functions.preprocessing_functions import drop_cols, count_categories_to_file, remove_variables
 
+    from Params.Grids import get_test_param_grids, get_param_grids
+
     from fixed_params import (remove_vars, school_track, dv_t1_name)
     
     # =======================================================================================================
@@ -81,7 +83,6 @@ def run_pipeline(cfg: dict):
     n_permutations = cfg_get(cfg, ["interpretation", "n_permutations"])
 
     # test run params:
-    test_imputer_max_iter = cfg_get(cfg, ["test_run_params", "test_imputer_max_iter"])
     test_cv = cfg_get(cfg, ["test_run_params", "test_cv"])
     test_n_permutations = cfg_get(cfg, ["test_run_params", "test_n_permutations"])
 
@@ -127,16 +128,13 @@ def run_pipeline(cfg: dict):
     print("After applying subset, X shape is: " + str(X.shape))
     #======================================================================================================= 
     if TEST_RUN == True:
-        print("running a test run.... df shape is " + str(X_and_y.shape))
-        from Params.Grids import test_dt_param_grid, test_rf_param_grid, test_hgb_param_grid, test_xgb_param_grid
-        param_list = [test_dt_param_grid, test_rf_param_grid, test_hgb_param_grid, test_xgb_param_grid]
+        print("running a test run.... df shape is " + str(X_and_y.shape))       
+        param_list = get_test_param_grids(seed)
         run = "_test"
         n_permutations = test_n_permutations
         cv = test_cv
-        imputer_max_iter = test_imputer_max_iter
     else:
-        from Params.Grids import dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid
-        param_list = [dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid]
+        param_list = get_param_grids(seed)
         run = ""
 
     # ========================================

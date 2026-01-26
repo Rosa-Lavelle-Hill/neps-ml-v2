@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import xgboost
+import yaml
 from sklearn.compose import ColumnTransformer
 from sklearn.experimental import enable_hist_gradient_boosting
 from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor, RandomForestClassifier
@@ -11,8 +12,13 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder, OrdinalEncoder
 from sklearn.linear_model import ElasticNet
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.tree import DecisionTreeRegressor
+from Functions.subsets import cfg_get
 
-from fixed_params import seed, imputer_max_iter
+# import fixed params from base yaml:
+with open("configs/base.yaml", "r") as f:
+    cfg_base = yaml.safe_load(f) or {}
+seed = cfg_get(cfg_base, ["params", "seed"])
+random_state = seed
 
 random_state = seed
 
