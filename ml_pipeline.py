@@ -1,14 +1,12 @@
 
 def run_pipeline(cfg: dict):
 
-    import os
     from pathlib import Path        
     import pickle
     import joblib
     import json
     import re
     import datetime as dt
-    import numpy as np
     import pandas as pd
     import shap
     import matplotlib.pyplot as plt
@@ -88,11 +86,24 @@ def run_pipeline(cfg: dict):
 
     # run-scoped save paths
     results_dir = make_run_dirs(cfg)
-    print("Saving to:", results_dir)   
+    print("Saving to:", results_dir)
+
     results_path = Path(results_dir)
     params_save = results_path / "Prediction" / "Best_Params"
     plot_save = results_path / "Prediction" / "Plots"
     all_models_save = results_path / "Prediction" / "All_Models"
+    shap_save = results_path / "Interpretation" / "SHAP"
+    perm_imp_save = results_path / "Interpretation" / "Permutation"
+
+    # load results paths
+    results_load_dir = make_run_dirs(load_cfg)
+    print("Loading results from:", results_load_dir)
+
+    perm_imp_load = results_load_dir / "Interpretation" / "Permutation" 
+    shap_load = results_load_dir / "Interpretation" / "SHAP"
+    all_models_load = results_load_dir / "Prediction" / "All_Models"
+
+    # general outputs path
     outputs_path = Path("Outputs")
 
     # ensure directories exist
@@ -333,7 +344,6 @@ def run_pipeline(cfg: dict):
         if interpret_models == True:
 
             model_interpretation_start = dt.datetime.now()
-            save_path = results_path / "Interpretation/Permutation/"
 
             # Fit the preprocessor
             opt_model = pipe.named_steps.regressor
@@ -379,7 +389,6 @@ def run_pipeline(cfg: dict):
                 print("Starting permutation importance for {}".format(model_name))
                 result = permutation_importance(pipe, X_test, y_test, n_repeats=n_permutations,
                                                 random_state=seed, n_jobs=skl_n_jobs, scoring=scoring)
-                perm_importances_mean = result.importances_mean
                 vars=list(X_test.columns)
                 perm_imp_df = pd.DataFrame({
                     'Feature': vars,
@@ -388,15 +397,14 @@ def run_pipeline(cfg: dict):
                 })
 
                 # take top n features and then flip so most important at top on graph
-                perm_imp_df.sort_values(by="importance_mean", ascending=False, inplace=True, axis=0)\
-        
-                save_path_p = Path(save_path)
-                save_path_p.mkdir(parents=True, exist_ok=True)
+                perm_imp_df.sort_values(by="importance_mean", ascending=False, inplace=True, axis=0)     
+                save_path_perm_p = Path(perm_imp_save)
+                save_path_perm_p.mkdir(parents=True, exist_ok=True)
                 filename = f"{run_label}_{model_name}_permutation_importance{run}.csv"
-                perm_imp_df.to_csv(save_path_p / filename)
+                perm_imp_df.to_csv(save_path_perm_p / filename)
 
             else:
-                perm_imp_df = pd.read_csv(save_path + f"{load_label}_{model_name}_permutation_importance{run}.csv",
+                perm_imp_df = pd.read_csv(perm_imp_load + f"{load_label}_{model_name}_permutation_importance{run}.csv",
                                         index_col=[0])
                 if plot_nice_names == True:
                     perm_imp_df["Original Feature Name"] = perm_imp_df["Feature"].copy()
@@ -407,24 +415,26 @@ def run_pipeline(cfg: dict):
             perm_imp_df = perm_imp_df[0:plot_n_features]
             perm_imp_df.sort_values(by="importance_mean", ascending=True, inplace=True, axis=0)
 
+            save_path_perm_plots = Path(perm_imp_save) / "PLots/"
             plot_permutation(perm_imp_df=perm_imp_df,
-                            save_path=save_path / "PLots/",
+                            save_path=save_path_perm_plots,
                             save_name=f"{run_label}_{model_name}_permutation{run}")
 
-            if n_permutations > 1:
-                save_path_p = Path(save_path) / "PLots/"
-                plot_permutation_bars(perm_imp_df=perm_imp_df, save_path=save_path_p,
+            if n_permutations > 1:               
+                plot_permutation_bars(perm_imp_df=perm_imp_df, save_path=save_path_perm_plots,
                                     save_name=f"{run_label}_{model_name}_MULTIpermutation{run}",
                                     plot_n_features=plot_n_features)
 
             if run_grouped_permutation == True:
                 print("Starting grouped permutation importance")
 
-                save_path = results_path / "Interpretation/Permutation/Grouped/"
+                save_path_grouped = Path(perm_imp_save) / "Grouped/"
+                save_path_grouped.mkdir(parents=True, exist_ok=True)
+
                 result = group_permutation_analysis_avg(X_train, y_train,
                                                     X_test, y_test,
                                                     pipeline=pipe,
-                                                    save_path=save_path,
+                                                    save_path=save_path_grouped,
                                                     model_name=model_name,
                                                     group_dict=block_dict,
                                                     n=n_permutations)
@@ -432,18 +442,20 @@ def run_pipeline(cfg: dict):
                 result_df = pd.DataFrame.from_dict(result, orient='index', columns=["Importance"])
                 result_df.sort_values(by="Importance", ascending=False, inplace=True, axis=0)
                 
-                save_path_p = Path(save_path)
-                save_path_p.mkdir(parents=True, exist_ok=True)
                 filename = f"Grouped_{run_label}_{model_name}{run}.csv"
-                result_df.to_csv(save_path_p / filename)
+                result_df.to_csv(save_path_grouped / filename)
 
-                plot_group_perm_importance(result, save_path=save_path_p / "PLots/",
+                # plot grouped permutation importance
+                save_path_grouped_plots = save_path_grouped / "Plots"
+                save_path_grouped_plots.mkdir(parents=True, exist_ok=True)
+
+                plot_group_perm_importance(result, save_path=save_path_grouped_plots,
                                         save_name=f"Grouped_{run_label}_{model_name}{run}"
                                         )
 
             # 2) SHAP importance ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-            save_path= results_path / "Interpretation/SHAP/"
+            save_path_shap_p = Path(shap_save)
+            save_path_shap_p.mkdir(parents=True, exist_ok=True)
             if run_SHAP == True:
 
                 print("Starting SHAP importance for {}".format(model_name))
@@ -475,26 +487,23 @@ def run_pipeline(cfg: dict):
 
                     # save
                     shap_values_df = pd.DataFrame(shap_values, columns=names)
-                    save_path_p = Path(save_path)
-                    save_path_p.mkdir(parents=True, exist_ok=True)
                     filename = f"{run_label}_SHAP_{model_name}-{method_type}{run}.csv"   
 
-                    shap_values_df.to_csv(save_path_p / filename)
+                    shap_values_df.to_csv(save_path_shap_p / filename)
                     shap_results_dict[method_type] = shap_dict
 
                     filename_pkl = f"{run_label}_SHAP_{model_name}{run}.pkl"
-                    file_path = save_path_p / filename_pkl
-                    with open(file_path, 'wb') as handle:
+                    file_path_pkl = save_path_shap_p / filename_pkl
+                    with open(file_path_pkl, 'wb') as handle:
                         pickle.dump(shap_results_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
             else:
-                method_type = "interventional" # todo: check if we want to include "tree path dependent"
-                shap_values_df = pd.read_csv(save_path + f"{load_label}_SHAP_{model_name}-{method_type}{run}.csv")
-                save_path_p = Path(save_path)
-                save_path_p.mkdir(parents=True, exist_ok=True)
+                #load previously calculated SHAP values
+                method_type = "interventional" # todo: include "tree path dependent"?
+                shap_values_df = pd.read_csv(shap_load + f"{load_label}_SHAP_{model_name}-{method_type}{run}.csv")
                 filename_pkl = f"{load_label}_SHAP_{model_name}{run}.pkl"
-                file_path = save_path_p / filename_pkl
-                with open(file_path, 'rb') as handle:
+                file_path_pkl = shap_load / filename_pkl
+                with open(file_path_pkl, 'rb') as handle:
                     shap_results_dict = pickle.load(handle)
 
             # Plot
@@ -503,9 +512,8 @@ def run_pipeline(cfg: dict):
                 X_test_p.rename(columns=processed_rename_dict, inplace=True)
                 names = list(X_test_p.columns)
 
-            save_path_p = Path(save_path)
-            save_path_p.mkdir(parents=True, exist_ok=True)
-            shap_plot_save_path = save_path_p / "Plots"
+
+            shap_plot_save_path = save_path_shap_p / "Plots"
             for method, shap_dict in shap_results_dict.items():
                 plot_types = ["bar", "summary", "violin"]
                 for plot_type in plot_types:
@@ -523,6 +531,8 @@ def run_pipeline(cfg: dict):
             if run_grouped_SHAP == True:
                 print('running grouped SHAP importance...')
                 # Get extended mapping dict
+                shap_save_grouped = Path(shap_save) / "Grouped"
+                shap_save_grouped.mkdir(parents=True, exist_ok=True)
 
                 # Regex to remove '_{any digit}.0' or '_nan' at the end of the column name
                 base_columns = [re.sub(r'(_\d+\.0|_nan)$', '', col) for col in X_train_p.columns]
@@ -547,17 +557,18 @@ def run_pipeline(cfg: dict):
                     .round(2)
                 )
                 method_type = "interventional"
+
                 # Save values
                 group_shap_values_df = pd.DataFrame(group_shap_values, columns=["Importance"])
                 group_shap_values_df.sort_values(by="Importance", ascending=False, inplace=True, axis=0)
                 filename = f"Grouped_{run_label}_{model_name}_{method_type}{run}.csv"
-                save_path= "Results/Interpretation/SHAP/Grouped/Plots/"                
-                save_path_p = Path(save_path)
-                save_path_p.mkdir(parents=True, exist_ok=True)
-                group_shap_values_df.to_csv(save_path_p / filename)
-                # Plot
+                group_shap_values_df.to_csv(shap_save_grouped / filename)
+
+                # Plot shap grouped importance
+                shap_save_grouped = shap_save_grouped / "Plots"
+                shap_save_grouped.mkdir(parents=True, exist_ok=True)
                 plot_group_SHAP_importance(group_shap_values,
-                                        save_path=save_path_p, save_name=filename)
+                                        save_path=shap_save_grouped, save_name=filename)
 
             model_interpretation_end = dt.datetime.now()
             model_interpretation_time = model_interpretation_end - model_interpretation_start
@@ -600,10 +611,8 @@ def run_pipeline(cfg: dict):
                 xlab="Prediction Models", ylab="RMSE",
                 title="",
                 x_ticks=x_ticks)
-
-    # todo: add plot comparison plot of all models
-
-    # end timer
+    # =======================================================================================================
+    # end timer 
     script_end = dt.datetime.now()
     run_time = script_end - script_start
     print(f"Script run time: {run_time}")
