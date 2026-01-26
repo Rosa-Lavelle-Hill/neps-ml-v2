@@ -2,12 +2,62 @@ import numpy as np
 import pandas as pd
 
 def is_binary(column):
-    # Check if all values are either 0, 1, or NA
+    """
+    Check whether a pandas Series represents a binary variable.
+
+    A column is considered binary if, after dropping missing values,
+    it contains at most two unique values and all values are either
+    0 or 1.
+
+    Parameters
+    ----------
+    column : pandas.Series
+        Input data column to check.
+
+    Returns
+    -------
+    bool
+        True if the column is binary (0/1 with optional NaNs), False otherwise.
+
+    Notes
+    -----
+    - Missing values are ignored.
+    - Columns with a single unique value (all 0s or all 1s) return True.
+    """
     unique_values = column.dropna().unique()
     return len(unique_values) <= 2 and all(value in [0, 1] for value in unique_values)
 
 
 def phi_coefficient(data):
+    """
+    Compute the pairwise Phi coefficient for binary variables.
+
+    Calculates the Phi correlation coefficient for all pairs of binary
+    variables in the input data and returns a symmetric matrix of
+    coefficients.
+
+    Parameters
+    ----------
+    data : array-like or pandas.DataFrame
+        Input data containing binary variables coded as 0/1.
+        Each column is treated as a separate variable.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Square DataFrame of Phi coefficients with variables as both
+        index and columns.
+
+    Notes
+    -----
+    - Assumes all variables are binary (0/1). No validation is performed.
+    - If two variables are identical, their Phi coefficient is set to 1.
+    - Missing values are implicitly handled via `pd.crosstab`, which
+      excludes NaNs.
+    - The diagonal of the returned matrix is 1 by construction.
+    - Division-by-zero can occur if any marginal count is zero; this
+      implementation does not explicitly guard against that.
+    """
     # Convert data to a pandas DataFrame if not already
     df = pd.DataFrame(data)
     num_vars = df.shape[1]
@@ -47,4 +97,3 @@ def phi_coefficient(data):
                 phi_df.iloc[j, i] = phi  # Symmetric matrix
 
     return phi_df
-

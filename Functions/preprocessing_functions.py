@@ -18,7 +18,24 @@ seed = cfg_get(cfg_base, ["params", "seed"])
 random_state = seed
 
 def get_redundant_pairs(df):
-    '''Get diagonal and lower triangular pairs of correlation matrix'''
+    """
+    Return diagonal and lower-triangular column pairs for a correlation matrix.
+
+    Useful for removing redundant correlation pairs when working with a
+    symmetric correlation matrix (Var1-Var2 is the same as Var2-Var1) and
+    excluding self-correlations.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame whose columns define the correlation matrix axes.
+
+    Returns
+    -------
+    set of tuple
+        Set of (col_i, col_j) pairs corresponding to the diagonal and the
+        lower triangle (including diagonal).
+    """
     pairs_to_drop = set()
     cols = df.columns
     for i in range(0, df.shape[1]):
@@ -27,13 +44,38 @@ def get_redundant_pairs(df):
     return pairs_to_drop
 
 def get_top_abs_correlations(df, threshold, cor_m=None):
-    '''
-    Computes pairwise correlation of columns, excluding NA/null values.
-    :param df: dataframe containing features to compute correlations
-    :param threshold: threshold for correlation above which to return
-    :param cor_m: correlation matrix, optional instead of df
-    :return: dataframe containing pairwise correlations above threshold, all pairwise correlations
-    '''
+    """
+    Compute absolute pairwise correlations and return pairs above a threshold.
+
+    Computes absolute correlations between all column pairs (excluding redundant
+    diagonal/lower triangle pairs) and returns both (a) pairs exceeding the
+    threshold and (b) the full sorted list of non-redundant pairs.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing numeric features.
+    threshold : float
+        Absolute-correlation threshold. Pairs with abs(corr) >= threshold
+        are returned in the filtered output.
+    cor_m : pandas.DataFrame, optional
+        Precomputed correlation matrix (same labels as `df.columns`). If provided,
+        `df.corr(...)` is skipped and `cor_m` is used instead.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame of correlations above threshold with columns:
+        ['Var1', 'Var2', 'Corr'].
+    pandas.DataFrame
+        DataFrame of all non-redundant correlations sorted descending with columns:
+        ['Var1', 'Var2', 'Corr'].
+
+    Notes
+    -----
+    - If `cor_m` is None, correlations are computed with `df.corr(min_periods=50)`.
+    - Redundant pairs (diagonal and lower triangle) are dropped.
+    """
     if cor_m is None:
         au_corr = df.corr(min_periods=50).abs().unstack()
     else:
@@ -53,6 +95,31 @@ def get_top_abs_correlations(df, threshold, cor_m=None):
     return cors_above_threshold, all_cors
 
 def get_top_abs_phi(df, phi_coefs, threshold):
+    """
+    Return absolute Phi coefficient pairs above a threshold.
+
+    Processes a Phi coefficient matrix similarly to correlation processing:
+    flattens, drops redundant pairs, sorts by absolute strength, and filters
+    by threshold.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame whose columns define the variable names (used to generate
+        redundant pairs to drop).
+    phi_coefs : pandas.DataFrame
+        Square matrix of Phi coefficients indexed/columned by variable names.
+    threshold : float
+        Absolute Phi threshold. Pairs with abs(phi) >= threshold are returned.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Phi values above threshold with columns ['Var1', 'Var2', 'Phi'].
+    pandas.DataFrame
+        All non-redundant Phi values sorted descending with columns
+        ['Var1', 'Var2', 'Phi'].
+    """
     au_corr = phi_coefs.abs().unstack()
     labels_to_drop = get_redundant_pairs(df)
     # Find common labels between the index and labels_to_drop
@@ -69,6 +136,30 @@ def get_top_abs_phi(df, phi_coefs, threshold):
     return phi_above_threshold, all_phi
 
 def drop_most_cor_var(cor_df):
+    """
+    Select variables to drop from a pairwise correlation table.
+
+    Iterates through a correlation DataFrame and builds a list of variables
+    to drop by repeatedly removing the variable that has the larger sum of
+    correlations across remaining pairs.
+
+    Parameters
+    ----------
+    cor_df : pandas.DataFrame
+        DataFrame containing at least ['Var1', 'Var2', 'Corr'] where each row
+        represents a variable pair and its correlation.
+
+    Returns
+    -------
+    list
+        List of variable names selected for dropping.
+
+    Notes
+    -----
+    - If Corr == 1 for a pair, Var1 is added to the drop list (if not already),
+      and all rows containing Var1 are removed from the search set.
+    - This function modifies an internal copy (`search_df`) while iterating.
+    """
     search_df = cor_df.copy()
     drop_list= []
     for index, row in search_df.iterrows():
@@ -120,6 +211,22 @@ def drop_most_cor_var(cor_df):
 
 
 def remove_rows_by_values(df, values_to_remove):
+    """
+    Remove rows where Var1 or Var2 matches any value in a removal list.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame with columns 'Var1' and 'Var2'.
+    values_to_remove : list or set
+        Variable names to filter out.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Filtered DataFrame excluding rows where 'Var1' or 'Var2' is in
+        `values_to_remove`.
+    """
     # Check if values in either column 1 or column 2 are in the list of values to remove
     mask = (df['Var1'].isin(values_to_remove)) | (df['Var2'].isin(values_to_remove))
 
@@ -131,16 +238,33 @@ def remove_rows_by_values(df, values_to_remove):
 
 
 def drop_most_cor_variables_old(cor_df, keep_vars):
+    """
+    Heuristic selection of variables to drop from highly correlated pairs (legacy).
 
+    Iterates through a correlation table and builds a set of variables to drop,
+    attempting to respect a list of variables to keep.
+
+    Parameters
+    ----------
+    cor_df : pandas.DataFrame
+        Pairwise correlation table with columns ['Var1', 'Var2', 'Corr'].
+    keep_vars : list or set
+        Variables that should not be dropped if possible.
+
+    Returns
+    -------
+    list
+        List of variables selected for dropping.
+
+    Notes
+    -----
+    - Prints intermediate row counts and may print a 'stop' message when no rows
+      are removed in an iteration.
+    - Uses a high-correlation shortcut (corr >= 0.99) to drop Var1 if allowed.
+    - This function mutates an internal search DataFrame during iteration.
+    """
     search_df = cor_df.copy()
     drop_set = set()
-
-    # drop_values = set(search_df[search_df["Corr"] == 1]['Var1'].unique())
-    # # remove any variables from drop list that are in the "keeps" list
-    # drop_values.difference_update(remove_vars)
-    # # remove rows from search_df which have a variable in drop_values list
-    # search_df = remove_rows_by_values(search_df, drop_values)
-    # drop_set.update(drop_values)
 
     # Iterate over the DataFrame in reverse order and remove rows
     for idx, row in search_df[::-1].iterrows():
@@ -178,8 +302,32 @@ def drop_most_cor_variables_old(cor_df, keep_vars):
 
 
 def drop_most_cor_variables_search(cor_df, keep_vars):
-    """Doesn't modify the search_df as it iterates"""
+    """
+    Select variables to drop from correlated pairs ***without modifying the iterator as it searches***.
 
+    Builds a set of variables to drop based on correlation strength and each
+    variable's total correlation mass across the full table, while attempting
+    to respect keep_vars.
+
+    Parameters
+    ----------
+    cor_df : pandas.DataFrame
+        Pairwise correlation table with columns ['Var1', 'Var2', 'Corr'].
+    keep_vars : list or set
+        Variables that should be retained when possible.
+
+    Returns
+    -------
+    list
+        List of variables selected for dropping.
+
+    Notes
+    -----
+    - If corr >= 0.99, Var1 is dropped unless it is in keep_vars.
+    - Otherwise, the variable with the higher sum of correlations across
+      all pairs is dropped (unless it is in keep_vars, then the other is dropped).
+    - Prints progress for each row.
+    """
     search_df = cor_df.copy()
     drop_set = set()
 
@@ -229,6 +377,38 @@ def drop_most_cor_variables_search(cor_df, keep_vars):
 
 
 def remove_highly_correlated_columns(df, threshold, keep_vars):
+    """
+    Iteratively remove columns with correlations above a threshold.
+
+    First removes (randomly) one variable from each pair with correlation >= 0.99.
+    Then repeatedly identifies variables involved in correlations above `threshold`
+    and drops the most collinear variable (by sum of absolute correlations),
+    attempting to keep variables listed in `keep_vars`.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame (assumed numeric) to filter.
+    threshold : float
+        Correlation threshold for iterative pruning (e.g. 0.8).
+    keep_vars : list or set
+        Variables that should not be removed if possible.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Filtered DataFrame after removing correlated columns.
+    set
+        Set of all removed column names.
+
+    Notes
+    -----
+    - Uses `np.corrcoef` in the initial >= 0.99 pass (can yield NaNs if columns
+      contain NaNs or constant values).
+    - The initial removal step is stochastic due to `np.random.choice`.
+    - Prints progress messages and drop counts.
+    - Modifies `df` in-place during the iterative loop after the initial drop.
+    """
     all_columns_removed = set()
 
     # first, where correlation is >=0.99, randomly remove one (as they are essentially the same)
@@ -314,7 +494,26 @@ def remove_highly_correlated_columns(df, threshold, keep_vars):
 
 
 def check_condition(value):
-    """Function to check if a string is a number with 0 or 1 decimal places or is 'applicable'"""
+    """
+    Normalize underscore-suffixed strings by stripping qualifying suffixes.
+
+    If a string has the form '<prefix>_<suffix>' and the suffix is either:
+    - 'applicable'
+    - an integer string (e.g. '3')
+    - a number with up to 1 decimal place (e.g. '2.5')
+    then returns '<prefix>'. Otherwise returns the original value.
+
+    Parameters
+    ----------
+    value : str
+        Input string to check.
+
+    Returns
+    -------
+    str
+        Prefix with suffix removed if the suffix matches the rule, otherwise
+        the original string.
+    """
     parts = value.rsplit('_', 1)
     if len(parts) == 2:
         after_underscore = parts[1]
@@ -326,14 +525,28 @@ def check_condition(value):
 
 def flatten_dict(d, sep='_'):
     """
-    Flatten a nested dictionary by removing the top layer.
+    Flatten a nested dictionary by recursively removing intermediate keys.
 
-    Parameters:
-    - d: The input dictionary.
-    - sep: The separator to be used between keys.
+    Recursively traverses nested dictionaries and returns a single-level
+    dictionary containing only the leaf keys and values.
 
-    Returns:
-    - A flattened dictionary.
+    Parameters
+    ----------
+    d : dict
+        Input dictionary (possibly nested).
+    sep : str, default='_'
+        Separator between keys (currently not used in this implementation).
+
+    Returns
+    -------
+    dict
+        Flattened dictionary containing leaf keys mapped to leaf values.
+
+    Notes
+    -----
+    - This implementation drops parent key context rather than composing
+      hierarchical keys. If nested dicts contain duplicate leaf keys, later
+      keys will overwrite earlier ones.
     """
     items = []
     for k, v in d.items():
@@ -347,6 +560,23 @@ def flatten_dict(d, sep='_'):
 
 
 def drop_cols(col_list, df):
+    """
+    Drop a list of columns from a DataFrame and return updated DataFrame and columns.
+
+    Parameters
+    ----------
+    col_list : list
+        Column names to drop (if present).
+    df : pandas.DataFrame
+        Input DataFrame.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Copy of `df` with columns removed.
+    list
+        List of remaining column names after dropping.
+    """
     dropped_df = df.copy()
     dropped_col_list = list(df.columns)
     for col in col_list:
@@ -356,47 +586,37 @@ def drop_cols(col_list, df):
     return dropped_df, dropped_col_list
 
 
-def impute_X(X_train, X_test, num_cols, cat_cols):
-    # Define imputers
-    imp_iter_num = IterativeImputer(missing_values=np.nan,
-                                    max_iter=imputer_max_iter,
-                                    random_state=random_state)
-
-    imp_iter_cat = IterativeImputer(estimator=RandomForestClassifier(),
-                                    initial_strategy='most_frequent',
-                                    missing_values=np.nan,
-                                    max_iter=imputer_max_iter,
-                                    random_state=random_state,
-                                    )
-    # Define two separate pipelines
-    numerical_pipeline = Pipeline([
-        ('imputer_num', imp_iter_num)
-    ])
-    categorical_pipeline = Pipeline([
-        ('imputer_cat', imp_iter_cat)
-    ])
-    # Create a column transformer
-    preprocessor = ColumnTransformer([
-        ('num', numerical_pipeline, num_cols),
-        ('cat', categorical_pipeline, cat_cols)
-    ])
-    # Fit and transform data
-    X_train_imputed = preprocessor.fit_transform(X_train)
-    X_test_imputed = preprocessor.transform(X_test)
-
-    # Concat num and cat data
-    transformed_num_data_train = pd.DataFrame(X_train_imputed[:, :len(num_cols)], columns=num_cols)
-    transformed_cat_data_train = pd.DataFrame(X_train_imputed[:, len(num_cols):], columns=cat_cols)
-    X_train_imputed = pd.concat([transformed_num_data_train, transformed_cat_data_train], axis=1)
-
-    transformed_num_data_test = pd.DataFrame(X_test_imputed[:, :len(num_cols)], columns=num_cols)
-    transformed_cat_data_test = pd.DataFrame(X_test_imputed[:, len(num_cols):], columns=cat_cols)
-    X_test_imputed = pd.concat([transformed_num_data_test, transformed_cat_data_test], axis=1)
-
-    return X_train_imputed, X_test_imputed
 
 
 def plot_category_distribution(df, save_path, min_cat, categorical_cols, var_name_dict):
+    """
+    Plot bar charts for categorical variables with small minimum category counts.
+
+    For each categorical column, computes value counts and saves a bar plot if
+    the smallest category count is <= `min_cat`.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input data.
+    save_path : str
+        Directory path where figures will be saved (string concatenation is used).
+    min_cat : int
+        Minimum-count threshold triggering a plot.
+    categorical_cols : list
+        List of categorical column names to check.
+    var_name_dict : dict
+        Mapping from column name to human-readable long name used in the title.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Saves one PNG per qualifying categorical column using filename f'{col}.png'.
+    - Writes counts above bars.
+    """
     for col in categorical_cols:
         long_name = var_name_dict[col]
         if col in df.columns:
@@ -417,6 +637,44 @@ def plot_category_distribution(df, save_path, min_cat, categorical_cols, var_nam
 
 
 def count_categories_to_file(df, output_file, categorical_columns, var_name_dict, min_cat, cat_name_dict, data_name):
+    """
+    Write category counts for selected categorical variables to a text file.
+
+    For each categorical variable, if its minimum category count is <= `min_cat`,
+    writes the variable name, long name, and per-category counts (optionally
+    including category labels from `cat_name_dict`) to `output_file`.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input data.
+    output_file : str
+        Path to the output text file to write.
+    categorical_columns : list
+        List of categorical column names to process.
+    var_name_dict : dict
+        Mapping from variable name to long descriptive name.
+    min_cat : int
+        Minimum-count threshold for including a variable in the report.
+    cat_name_dict : dict
+        Nested mapping used to look up category labels by variable and category code.
+        Expected shape: {<outer_key>: {<var>: {<category_code_str>: <label>}}}
+    data_name : str
+        Name of the dataset (used in printed progress messages).
+
+    Returns
+    -------
+    int
+        Number of variables written to file.
+    list
+        List of variable names that met the threshold criterion.
+
+    Notes
+    -----
+    - Prints progress messages for included variables.
+    - Categories are cast to int then to str before lookup.
+    - Only writes category lines when a label is successfully found in cat_name_dict.
+    """
     with open(output_file, 'w') as file:
         file.write(f"Category counts for categorical variables where minimum category is <= {min_cat}\n")
         var_count = 1
@@ -447,12 +705,28 @@ def count_categories_to_file(df, output_file, categorical_columns, var_name_dict
                                     file.write(f"Category: {category} ({cat_name}): {count}\n")
                     file.write("\n")
                     var_count += 1
-
-
     return var_count-1, list
 
 
 def find_matching_rows(column_data, search_list):
+    """
+    Find indices of rows containing parenthesized substrings matching a search list.
+
+    Extracts all substrings inside parentheses for each value in `column_data`
+    and returns the indices where any extracted substring is present in `search_list`.
+
+    Parameters
+    ----------
+    column_data : iterable of str
+        Sequence of strings to search.
+    search_list : list or set
+        Set of target substrings to match.
+
+    Returns
+    -------
+    list
+        List of integer indices of matching rows.
+    """
     matching_rows = []
     for index, value in enumerate(column_data):
         # Find all substrings within parentheses
@@ -464,6 +738,26 @@ def find_matching_rows(column_data, search_list):
 
 
 def remove_variables(df, variables_to_remove):
+    """
+    Remove columns from a DataFrame in-place if they exist.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame to modify.
+    variables_to_remove : list
+        Column names to drop if present.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The modified DataFrame (same object as input).
+
+    Notes
+    -----
+    - Drops columns in-place (`inplace=True`).
+    - Prints a message for each removed variable and prints the final shape.
+    """
     # Remove variables if they exist in the DataFrame
     for var in variables_to_remove:
         if var in df.columns:
