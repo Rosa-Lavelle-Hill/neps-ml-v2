@@ -354,7 +354,7 @@ def get_preprocessed_data(pipeline, X_train, X_test, numeric_features, categoric
     preprocessor = pipeline.named_steps["preprocessor"]
 
     # Fit the preprocessor on X_train and transform X_train and X_test
-    X_train_preprocessed = preprocessor.fit_transform(X_train)
+    X_train_preprocessed = preprocessor.transform(X_train)
     X_test_preprocessed = preprocessor.transform(X_test)
 
     # Get column names from the preprocessor
@@ -369,9 +369,3 @@ def get_preprocessed_data(pipeline, X_train, X_test, numeric_features, categoric
     X_test_preprocessed_df = pd.DataFrame(X_test_preprocessed, columns=all_feature_names, index=X_test.index)
 
     return X_train_preprocessed_df, X_test_preprocessed_df
-
-
-
-
-
-

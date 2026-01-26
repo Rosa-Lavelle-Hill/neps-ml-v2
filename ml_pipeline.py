@@ -18,7 +18,7 @@ def run_pipeline(cfg: dict):
     from sklearn.metrics import mean_absolute_error, r2_score, root_mean_squared_error
 
     from Functions.subsets import apply_subset
-    from Functions.subsets import cfg_get, make_run_dirs
+    from Functions.subsets import cfg_get, get_run_dir
     from Functions.grouped_importance import group_permutation_analysis_avg
     from Functions.plotting import plot_label_reg_sns, plot_scat, plot_permutation, plot_SHAP, plot_permutation_bars, \
                                     plot_results, plot_group_perm_importance, plot_group_SHAP_importance
@@ -37,6 +37,8 @@ def run_pipeline(cfg: dict):
     load_cfg = cfg.get("load", {})
 
     current_run_id = run_cfg["id"]  # where new outputs go
+    if not current_run_id:
+        raise RuntimeError("cfg['run']['id'] is missing")
     load_enabled = load_cfg.get("enabled", False) # where inputs can be loaded from
 
     if load_enabled:
@@ -85,7 +87,7 @@ def run_pipeline(cfg: dict):
     test_n_permutations = cfg_get(cfg, ["test_run_params", "test_n_permutations"])
 
     # run-scoped save paths
-    results_dir = make_run_dirs(cfg)
+    results_dir = get_run_dir(source_run_id, create=True)
     print("Saving to:", results_dir)
 
     results_path = Path(results_dir)
@@ -95,9 +97,28 @@ def run_pipeline(cfg: dict):
     shap_save = results_path / "Interpretation" / "SHAP"
     perm_imp_save = results_path / "Interpretation" / "Permutation"
 
-    # load results paths
-    results_load_dir = make_run_dirs(load_cfg)
-    print("Loading results from:", results_load_dir)
+    # ensure directories exist
+    for p in [params_save, plot_save, all_models_save, shap_save, perm_imp_save]:
+        p.mkdir(parents=True, exist_ok=True)
+
+  # load results paths
+    load_enabled = load_cfg.get("enabled", False)
+
+    # determine source run id (what to load from)
+    if load_enabled:
+        source_run_id = load_cfg.get("run_id")
+        if not source_run_id:
+            raise ValueError("load.enabled=True but load.run_id is not set")
+    else:
+        source_run_id = current_run_id  # load from self by default
+
+    # compute load dir (do NOT create)
+    results_load_dir = get_run_dir(source_run_id, create=False)
+
+    if load_enabled:
+        if not results_load_dir.exists():
+            raise FileNotFoundError(f"Requested load run does not exist: {results_load_dir}")
+        print("Loading results from:", results_load_dir)
 
     perm_imp_load = results_load_dir / "Interpretation" / "Permutation" 
     shap_load = results_load_dir / "Interpretation" / "SHAP"
@@ -106,10 +127,6 @@ def run_pipeline(cfg: dict):
     # general outputs path
     outputs_path = Path("Outputs")
 
-    # ensure directories exist
-    params_save.mkdir(parents=True, exist_ok=True)
-    plot_save.mkdir(parents=True, exist_ok=True)
-    all_models_save.mkdir(parents=True, exist_ok=True)
     # =======================================================================================================
 
     # Read data
@@ -180,7 +197,7 @@ def run_pipeline(cfg: dict):
     categorical_features_index = X[categorical_features_in_data].columns
 
     # Construct all pipelines with no imputation
-    pipe_dt, pipe_rf, pipe_hgb, pipe_xgb = construct_pipelines_all_no_imputation(numeric_features_index, categorical_features_index)
+    pipe_dt, pipe_rf, pipe_hgb, pipe_xgb = construct_pipelines_all_no_imputation(categorical_features_index)
 
     # ******* define models ********
     pipes = [pipe_dt, pipe_rf, pipe_hgb, pipe_xgb]
@@ -322,7 +339,7 @@ def run_pipeline(cfg: dict):
             print(f"Best {model_name} model performance on test data:\nR2: {test_score_r2}; mae: {test_score_mae}",
                 file=open(save_file, "a"))
 
-            test_scores[model_name] = {"R2": test_score_r2, "MAE": test_score_mae, "RMSE": dvt1_rmse}
+            test_scores[model_name] = {"R2": test_score_r2, "MAE": test_score_mae, "RMSE": test_score_rmse}
 
             # plot distribution of predictions:
             plot_scat(x=y_test, y=y_pred, x_lab="actual", y_lab="predicted",
@@ -347,15 +364,18 @@ def run_pipeline(cfg: dict):
 
             # Fit the preprocessor
             opt_model = pipe.named_steps.regressor
-            preprocessor = pipe.named_steps.preprocessor
 
             # fit to and transform train
             X_train_p, X_test_p = get_preprocessed_data(
-                pipeline=pipe_dt,
+                pipeline=pipe,
                 X_train=X_train,
                 X_test=X_test,
                 numeric_features=numerical_features_in_data,
                 categorical_features=categorical_features_in_data)
+            
+            print("processed train shape:", X_train_p.shape)
+            print("processed test shape:",  X_test_p.shape)
+            assert X_train_p.shape[1] == X_test_p.shape[1]
 
             names = X_test_p.columns
 
@@ -404,8 +424,8 @@ def run_pipeline(cfg: dict):
                 perm_imp_df.to_csv(save_path_perm_p / filename)
 
             else:
-                perm_imp_df = pd.read_csv(perm_imp_load + f"{load_label}_{model_name}_permutation_importance{run}.csv",
-                                        index_col=[0])
+                filename = f"{load_label}_{model_name}_permutation_importance{run}.csv"
+                perm_imp_df = pd.read_csv(perm_imp_load / filename, index_col=[0])
                 if plot_nice_names == True:
                     perm_imp_df["Original Feature Name"] = perm_imp_df["Feature"].copy()
                     perm_imp_df["Feature"].replace(var_names_dict, inplace=True)
@@ -460,37 +480,41 @@ def run_pipeline(cfg: dict):
 
                 print("Starting SHAP importance for {}".format(model_name))
 
-                # fit optimised model to transformed train data
-                opt_model.fit(X_train_p, y_train)
+                # # fit optimised model to transformed train data
+                # opt_model.fit(X_train_p, y_train) <- should already be fit from
 
                 # Fit the explainer
                 shap_results_dict = {}
 
-                # method_types = ["tree_path_dependent", "interventional"]# (see Lundberg et al., 2020) https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html
-                # data_options = [None, shap.sample(X_test_p, 1000)]
-                method_types = ["interventional"]
-                data_options = [shap.sample(X_test_p, 1000)]
+                # method_types = ["tree_path_dependent", "interventional"]
+                # tree_path_dependent": If features are collinear: Credit is shared or split - which feature gets credit depends on: 
+                # -Which one appears higher in the tree
+                # -Which one is used more often in splits
+                # # (see Lundberg et al., 2020) https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html
+                method_types = ["interventional"] #interventional: Treats features as if they were independently intervened on 
+                                                  # (if two features are highly correlated:Each one gets its own separate credit)
+                data_options = [shap.sample(X_test_p, 1000)] # returns: min(K, number_of_rows_in_data) - so if test_data <1000, will return all rows   
                 for method_type, data_option in zip(method_types, data_options):
-                    print(method_type)
-                    if (model_name == 'DT'):
-                        explainer = shap.TreeExplainer(model=opt_model, data=data_option, feature_perturbation=method_type)
-
-                    else:
-                        explainer = shap.KernelExplainer(
-                            model=lambda x: opt_model.predict(x),
-                            data=shap.sample(X_test_p, 100)
-                        )
+                        # print(method_type)
+                        # if (model_name == 'DT'):
+                        #     explainer = shap.TreeExplainer(model=opt_model,
+                        #                   data=data_option,
+                        #                   feature_perturbation=method_type)
+                        # else:
+                    explainer = shap.KernelExplainer(
+                        model=lambda x: opt_model.predict(x),
+                        data=data_option)
 
                     # Calculate the SHAP values and save
-                    shap_dict = explainer(X_test_p)
-                    shap_values = explainer.shap_values(X_test_p)
+                    shap_exp = explainer(X_test_p)
+                    shap_values = shap_exp.values
 
                     # save
                     shap_values_df = pd.DataFrame(shap_values, columns=names)
                     filename = f"{run_label}_SHAP_{model_name}-{method_type}{run}.csv"   
-
                     shap_values_df.to_csv(save_path_shap_p / filename)
-                    shap_results_dict[method_type] = shap_dict
+
+                    shap_results_dict[method_type] = shap_exp
 
                     filename_pkl = f"{run_label}_SHAP_{model_name}{run}.pkl"
                     file_path_pkl = save_path_shap_p / filename_pkl
@@ -518,12 +542,12 @@ def run_pipeline(cfg: dict):
                 plot_types = ["bar", "summary", "violin"]
                 for plot_type in plot_types:
                     print(plot_type)
-                    plot_SHAP(shap_dict, col_list=names, data=X_test_p,
+                    plot_SHAP(shap_dict, col_list=names, 
                             n_features=plot_n_features, plot_type=plot_type,
                             save_path=shap_plot_save_path, title="SHAP importance (test set)",
                             save_name=f"{run_label}_{model_name}_SHAP_{plot_type}_{method}{run}.png")
                     if plot_type == "summary":
-                        plot_SHAP(shap_dict, col_list=names, data=X_test_p,
+                        plot_SHAP(shap_dict, col_list=names,
                                 n_features=plot_n_features, plot_type=None,
                                 save_path=shap_plot_save_path, title="SHAP importance (test set)",
                                 save_name=f"{run_label}_{model_name}_SHAP_{plot_type}_{method}{run}.png")

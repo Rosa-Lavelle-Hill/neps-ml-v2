@@ -154,29 +154,32 @@ def cfg_get(cfg, path):
         cur = cur[key]
     return cur
 
-def make_run_dirs(cfg):
-    """
-    Create (if needed) and return the run results directory for a configuration.
+from pathlib import Path
 
-    Uses cfg['run']['id'] to construct a path of the form:
-    'Results/runs/<run_id>' and ensures it exists.
+def get_run_dir(run_id: str, create: bool = True) -> Path:
+    """
+    Return the run directory for a given run_id.
 
     Parameters
     ----------
-    cfg : dict
-        Configuration dictionary expected to optionally contain {'run': {'id': ...}}.
+    run_id : str
+        Run identifier (e.g. '2026-01-22_102249__prior_reading__student').
+    create : bool, default=True
+        Whether to create the directory if it does not exist.
 
     Returns
     -------
     pathlib.Path
-        Path to the created/existing run directory.
-
-    Notes
-    -----
-    - If cfg does not contain a run id, defaults to 'no_run_id'.
+        Path to the run directory.
     """
-    run_id = cfg.get("run", {}).get("id", "no_run_id")
-    results_root = Path("Results") / "runs" / run_id
-    results_root.mkdir(parents=True, exist_ok=True)
-    return results_root
+    if not run_id:
+        raise ValueError("run_id must be a non-empty string")
+
+    run_dir = Path("Results") / "runs" / run_id
+
+    if create:
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+    return run_dir
+
 
