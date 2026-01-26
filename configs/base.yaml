@@ -3,20 +3,20 @@ params:
   decimal_places: 3 # for rounding of results
 
 run:
-  test_run: false # runs test run of code (fixed grid) 
+  test_run: true # runs test run of code (fixed grid) 
   train_models: true # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
   test_models: true # runs evaluation of model performance
   interpret_models: true # runs model interpretation, if False then neither SHAP nor permutation importance will run
-  run_permutation: false # runs permutation importance, otherwise loads results and plots
-  run_grouped_permutation: false # calculates and plots grouped permutation importance
+  run_permutation: true # runs permutation importance, otherwise loads results and plots
+  run_grouped_permutation: true # calculates and plots grouped permutation importance
   run_SHAP: true # runs SHAP, otherwise loads results and plots
   run_grouped_SHAP: true # calculates and plots grouped SHAP
   plot_nice_names: true # plots with nice variable names where possible
   count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
   
 parallel:
-  enabled: false # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
-  max_workers: null # number of parallel workers (4 or null)
+  enabled: true # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
+  max_workers: 4 # number of parallel workers (4 or null)
 
 paths:
   data_raw: "Data/Pilot_data_without_validT2_2026_01_13.csv" # raw data path
