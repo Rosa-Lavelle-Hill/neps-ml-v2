@@ -342,7 +342,7 @@ def run_pipeline(cfg: dict):
             test_score_mae = round(metrics.mean_absolute_error(y_test, y_pred_m), decimal_places)
             test_score_rmse = round(metrics.root_mean_squared_error(y_test, y_pred_m), decimal_places)
 
-            print(f"Best {model_name} model performance on test data:\nR2: {test_score_r2}; mae: {test_score_mae}",
+            print(f"Best {model_name} model performance on test data ({load_label}):\nR2: {test_score_r2}; mae: {test_score_mae}",
                 file=open(save_file, "a"))
 
             test_scores[model_name] = {"R2": test_score_r2, "MAE": test_score_mae, "RMSE": test_score_rmse}
@@ -615,7 +615,7 @@ def run_pipeline(cfg: dict):
         results_df = pd.DataFrame.from_dict(test_scores)   
         filename = f"all_test_scores_{run_label}{run}.csv"
         results_df.to_csv(all_models_save / filename)
-
+        print("Saving all model's test errors to file for statistical comparison...")
         errors_df = pd.DataFrame.from_dict(errors_dict)
         filename = f"all_model_errors_{run_label}{run}.csv"
         errors_df.to_csv(all_models_save / filename)
