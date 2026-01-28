@@ -101,7 +101,7 @@ def run_pipeline(cfg: dict):
     for p in [params_save, plot_save, all_models_save, shap_save, perm_imp_save]:
         p.mkdir(parents=True, exist_ok=True)
 
-  # load results paths
+    # load results paths
     load_enabled = load_cfg.get("enabled", False)
 
     # determine source run id (what to load from)
@@ -280,13 +280,15 @@ def run_pipeline(cfg: dict):
 
             best_params_dict[model_name] = best_params
         else:
-            filename = f'{load_label}_{model_name}.pkl'
+            print("Loading best parameters for {} model from previous run...{}".format(model_name, load_label))
+            filename = f'{load_label}_{model_name}{run}.pkl'
             best_params = joblib.load(params_load / filename )
 
         # set pipeline to use best params
         pipe.set_params(**best_params)
 
         # fit best pipeline to training data
+        print("Fitting best {} model to full training data...".format(model_name))
         pipe.fit(X_train, y_train)
 
         model_train_end = dt.datetime.now()
@@ -322,8 +324,8 @@ def run_pipeline(cfg: dict):
             dvt1_mae2 = round(mean_absolute_error(y_test, y_pred2), 2)  # Mean Absolute Error
 
             # ===================================================================================================
-            test_scores["Prior Achieve. Baseline"] = {"R2": dvt1_r_squared, "MAE": dvt1_mae, "RMSE": dvt1_rmse}
-            test_scores["Prior Ach.+ School Track"] = {"R2": dvt1_r_squared2, "MAE": dvt1_mae2, "RMSE": dvt1_rmse2}
+            test_scores["Prior Ach. Baseline"] = {"R2": dvt1_r_squared, "MAE": dvt1_mae, "RMSE": dvt1_rmse}
+            test_scores["Prior Ach.+ Track"] = {"R2": dvt1_r_squared2, "MAE": dvt1_mae2, "RMSE": dvt1_rmse2}
 
             # Test model on hold-out data:
             print("Evaluating performance on test set for {}".format(model_name))
@@ -354,6 +356,8 @@ def run_pipeline(cfg: dict):
             model_test_end = dt.datetime.now()
             model_test_time = model_test_end - model_test_start
             print(f"Model test time for {model_name}: {model_test_time}")
+        else:
+            print("Skipping model testing on hold-out data...will plot later previously saved results.")
 
         # ===========================================================================================
         # Interpretations of best model on test data
@@ -435,7 +439,7 @@ def run_pipeline(cfg: dict):
             perm_imp_df = perm_imp_df[0:plot_n_features]
             perm_imp_df.sort_values(by="importance_mean", ascending=True, inplace=True, axis=0)
 
-            save_path_perm_plots = Path(perm_imp_save) / "PLots/"
+            save_path_perm_plots = Path(perm_imp_save) / "Plots/"
             plot_permutation(perm_imp_df=perm_imp_df,
                             save_path=save_path_perm_plots,
                             save_name=f"{run_label}_{model_name}_permutation{run}")
@@ -599,12 +603,12 @@ def run_pipeline(cfg: dict):
             print(f"Model interpretation time for {model_name}: {model_interpretation_time}")
 
     if test_models == True:
+        print("Saving all model's test results to file...")
         results_df = pd.DataFrame.from_dict(test_scores)   
         filename = f"all_test_scores_{run_label}{run}.csv"
         results_df.to_csv(all_models_save / filename)
 
     if test_models == False:
-        # filename = f"all_test_scores_{load_label}{run}.csv"
         filename = f"all_test_scores_{load_label}.csv"
         results_df = pd.read_csv(all_models_load / filename, index_col=[0])
         print(f"Loading test results data from: {all_models_save / filename}")
@@ -612,7 +616,7 @@ def run_pipeline(cfg: dict):
     print("Plotting test performance to compare all models...")
 
     print(f"Loading test results data from: {all_models_save / filename}")
-    x_ticks = ["Prior Achieve.", "Prior Ach.+ School Track" "Decision Tree", "Random Forest", "Hist Grad. Boost.", "XGBoost"]
+    x_ticks = ["Prior Ach.", "Prior Ach.+ Track", "Decision Tree", "Random Forest", "Hist. G. Boost.", "XGBoost"]
 
     save_path_plots = all_models_save / "Plots"
     save_path_plots = Path(save_path_plots)

@@ -4,13 +4,13 @@ params:
 
 run:
   test_run: true # runs test run of code (fixed grid) 
-  train_models: true # trains models, if False uses optimal model parameters saved from a previous run (use "start_string" to choose previous run)
-  test_models: true # runs evaluation of model performance
-  interpret_models: true # runs model interpretation, if False then neither SHAP nor permutation importance will run
-  run_permutation: true # runs permutation importance, otherwise loads results and plots
-  run_grouped_permutation: true # calculates and plots grouped permutation importance
-  run_SHAP: true # runs SHAP, otherwise loads results and plots
-  run_grouped_SHAP: true # calculates and plots grouped SHAP
+  train_models: false # trains models using CV, if false uses optimal model parameters saved from a previous run (using load_id passed to subset yaml) and refits model to training data
+  test_models: true # runs evaluation of model performance (if false, still plots results loaded from previous run using load_id passed in subset yaml)
+  interpret_models: false # runs model interpretation, if false then neither SHAP nor permutation importance will run
+  run_permutation: false # runs permutation importance, otherwise loads results and plots
+  run_grouped_permutation: false # calculates and plots grouped permutation importance
+  run_SHAP: false # runs SHAP, otherwise loads results and plots
+  run_grouped_SHAP: false # calculates and plots grouped SHAP
   plot_nice_names: true # plots with nice variable names where possible
   count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
   

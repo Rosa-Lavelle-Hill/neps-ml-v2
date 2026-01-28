@@ -528,7 +528,7 @@ def plot_results(y, data, colour, save_path, save_name,
     save_path_p = Path(save_path)
     save_path_p.mkdir(parents=True, exist_ok=True)
     filename = str(save_name) + ".png"
-    plt.savefig(save_path_p / filename, dpi=300, bbox_inches="tight")
+    plt.savefig(save_path_p / filename)
     plt.clf()
     plt.cla()
     plt.close()
