@@ -6,6 +6,7 @@ def compare_models(
     df,
     model_a,
     model_b,
+    decimal_places=3,
     alternative="two-sided",   # "less": A better than B
     dropna=True,
 ):
@@ -22,6 +23,8 @@ def compare_models(
         Hypothesis for A vs B (less = A has smaller errors)
     dropna : bool
         Drop rows with missing values
+    decimal_places : int
+        Number of decimal places to round results
 
     Returns
     -------
@@ -49,13 +52,13 @@ def compare_models(
 
     results = {
         "n": len(d),
-        "mean_MAE_A": ae_a.mean(),
-        "mean_MAE_B": ae_b.mean(),
-        "mean_diff": d.mean(),          # < 0 favors A
-        "t_stat": t_stat,
-        "t_p": t_p,
-        "wilcoxon_stat": w_stat,
-        "wilcoxon_p": w_p,
+        "mean_MAE_A": round(ae_a.mean(), decimal_places),
+        "mean_MAE_B": round(ae_b.mean(), decimal_places),
+        "mean_diff": round(d.mean(), decimal_places), # < 0 favors A
+        "t_stat": round(t_stat, decimal_places),
+        "t_p": round(t_p, decimal_places),
+        "wilcoxon_stat": round(w_stat, decimal_places),
+        "wilcoxon_p": round(w_p, decimal_places),
     }
 
     return results

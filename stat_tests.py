@@ -55,6 +55,7 @@ errors_df = pd.DataFrame.from_dict(best_models_errors)
 errors_save_path = Path(f"Results/stat_tests/best_models_errors_{run_id}{run}.csv")
 errors_df.to_csv(errors_save_path)
 print(f"Saved best models errors to: {errors_save_path}")
+print("--------------------------------------------------")
 #=======================================================================================
 # Calculate a paired t-test between the absolute models errors (using only the best model per subset)
 # 1.1. Prior Reading (M1) vs. Prior Reading + Student (M2)
@@ -67,6 +68,7 @@ results = compare_models(
 print("Comparing model A (Prior Reading) vs. model B (Prior Reading + Student)")
 for k, v in results.items():
     print(f"{k}: {v}")
+print("--------------------------------------------------")
 
 # 2.1. Prior Reading + Student (M2) vs. Prior Reading + Student + Parent (M3)
 results = compare_models(
@@ -79,6 +81,7 @@ print("Comparing model A (Prior Reading + Student) vs. model B (Prior Reading + 
 for k, v in results.items():
     print(f"{k}: {v}")  
 
+print("--------------------------------------------------") 
 # 2.2. Prior Reading + Student (M2) vs. Prior Reading + Student + Teacher (M4)
 results = compare_models(
     df=errors_df,
@@ -90,6 +93,7 @@ print("Comparing model A (Prior Reading + Student) vs. model B (Prior Reading + 
 for k, v in results.items():
     print(f"{k}: {v}")  
 
+print("--------------------------------------------------")
 # 2.3. Prior Reading + Student (M2) vs. All (M5)
 results = compare_models(
     df=errors_df,
