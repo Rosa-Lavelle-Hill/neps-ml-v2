@@ -41,12 +41,44 @@ def run_pipeline(cfg: dict):
         raise RuntimeError("cfg['run']['id'] is missing")
     load_enabled = load_cfg.get("enabled", False) # where inputs can be loaded from
 
+    # Decide which run to LOAD from
     if load_enabled:
         source_run_id = load_cfg.get("run_id")
         if not source_run_id:
             raise ValueError("load.enabled=True but load.run_id is not set")
     else:
         source_run_id = current_run_id
+
+    # SAVE dir: always current run (create) -------------------------
+    results_save_dir = get_run_dir(current_run_id, create=True)
+    print("Saving to:", results_save_dir)
+
+    # LOAD dir: source_run_id (do not create)
+    results_load_dir = get_run_dir(source_run_id, create=False)
+    if load_enabled:
+        if not results_load_dir.exists():
+            raise FileNotFoundError(f"Requested load run does not exist: {results_load_dir}")
+        print("Loading results from:", results_load_dir)
+
+    assert results_save_dir.name == current_run_id
+    assert results_load_dir.name == source_run_id
+    # -------------------------------------------------------------------
+    # run-scoped SAVE paths (build from results_save_dir)
+    results_path = Path(results_save_dir)
+    params_save = results_path / "Prediction" / "Best_Params"
+    plot_save = results_path / "Prediction" / "Plots"
+    all_models_save = results_path / "Prediction" / "All_Models"
+    shap_save = results_path / "Interpretation" / "SHAP"
+    perm_imp_save = results_path / "Interpretation" / "Permutation"
+
+    for p in [params_save, plot_save, all_models_save, shap_save, perm_imp_save]:
+        p.mkdir(parents=True, exist_ok=True)
+
+    # -------------------------------------------------------------------
+    # LOAD paths (build from results_load_dir)
+    perm_imp_load = results_load_dir / "Interpretation" / "Permutation"
+    shap_load = results_load_dir / "Interpretation" / "SHAP"
+    all_models_load = results_load_dir / "Prediction" / "All_Models"
     # =======================================================================================================
     # import fixed params from base yaml:
     seed = cfg_get(cfg, ["params", "seed"])
@@ -86,47 +118,8 @@ def run_pipeline(cfg: dict):
     test_cv = cfg_get(cfg, ["test_run_params", "test_cv"])
     test_n_permutations = cfg_get(cfg, ["test_run_params", "test_n_permutations"])
 
-    # run-scoped save paths
-    results_dir = get_run_dir(source_run_id, create=True)
-    print("Saving to:", results_dir)
-
-    results_path = Path(results_dir)
-    params_save = results_path / "Prediction" / "Best_Params"
-    plot_save = results_path / "Prediction" / "Plots"
-    all_models_save = results_path / "Prediction" / "All_Models"
-    shap_save = results_path / "Interpretation" / "SHAP"
-    perm_imp_save = results_path / "Interpretation" / "Permutation"
-
-    # ensure directories exist
-    for p in [params_save, plot_save, all_models_save, shap_save, perm_imp_save]:
-        p.mkdir(parents=True, exist_ok=True)
-
-    # load results paths
-    load_enabled = load_cfg.get("enabled", False)
-
-    # determine source run id (what to load from)
-    if load_enabled:
-        source_run_id = load_cfg.get("run_id")
-        if not source_run_id:
-            raise ValueError("load.enabled=True but load.run_id is not set")
-    else:
-        source_run_id = current_run_id  # load from self by default
-
-    # compute load dir (do NOT create)
-    results_load_dir = get_run_dir(source_run_id, create=False)
-
-    if load_enabled:
-        if not results_load_dir.exists():
-            raise FileNotFoundError(f"Requested load run does not exist: {results_load_dir}")
-        print("Loading results from:", results_load_dir)
-
-    perm_imp_load = results_load_dir / "Interpretation" / "Permutation" 
-    shap_load = results_load_dir / "Interpretation" / "SHAP"
-    all_models_load = results_load_dir / "Prediction" / "All_Models"
-
     # general outputs path
     outputs_path = Path("Outputs")
-
     # =======================================================================================================
 
     # Read data
@@ -212,6 +205,7 @@ def run_pipeline(cfg: dict):
     # define empty dicts to save values in
     best_params_dict = {}
     test_scores = {}
+    errors_dict = {}
 
     # Split into train and test
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=seed, test_size=test_size, shuffle=True)
@@ -240,7 +234,7 @@ def run_pipeline(cfg: dict):
 
 
     # loop through one model class at a time
-    for model_name, pipe, params in zip(model_names, pipes, param_list):
+    for counter, (model_name, pipe, params) in enumerate(zip(model_names, pipes, param_list)):
         model_train_start = dt.datetime.now()
 
         save_file = results_path / f"Prediction/{run_label}_{model_name}{run}.txt"
@@ -297,58 +291,72 @@ def run_pipeline(cfg: dict):
         #========================================
         # Test best model on hold-out test data
         if test_models == True:
+        
             model_test_start = dt.datetime.now()
-
             # Add a baseline model 1: dv at T1 (linear regression) -----------------------------------------
+            if counter == 0:
+                # only need to do onece...
+                lr = LinearRegression()
+                lr.fit(pd.DataFrame(X_train[dv_t1_name]), y_train)
 
-            lr = LinearRegression()
-            lr.fit(pd.DataFrame(X_train[dv_t1_name]), y_train)
+                y_pred1 = lr.predict(pd.DataFrame(X_test[dv_t1_name]))
 
-            y_pred = lr.predict(pd.DataFrame(X_test[dv_t1_name]))
+                # Calculate evaluation metrics
+                dvt1_r_squared = round(r2_score(y_test, y_pred1), 2)  # R-squared
+                dvt1_rmse = round(root_mean_squared_error(y_test, y_pred1), 2)  # Root Mean Squared Error
+                dvt1_mae = round(mean_absolute_error(y_test, y_pred1), 2)  # Mean Absolute Error
 
-            # Calculate evaluation metrics
-            dvt1_r_squared = round(r2_score(y_test, y_pred), 2)  # R-squared
-            dvt1_rmse = round(root_mean_squared_error(y_test, y_pred), 2)  # Root Mean Squared Error
-            dvt1_mae = round(mean_absolute_error(y_test, y_pred), 2)  # Mean Absolute Error
+                # Add a baseline model 2: dv at T1 and track (linear regression) -------------------------------
 
-            # Add a baseline model 2: dv at T1 and track (linear regression) -------------------------------
+                lr2 = LinearRegression()
+                lr2.fit(pd.DataFrame(X_train[[dv_t1_name, school_track]]), y_train)
 
-            lr2 = LinearRegression()
-            lr2.fit(pd.DataFrame(X_train[[dv_t1_name, school_track]]), y_train)
+                y_pred2 = lr2.predict(pd.DataFrame(X_test[[dv_t1_name, school_track]]))
 
-            y_pred2 = lr2.predict(pd.DataFrame(X_test[[dv_t1_name, school_track]]))
+                # Calculate evaluation metrics
+                dvt1_r_squared2 = round(r2_score(y_test, y_pred2), 2)  # R-squared
+                dvt1_rmse2 = round(root_mean_squared_error(y_test, y_pred2), 2)  # Root Mean Squared Error
+                dvt1_mae2 = round(mean_absolute_error(y_test, y_pred2), 2)  # Mean Absolute Error
 
-            # Calculate evaluation metrics
-            dvt1_r_squared2 = round(r2_score(y_test, y_pred2), 2)  # R-squared
-            dvt1_rmse2 = round(root_mean_squared_error(y_test, y_pred2), 2)  # Root Mean Squared Error
-            dvt1_mae2 = round(mean_absolute_error(y_test, y_pred2), 2)  # Mean Absolute Error
+                # Save errors for later statistical comparison 
+                # Baseline 1
+                errors_dvt1 = y_test - y_pred1
+                errors_dict["Prior Ach. Baseline"] = errors_dvt1
+                # Baseline 2 (with track)         
+                errors_dvt1_track = y_test - y_pred2   
+                errors_dict["Prior Ach.+ Track"] = errors_dvt1_track
 
+                # Save baseline test scores
+                test_scores["Prior Ach. Baseline"] = {"R2": dvt1_r_squared, "MAE": dvt1_mae, "RMSE": dvt1_rmse}
+                test_scores["Prior Ach.+ Track"] = {"R2": dvt1_r_squared2, "MAE": dvt1_mae2, "RMSE": dvt1_rmse2}
             # ===================================================================================================
-            test_scores["Prior Ach. Baseline"] = {"R2": dvt1_r_squared, "MAE": dvt1_mae, "RMSE": dvt1_rmse}
-            test_scores["Prior Ach.+ Track"] = {"R2": dvt1_r_squared2, "MAE": dvt1_mae2, "RMSE": dvt1_rmse2}
 
             # Test model on hold-out data:
             print("Evaluating performance on test set for {}".format(model_name))
 
             # use pipeline to make predictions
-            y_pred = pipe.predict(X_test)
+            y_pred_m = pipe.predict(X_test)
 
             # evaluate/score best out of sample
-            test_score_r2 = round(metrics.r2_score(y_test, y_pred), decimal_places)
-            test_score_mae = round(metrics.mean_absolute_error(y_test, y_pred), decimal_places)
-            test_score_rmse = round(metrics.root_mean_squared_error(y_test, y_pred), decimal_places)
+            test_score_r2 = round(metrics.r2_score(y_test, y_pred_m), decimal_places)
+            test_score_mae = round(metrics.mean_absolute_error(y_test, y_pred_m), decimal_places)
+            test_score_rmse = round(metrics.root_mean_squared_error(y_test, y_pred_m), decimal_places)
 
             print(f"Best {model_name} model performance on test data:\nR2: {test_score_r2}; mae: {test_score_mae}",
                 file=open(save_file, "a"))
 
             test_scores[model_name] = {"R2": test_score_r2, "MAE": test_score_mae, "RMSE": test_score_rmse}
 
+            # Calculate and save errors for statistical comparison later
+            errors_best_model = y_test - y_pred_m
+            errors_dict[model_name] = errors_best_model
+
             # plot distribution of predictions:
-            plot_scat(x=y_test, y=y_pred, x_lab="actual", y_lab="predicted",
+            plot_scat(x=y_test, y=y_pred_m, x_lab="actual", y_lab="predicted",
                     save_path=plot_save,
                     save_name=f"{run_label}_{model_name}_predicted_actual{run}")
 
-            plot_label_reg_sns(x=y_test, y=y_pred, x_lab="actual", y_lab="predicted",
+            plot_label_reg_sns(x=y_test, y=y_pred_m, x_lab="actual", y_lab="predicted",
                             save_path=plot_save,
                             save_name=f"{run_label}_{model_name}_predicted_actual_cor{run}", anov_var=None,
                             cor=True, ano=False, print_cor=False, same_axis=True)
@@ -607,6 +615,10 @@ def run_pipeline(cfg: dict):
         results_df = pd.DataFrame.from_dict(test_scores)   
         filename = f"all_test_scores_{run_label}{run}.csv"
         results_df.to_csv(all_models_save / filename)
+
+        errors_df = pd.DataFrame.from_dict(errors_dict)
+        filename = f"all_model_errors_{run_label}{run}.csv"
+        errors_df.to_csv(all_models_save / filename)
 
     if test_models == False:
         filename = f"all_test_scores_{load_label}.csv"
