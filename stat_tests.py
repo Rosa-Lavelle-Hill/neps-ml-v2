@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from Functions.stat_tests import compare_models 
+from Functions.stat_tests import compare_models, plot_difference_normality, plot_error_distributions 
 
 # Settings
 test = True # If True, extract data from a test run <-- only to check that the code works
@@ -107,3 +107,24 @@ for k, v in results.items():
 
 print("Statistical comparison complete.")
 # ------------------------------------------------------------------
+# Plot error distributions of models comparing
+plot_save = Path(f"Results/stat_tests/distribution_plots/")
+print("Plotting error distributions...")
+
+plot_error_distributions(errors_df, model_a="Prior Reading", model_b="Prior Reading + Student", save_path=plot_save)
+plot_error_distributions(errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Parent", save_path=plot_save)
+plot_error_distributions(errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Teacher", save_path=plot_save)
+plot_error_distributions(errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Parent + Teacher", save_path=plot_save)
+
+print(f"Plotting complete. Plots saved to: {plot_save}")
+# ------------------------------------------------------------------
+# Plot distribution of error differences for normality check
+plot_save = Path(f"Results/stat_tests/normality_plots/")
+print("Plotting difference normality...")
+plot_difference_normality(df=errors_df, model_a="Prior Reading", model_b="Prior Reading + Student", save_path=plot_save)
+plot_difference_normality(df=errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Parent", save_path=plot_save)
+plot_difference_normality(df=errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Teacher", save_path=plot_save)
+plot_difference_normality(df=errors_df, model_a="Prior Reading + Student", model_b="Prior Reading + Student + Parent + Teacher", save_path=plot_save)
+print(f"Plotting complete. Plots saved to: {plot_save}")
+# ------------------------------------------------------------------
+print("All tasks completed.")
