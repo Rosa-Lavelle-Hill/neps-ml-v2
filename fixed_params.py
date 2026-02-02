@@ -2,7 +2,7 @@
 import pandas as pd
 
 # ---- meta data coding ----
-var_info_sheet = "Data/Meta/variable_info_agreed_Jan_21_2026.csv"
+var_info_sheet = "Data/Meta/variable_info_agreed_Feb_2_2026.csv"
 target_id = "ID_t"
 school_track = "tx80106"
 institution_id = "ID_i"
