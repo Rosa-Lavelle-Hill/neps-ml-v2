@@ -1,5 +1,5 @@
 paths:
-  raw_input_csv: Data/Pilot_data_without_validT2_2026_01_13.csv
+  raw_input_csv: Data/neps.csv
   df_r_processed_csv: Data/Preprocessed/df_R_processed.csv
   outputs_folder: Outputs
 
@@ -12,9 +12,9 @@ preprocessing:
   missing_values_to_na: [-100, -200, -300]
 
 switches:
-  run_R: true # Run preprocessing R script first? (true/false)
+  run_R: false # Run preprocessing R script first? (true/false)
   create_corr_drop_list: true # (true/false) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
-  check_mutual_information: false # (true/false) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
+  check_mutual_information: true # (true/false) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
   # make manual changes?
   merge_categories: true #(true/false) whether to merge some categories in categorical variables due to small category sizes
   create_new_vars: true # (true/false) whether to create new variables from existing ones due to high multicollinearity

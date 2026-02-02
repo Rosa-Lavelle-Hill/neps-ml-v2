@@ -6,9 +6,9 @@ var_info_sheet = "Data/Meta/variable_info_agreed_Jan_21_2026.csv"
 target_id = "ID_t"
 school_track = "tx80106"
 institution_id = "ID_i"
-dv_t1_name = "reg5_sc1u" # name of dv at time 1
+dv_t1_name = "reg5_sc1" # name of dv at time 1
 dob_var = "p70012"
-date_variables = ["tx8602", "tx8610", "tx8611", "tx8620", "p40603", "p71202", "p71203",
+date_variables = ["tx8602", "tx8611", "tx8620", "p40603", "p71202", "p71203", "tx8610",
                   "p72802", "p40003", "p40113", "p73191", "p73111", "p40403", "p73195"]
 
 # ---- variable removal coding ----

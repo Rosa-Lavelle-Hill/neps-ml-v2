@@ -224,10 +224,10 @@ def run_pipeline(cfg: dict):
     # Count category distributions across train and test data sets
     cat_save_path = outputs_path / "category_distributions"
     if count_categories == True:
-        count_categories_to_file(X_train, output_file=cat_save_path+"X_train_counts.txt", categorical_columns=categorical_features_in_data,
+        count_categories_to_file(X_train, output_file=cat_save_path / "X_train_counts.txt", categorical_columns=categorical_features_in_data,
                                 var_name_dict=var_names_dict, min_cat=round((smallest_category_count/100)*80, 0),
                                 cat_name_dict=cat_name_dict, data_name="X_train")
-        count_categories_to_file(X_test, output_file=cat_save_path+"X_test_counts.txt", categorical_columns=categorical_features_in_data,
+        count_categories_to_file(X_test, output_file=cat_save_path / "X_test_counts.txt", categorical_columns=categorical_features_in_data,
                                 var_name_dict=var_names_dict, min_cat=round((smallest_category_count/100)*20, 0),
                                 cat_name_dict=cat_name_dict, data_name="X_test")
 
@@ -241,7 +241,7 @@ def run_pipeline(cfg: dict):
         plt.xlabel('Features')
         plt.ylabel('Number of Unique Values')
         plt.tight_layout()
-        plt.savefig(outputs_path + "category_distributions/cardinality.png")
+        plt.savefig(outputs_path / "category_distributions" / "cardinality.png")
 
 
     # loop through one model class at a time

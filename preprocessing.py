@@ -58,7 +58,7 @@ print(f"Data shape before R preprocessing: {df_pre_R.shape[1]} columns, {df_pre_
 
 ## PREPROCESSING IN R
 if run_R == True:
-    r_script = 'Scripts/R_pre-processing_v2.R'
+    r_script = 'Scripts/R_pre-processing.R'
 
     # Run the R script
     subprocess.call(['Rscript', r_script])
