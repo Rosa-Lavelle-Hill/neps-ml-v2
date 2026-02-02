@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import yaml
 import shutil
+import shutil
+import subprocess
 from pathlib import Path
 from sklearn.metrics import r2_score
 from sklearn.feature_selection import mutual_info_regression
@@ -94,6 +96,11 @@ scale_vars_to_drop = var_info.iloc[matching_rows]["var"]
 print(f"num of Edu and SES scale vars dropped: {len(scale_vars_to_drop)}")
 df.drop(scale_vars_to_drop, axis=1, inplace=True)
 print(f"num cols after dropping Edu and SES scales: {df.shape[1]}")
+print(f"Dropping the following Edu and SES scale variables: {scale_vars_to_drop.tolist()}")
+
+matching_rows_keep = find_matching_rows(column_data=list(var_info.varname), search_list=scale_keep)
+scale_vars_to_keep = var_info.iloc[matching_rows_keep]["var"]
+print(f"Keeping the following Edu and SES scale variables: {scale_vars_to_keep.tolist()}")
 #  -----------------------------------------------------------------------------------------
 ## RECODE VARS
 # Some variables are not truely ordinal, and need some additional pre-processing...
@@ -465,6 +472,7 @@ print(f"New data shape after dropping rows >{missing_thresh_row*100}% missing: {
 
 # Calculate the overall percentage of missing values in the DataFrame
 overall_missing_percentage = df.isnull().sum().sum() / df.size * 100
+overall_missing_percentage = round(overall_missing_percentage, 2)
 print("\nOverall percentage of missing values in the DataFrame:", overall_missing_percentage)
 
 # Check the shape and overall missing values

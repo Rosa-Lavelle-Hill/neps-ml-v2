@@ -85,7 +85,6 @@ def run_pipeline(cfg: dict):
     decimal_places = cfg_get(cfg, ["params", "decimal_places"])
 
     # run option flags:
-    TEST_RUN = cfg_get(cfg, ["run", "test_run"])
     train_models = cfg_get(cfg, ["run", "train_models"])
     test_models = cfg_get(cfg, ["run", "test_models"])
     interpret_models = cfg_get(cfg, ["run", "interpret_models"])
@@ -115,6 +114,7 @@ def run_pipeline(cfg: dict):
     n_permutations = cfg_get(cfg, ["interpretation", "n_permutations"])
 
     # test run params:
+    TEST_RUN = cfg_get(cfg, ["test_run_params", "test_run"])
     test_cv = cfg_get(cfg, ["test_run_params", "test_cv"])
     test_n_permutations = cfg_get(cfg, ["test_run_params", "test_n_permutations"])
 
@@ -132,9 +132,13 @@ def run_pipeline(cfg: dict):
     var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=None, engine="python")
     var_info.columns = var_info.columns.str.replace("\ufeff", "", regex=False).str.strip()
 
-    # var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=';')
     var_info = var_info[var_info["include as predictor"] == 1]
     var_names_dict = dict(zip(var_info['var'], var_info['varname']))
+
+    # Var info only for where columns exist in data
+    var_info = var_info[var_info['var'].isin(X_and_y.columns)]
+    print(f"num of variables in var_info and in X_and_y: {var_info.shape[0]}")
+    var_info.to_csv("Data/Meta/var_info_used_in_model.csv", index=False)   
 
     # get block information for grouped importance
     block_dict = dict(zip(var_info['var'], var_info['Variable_Group']))
@@ -170,7 +174,7 @@ def run_pipeline(cfg: dict):
     # ========================================
 
     # Assign data types
-    categorical_features = pd.read_csv(categorical_features_csv, index_col=[0]) # i
+    categorical_features = pd.read_csv(categorical_features_csv, index_col=[0]) 
     categorical_features = list(categorical_features['0'])
     numerical_df, numerical_features = drop_cols(categorical_features, X)
     categorical_features = [c for c in categorical_features if c in X.columns]
@@ -209,6 +213,13 @@ def run_pipeline(cfg: dict):
 
     # Split into train and test
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=seed, test_size=test_size, shuffle=True)
+
+    # Save modelling data
+    print("X_train shape: {}, X_test shape: {}".format(X_train.shape, X_test.shape))
+    X_train.to_csv(results_path / f"X_train{run}.csv")
+    X_test.to_csv(results_path / f"X_test{run}.csv")
+    y_train.to_csv(results_path / f"y_train{run}.csv")
+    y_test.to_csv(results_path / f"y_test{run}.csv")
 
     # Count category distributions across train and test data sets
     cat_save_path = outputs_path / "category_distributions"

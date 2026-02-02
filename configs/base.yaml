@@ -3,33 +3,25 @@ params:
   decimal_places: 3 # for rounding of results
 
 run:
-  test_run: true # runs test run of code (fixed grid) 
-  train_models: false # trains models using CV, if false uses optimal model parameters saved from a previous run (using load_id passed to subset yaml) and refits model to training data
+  train_models: true # trains models using CV, if false uses optimal model parameters saved from a previous run (using load_id passed to subset yaml) and refits model to training data
   test_models: true # runs evaluation of model performance (if false, still plots results loaded from previous run using load_id passed in subset yaml)
-  interpret_models: false # runs model interpretation, if false then neither SHAP nor permutation importance will run
-  run_permutation: false # runs permutation importance, otherwise loads results and plots
-  run_grouped_permutation: false # calculates and plots grouped permutation importance
-  run_SHAP: false # runs SHAP, otherwise loads results and plots
-  run_grouped_SHAP: false # calculates and plots grouped SHAP
+  interpret_models: true # runs model interpretation, if false then neither SHAP nor permutation importance will run
+  run_permutation: true # runs permutation importance, otherwise loads results and plots
+  run_grouped_permutation: true # calculates and plots grouped permutation importance
+  run_SHAP: true # runs SHAP, otherwise loads results and plots
+  run_grouped_SHAP: true # calculates and plots grouped SHAP
   plot_nice_names: true # plots with nice variable names where possible
-  count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
+  count_categories: true # counts min categories and notes where <25 ---> must be false if parallel is enabled 
   
 parallel:
-  enabled: true # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
-  max_workers: 4 # number of parallel workers (4 or null)
+  enabled: false # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
+  max_workers: null # number of parallel workers (4 or null)
 
 paths:
-  data_raw: "Data/Pilot_data_without_validT2_2026_01_13.csv" # raw data path
+  data_raw: "Data/neps.csv" # raw data path
   preprocessed_data: "Data/Preprocessed/X_and_y.csv" # preprocessed data path
   var_info_csv: Data/Meta/variable_info_agreed_Jan_21_2026.csv # variable information path
   categorical_features_csv: Data/Meta/categorical_variables.csv # categorical variables path
-
-preprocessing:
-  missing_thresh_col: 0.5 # threshold for missing data (column wise), above threshold col dropped 
-  missing_thresh_row: 0.5 # threshold for missing data (row wise), above threshold row dropped
-  variance_feature_selection_threshold: 0.02 # will remove variables which, for binary variables >98% are 1 or 0
-  smallest_category_count: 30 # number of instances in smallest category for categorical variables
-  IV_cor_threshold: 0.7 # below threshold, bivariate correlations are allowed
 
 modelling:
   test_size: 0.2 # proportion of data for testing
@@ -42,5 +34,6 @@ interpretation:
   n_permutations: 2 # ***10 for actual run
 
 test_run_params:
+  test_run: true # runs test run of code (fixed grid) 
   test_cv: 2 # number of folds in cross-validation for test run
   test_n_permutations: 1 # number of permutations for permutation importance in test run

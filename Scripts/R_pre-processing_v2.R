@@ -7,11 +7,11 @@ dir.create("~/Library/R/4.5/library", recursive = TRUE, showWarnings = FALSE)
 # Tell R to use it
 .libPaths(c("~/Library/R/4.5/library", .libPaths()))
 
-options(repos = "https://cran.r-project.org/")
-install.packages("ggplot2", dependencies = TRUE)
-install.packages("stringr")
-install.packages("tidyr")
-install.packages("psych")
+# options(repos = "https://cran.r-project.org/")
+# install.packages("ggplot2", dependencies = TRUE)
+# install.packages("stringr")
+# install.packages("tidyr")
+# install.packages("psych")
 
 # packages ####
 library(ggplot2)
@@ -36,9 +36,9 @@ as_numeric_trycatch <- function(column) {
 }
 
 # read in data ####
-setwd("/Users/lavell0000/Documents/neps-ml-v2/")
-df<-read.csv("Data/Pilot_data_without_validT2_2026_01_13.csv")
-variable_info<-read.csv("Data/Meta/variable_info_agreed_Jan_19_2026.csv", stringsAsFactors = F)
+print(getwd())
+df<-read.csv("Data/neps.csv")
+variable_info<-read.csv("Data/Meta/variable_info_agreed_Jan_21_2026.csv", stringsAsFactors = F)
 
 # subset to agreed variables ####
 variables<-as.character(variable_info[variable_info$include.as.predictor==1 | variable_info$include.as.ID==1,]$var)
