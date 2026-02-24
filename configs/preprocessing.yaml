@@ -15,7 +15,7 @@ switches:
   run_R: true # Run preprocessing R script first? (true/false)
   use_synthetic_y: true # (true/false) whether to create a mock y variable for piloting
   create_corr_drop_list: true # (true/false) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
-  check_mutual_information: true # (true/false) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
+  check_mutual_information: false # (true/false) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
   # make manual changes?
   merge_categories: true #(true/false) whether to merge some categories in categorical variables due to small category sizes
   create_new_vars: true # (true/false) whether to create new variables from existing ones due to high multicollinearity

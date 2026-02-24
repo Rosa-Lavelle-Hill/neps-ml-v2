@@ -83,8 +83,8 @@ var_info_all_dict = dict(zip(var_info_all['var'], var_info_all['varname']))
 #  -----------------------------------------------------------------------------------------
 ## IMPORT PROCESSED DATA
 # Import R pre-processed data:
-df = pd.read_csv("Data/Preprocessed/df_R_to_python_processed.csv", low_memory=False, index_col=[0])
-print(f"Data shape: {df.shape[1]} columns, {df.shape[0]} rows")
+df = pd.read_csv("Data/Preprocessed/df_R_to_python_processed.csv", low_memory=False)
+print(f"Data shape after R preprocessing: {df.shape[1]} columns, {df.shape[0]} rows")
 
 # retain original school track info
 school_track_dict = {}
@@ -694,7 +694,7 @@ if check_mutual_information == True:
     # Calculate mutual information between all pairs of variables
     mi_scores = {}
     for col1, col2 in combinations(df_fill.iloc[:,2:].columns, 2):
-        print(f'Calculating mutual information between {col1} and {col2}')
+        # print(f'Calculating mutual information between {col1} and {col2}')
         mi_score = mutual_info_regression(df_fill[[col1]], df_fill[col2])[0]
         mi_scores[(col1, col2)] = mi_score
         mi_scores[(col2, col1)] = mi_score  # Mutual information is symmetric
@@ -716,7 +716,7 @@ if check_mutual_information == True:
     # Save the DataFrame to a CSV file
     mi_df.to_csv(f'{outputs_folder}/mutual_information/mutual_information_scores.csv', index=False)
 
-else:
+elif check_mutual_information == False:
     mi_df = pd.read_csv(f'{outputs_folder}/mutual_information/mutual_information_scores.csv')
 
 # Plot MI scores above 1.3:
