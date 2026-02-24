@@ -1,7 +1,14 @@
+import yaml
 import pandas as pd
 import numpy as np
 from sklearn.metrics import r2_score
-from fixed_params import seed, n_permutations
+from Functions.subsets import cfg_get
+# import fixed params from base yaml:
+
+with open("configs/base.yaml", "r") as f:
+    cfg_base = yaml.safe_load(f) or {}
+seed = cfg_get(cfg_base, ["params", "seed"])
+random_state = seed
 
 def group_permutation_analysis(X_train, y_train, X_test, y_test,
                                pipeline, group_dict, model_name,

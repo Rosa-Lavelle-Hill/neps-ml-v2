@@ -1,0 +1,937 @@
+﻿var,varname,plotname,varsection_orig,Variable_Group,codebook_page,final classification,labels,include as predictor,include as ID,date_merge,aggregate,reverse,reverse_scale_min,reverse_scale_max,pick_one,picked,recode_does_not_apply,recode_as_1,remove_after_manual_inspection,notes
+tx80501,List of children/students: Gender Target child,,CohortProfile,pTarget,61,effect code,[m] male; [w] female,1,0,,,,,,,,,,,
+tx8050y,List of children/students: Date of birth (year) Target child,,CohortProfile,pTarget,63,collapse date_year,,1,0,y,,,,,,,,,1,redundant dob vars
+e229821_D,"Work at this school (years, categorized)",,pEducator,pCourseClass,565,continuous,0 to less than 5; 5 to less than 10; 10 to less than 15; 15 to less than 20; 20 to less than 25; 25 to less than 30; 30 to less than 35; 35 and more,1,0,,,,,,,,,,1,multicollinearity
+ed1009b,Stress at school - opportunities for advancement,,pEducator,pCourseClass,576,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply; Not a stress factor,1,0,,,,,,,,,5,1,multicollinearity - create new variable eacher_stress_factors_avg
+ed1009c,Stress at school - competition,,pEducator,pCourseClass,577,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply; Not a stress factor,1,0,,,,,,,,,5,1,multicollinearity - create new variable eacher_stress_factors_avg
+e537030_D,Federal state higher education entrance qualification (West/East),,pEducator,pCourseClass,690,categorical,West Germany; East Germany incl. Berlin; not in Germany,1,0,,,,,,,,,,1,multicollinearity - used in the creation of teacher_changed_state
+e53710y_D,Year Study start Teaching degree course (categorized),,pEducator,pCourseClass,739,continuous,before 1970; 1970-1979; 1980-1989; 1990-1999; after 1999,1,0,,,,,,,,,,1,multicollinearity
+e537110_g1,Place of study Teaching degree course (West/East),,pEducator,pCourseClass,740,categorical,West Germany; East Germany incl. Berlin; changing locations,1,0,,,,,,,,,,1,multicollinearity - used in creation of teacher_changed_state
+e537122,Activity before teaching degree course - military/civil service,,pEducator,pCourseClass,748,effect code,yes; no,1,0,,,,,,,,,,1,multicollinearity
+e537150_D,Year of state examination (categorized),,pEducator,pCourseClass,765,continuous,before 1970; 1970-1979; 1980-1989; 1990-1999; after 1999,1,0,,,,,,,,,,1,multicollinearity
+e537170_g1,Location: passed the state examination (West/East),,pEducator,pCourseClass,780,categorical,West Germany; East Germany incl. Berlin; changing locations,1,0,,,,,,,,,,1,multicollinearity - used in creation of teacher_changed_state
+e537200_D,Federal state second state examination (West/East),,pEducator,pCourseClass,792,categorical,West Germany; East Germany incl. Berlin; not in Germany,1,0,,,,,,,,,,1,multicollinearity - used in creation of teacher_changed_state
+p400000,Respondent born in Germany?,,pParent,pParent,2354,categorical,in Germany /within the current; in Germanyís former Eastern territories; abroad /in another country,1,0,,,,,,,,,,1,multicollinearity - drop (manual decision)
+p400000_g1,Country of birth Respondent (Germany/abroad; edited),,pParent,pParent,2355,categorical,in Germany /within the current; in Germanyís former Eastern territories; abroad /in another country,1,0,,,,,,,,,,1,multicollinearity - drop (manual decision)
+p401110,Citizenship Respondent German since birth,,pParent,pParent,2362,effect code,yes; no; Question erroneously not asked,1,0,,,,,,,,,,1,multicollinearity - drop (manual decision)
+p731116,Gender Partner,,pParent,pParent,2453,effect code,[m] male; [w] female,1,0,,,,,,,,,,1,removed later due to high multicollinearity with parent respondants' gender
+p403000,Country of birth Partner (Germany/abroad),,pParent,pParent,2461,categorical,in Germany /within the current; in Germanyís former Eastern territories; abroad /in another country,1,0,,,,,,,,,,1,multicollinearity - manual decision
+p403000_g1,Country of birth Partner (Germany/abroad; edited),,pParent,pParent,2465,categorical,in Germany /within the current; in Germanyís former Eastern territories; abroad /in another country,1,0,,,,,,,,,,1,multicollinearity - manual decision
+p404000,German citizenship Partner,,pParent,pParent,2479,effect code,"yes/yes, in the meantime he/she; no",1,0,,,,,,,,,,1,multicollinearity - manual decision
+p404010,German citizenship Partner since birth,,pParent,pParent,2480,effect code,yes; no,1,0,,,,,,,,,,1,multicollinearity - manual decision
+p413040,Ability to speak German Interviewed Parent (auto variable),,pParent,pParent,2576,effect code,yes; no,1,0,,,,,,,,,,1,multicollinearity - drop manual decision
+t41010a_g2D,"Mother: Mother tongue (reference 1, simplified)",,pTarget,pTarget,4422,effect code,German; not German,0,0,,,,,,,,,,1,use generated variable (t41010a_g1)
+t41012a_g2D,"Father: Mother tongue (Specification 1, simplified)",,pTarget,pTarget,4435,effect code,German; not German,0,0,,,,,,,,,,1,use generated variable (t41012a_g1) - multicollinearity
+t41040a,Subjective linguistic competence Target language of origin - comprehension,,pTarget,pTarget,4733,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,1,multicollinearity - used in command_of_other_lang
+t41040b,Subjective linguistic competence Target language of origin - speaking,,pTarget,pTarget,4734,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,1,multicollinearity - used in command_of_other_lang
+t417030,Language of media use Target ñ Surfing the Internet,,pTarget,pTarget,4743,continuous,"only in German;
+mostly in German, sometimes in the other language;
+mostly in the other language, some‐ times in German;
+only in the other language; doesnotapplytome;
+usesmostly/onlyathirdlanguage;
+equally often German and language of origin",1,0,,,,,,,,5,,1,multicollinearity - used in lang_of_media
+t417040,Language of media use Target ñ SMS and e-mails,,pTarget,pTarget,4745,continuous,"only in German;
+mostly in German, sometimes in the other language;
+mostly in the other language, some‐ times in German; only in the other; does not apply to; doesnít write SMS or emails; uses mostly/only a third language; equally often German and other language",1,0,,,,,,,,5,,1,multicollinearity - used in lang_of_media
+t412010,Interaction language - Mother,,pTarget,pTarget,4748,continuous,"only German;
+mostly German, sometimes the other language;
+mostly the other language, some‐ times German; only the other language; does not apply to me; does not apply/no contact; does not apply/mother deceased; uses mostly/only a third language; equally often German and language or origin",1,0,,,,,,,,5,,1,multcollinearity - used in creation of family_lang
+t412020,Interaction language - Father,,pTarget,pTarget,4749,continuous,"only German;
+mostly German, sometimes the other language; only the other language; does not apply to; does not apply/no contact; does not apply/father deceased; uses mostly/only a third; equally often German and language of origin",1,0,,,,,,,,5,,1,multcollinearity - used in creation of family_lang
+t412030,Interaction language - Siblings,,pTarget,pTarget,4750,continuous,"only German;
+mostly German, sometimes the other language;
+mostly the other language, some‐ times German; only the other language; does not apply to me; no siblngs; uses mostly/only a third language; equally often German and language",1,0,,,,,,,,5,,1,multicollinearity with family_lang
+t412060,Interaction language - Parents,,pTarget,pTarget,4751,continuous,"only German;
+mostly German, sometimes the other language;
+mostly the other language, some‐ times German; only the other language; does not apply to me; does not apply/no contact; does not apply/parents deceased; uses mostly/only a third language; equally often German and language",1,0,,,,,,,,5,,1,multcollinearity - used in creation of family_lang
+t412040,Interaction language - best friend,,pTarget,pTarget,4753,continuous,"only German;
+mostly German, sometimes the other language;
+mostly the other language, some‐ times German; only the other language; does not apply to; uses mostly/only a third; no best friend; equally often German and language of origin",1,0,,,,,,,,5,,1,multcollinearity - used in creation of lang_of_friends
+t412050,Use of language - classmates/fellow students,,pTarget,pTarget,4754,continuous,"only German;
+mostly German, sometimes the other language;
+mostly the other language, some‐ times German; only the other language; does not apply to me; uses mostly/only a third language; no classmates/ fellow students; equally often German and language of origin",1,0,,,,,,,,5,,1,multcollinearity - used in creation of lang_of_friends
+t262000_g1,Sports: type of sport,,pTarget,pTarget,5090,categorical,aerobics; agility; aikido; air hockey; airsoft; akontion; acrobatics; alpine climbing; amateur radio direction finding (ARDF); American football; American handball; fishing; wushu; Waveboarding; yoga; decathlon; Zumba,1,0,,,,,,,,,,1,too many categories and not particularly relevant
+t400280_g1D,Fatherís father: Country of birth (Germany/abroad),,pTarget,pTarget,5871,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country,",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t400260_g1D,Fatherís mother: country of birth (Germany/abroad),,pTarget,pTarget,5876,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country,",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t400240_g1D,Motherís father: Country of birth (Germany/abroad),,pTarget,pTarget,5881,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country, not",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t400220_g1D,Motherís mother: country of birth (Germany/abroad),,pTarget,pTarget,5886,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country, not",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t400090_g1D,Father: Country of birth (Germany/abroad),,pTarget,pTarget,5891,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country, not",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t400070_g1D,Mother: Country of birth (Germany/abroad),,pTarget,pTarget,5896,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country, not",1,0,,,,,,,,,,1,multicollinearity - manual decision
+t70004m,Date of birth - month,,pTarget,pTarget,5131,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,1,removed later due to being redundant
+t70004y,Date of birth - year,,pTarget,pTarget,5132,collapse date_year,,1,0,y,,,,,,,,,1,removed later due to being redundant
+teacher_predominant_state,place of (predominant) teacher education,,created,pCourseClass,,,,,,,,,,,,,,,1,highly correlated with students state of residence
+ID_t,ID target,,Biography,Biography,4,ID_categorical,,0,1,,,,,,,,,,,
+wave,Wave,,Biography,Biography,7,ID_categorical,Fall/Winter2010 / Spring2011; Fall/Winter2011 / Spring2012; Fall/Winter2012 / Spring2013; Fall/Winter2013 / Spring2014; Fall/Winter2014; Spring 2015; Fall2015 / Spring2016; Fall/Winter2016; Fall/Winter2017; Fall/Winter2018; Fall/Winter2019,0,0,,,,,,,,,,,
+cohort,NEPS Starting Cohort,,CohortProfile,pTarget,21,continuous,Newborns (SC1); Kindergarten (SC2); Grade 5 (SC3); Grade 9 (SC4); First-year students (SC5); Adults (SC6); Reform in Thuringia (TH); G8/G9 reform in Baden-Wuerttemberg (BW),1,0,,,,,,,,,,,
+ID_cc,Course-ID: Grade,,CohortProfile,,22,ID_categorical,,0,1,,,,,,,,,,,
+ID_cg,Course-ID: German,,CohortProfile,,23,ID_categorical,,0,1,,,,,,,,,,,
+ID_cm,Course-ID: Mathematics,,CohortProfile,,24,ID_categorical,,0,1,,,,,,,,,,,
+ID_tg_w1,Test day 1: test groups-ID,,CohortProfile,,25,ID_categorical,,0,1,,,,,,,,,,,
+ID_i,Institution ID,,CohortProfile,,27,ID_categorical,,0,1,,,,,,,,,,,
+sample,Sampling in wave..,,CohortProfile,,28,categorical,Fall/Winter2010 / Spring2011; Fall/Winter2011 / Spring2012; Fall/Winter2012 / Spring2013; Fall/Winter2013 / Spring2014; Fall/Winter2014; Spring 2015; Fall2015 / Spring2016; Fall/Winter2016; Fall/Winter2017; Fall/Winter2018; Fall/Winter2019,0,0,,,,,,,,,,,
+tx80106,Sample: Type of school,,pCourseClass,Baseline,29,categorical,Elementary school; Hauptschule (Volksschule); School with multiple courses of; Realschule; Integrated comprehensive school; Gymnasium; Special needs school,1,0,,,,,,,,,,,
+tx80107,Sample: First participation in wave,,CohortProfile,,30,categorical,Fall/Winter2010 / Spring2011; Fall/Winter2011 / Spring2012; Fall/Winter2012 / Spring2013; Fall/Winter2013 / Spring2014; Fall/Winter2014; Spring 2015; Fall2015 / Spring2016; Fall/Winter2016; Fall/Winter2017; Fall/Winter2018; Fall/Winter2019,0,0,,,,,,,,,,,
+tx80109_g1,Sample: Federal state school (west/east),,CohortProfile,,31,effect code,West Germany; East Germany incl. Berlin,0,0,,,,,,,,,,,
+tx80220,Participation/drop-out status,,CohortProfile,,37,categorical,Participation; Temporary drop-out; Final drop-out,0,0,,,,,,,,,,,
+tx80230,Panel Frame,,CohortProfile,pTarget,38,categorical,NEPS Sample school; Individual follow-up; Outside of the general education school system; ,1,0,,,,,,,,,,,
+tx80234,Main field: Grade,,CohortProfile,pTarget,41,continuous,,1,0,,,,,,,,,,,
+tx80521,Data available: survey target person,,CohortProfile,,43,effect code,no; yes,0,0,,,,,,,,,,,
+tx8600m,Survey Target person: survey month 1,,CohortProfile,pTarget,44,collapse date_month,,1,0,y,,,,,,,,,,assume this is actually tx8601m
+tx8600y,Survey Target person: survey month 1,,CohortProfile,pTarget,45,collapse date_year,,1,0,y,,,,,,,,,,assume this is actually tx8601y
+tx8602m,Survey Target person: Survey month 2,,CohortProfile,pTarget,46,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+tx8602y,Survey Target person: Survey year 2,,CohortProfile,pTarget,47,collapse date_year,,1,0,y,,,,,,,,,,
+tx80522,Data available: competence test target person,,CohortProfile,,48,effect code,no; yes; Data not approved,0,0,,,,,,,,,,,
+tx8610m,Competence testing Target person: survey month 1,,CohortProfile,pTarget,50,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+tx8610y,Competence testing Target person: survey year 1,,CohortProfile,pTarget,51,collapse date_year,,1,0,y,,,,,,,,,,
+tx8611m,Competence testing Target person: survey month 2,,CohortProfile,pTarget,52,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+tx8611y,Competence testing Target person: survey year 2,,CohortProfile,pTarget,53,collapse date_year,,1,0,y,,,,,,,,,,
+tx80523,Data available: parent survey,,CohortProfile,,54,effect code,no; yes,0,0,,,,,,,,,,,
+tx8620m,Parent survey: survey month,,CohortProfile,pParent,55,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+tx8620y,Parent survey: survey year,,CohortProfile,pParent,56,collapse date_year,,1,0,y,,,,,,,,,,
+tx80524,Data available: institution,,CohortProfile,pCourseClass,57,effect code,no; yes,0,0,,,,,,,,,,,
+tx80525,Data available: Class course,,CohortProfile,pCourseClass,58,effect code,no; yes,0,0,,,,,,,,,,,
+tx80526,Data available: German course,,CohortProfile,pCourseClass,59,effect code,no; yes,0,0,,,,,,,,,,,
+tx8050m,List of children/students: Date of birth (month) Target child,,CohortProfile,pTarget,62,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+tx80504,List of children/students: Migrant background Target child,,CohortProfile,pTarget,64,effect code,Russian; Turkish,1,0,,,,,,,,,,,
+t723080_g1,Current type of school (constructed),,CohortProfile,,68,categorical,"Elementary school Orientation stage;
+Hauptschule [lower secondary school];
+Realschule [intermediate secondary school];
+School with multiple educational programs: No separation in school branches (yet);
+School with multiple educational programs: School branch of the Hauptschule;
+School with multiple educational pro‐ grams: School branch of the Re‐ alschule;
+School with multiple educational pro‐ grams: Unclear;
+Gymnasium [upper secondary school]; Special needs school;
+Comprehensive school: no separation of school branches (yet)",0,0,,,,,,,,,,,
+ex20100,Data line recommended for linkage,,pCourseClass,,128,effect code,no; yes,0,0,,,,,,,,,,,
+ID_e,ID teacher/educator,,pCourseClass,,124,ID_categorical,,0,1,,,,,,,,,,,
+e451010,Class: number of students with a migrant background (approximately),,pCourseClass,pCourseClass,134,continuous,none; almost none; less than half; about half; more than half; almost all; all,1,0,,,,,,,,,,,
+e79201a_D,Student: lower social class (in %),,pCourseClass,pCourseClass,135,continuous,,1,0,,,,,,,,,,,
+e79201b_D,Student: middle social class (in %),,pCourseClass,pCourseClass,139,continuous,,1,0,,,,,,,,,,,
+e79201c_D,Student: Higher social class (in %),,pCourseClass,pCourseClass,143,continuous,,1,0,,,,,,,,,,,
+e79202a_D,Students with at least one parent with a higher education degree (in %),,pCourseClass,pCourseClass,147,continuous,,1,0,,,,,,,,,,,
+ex80211,Survey/Test instrument,,pCourseClass,pCourseClass,173,categorical,"NEPS TH: allgemeiner Lehrerfragebogen, Sch¸lerInnen; NEPS TH: Eltern von Sch¸lerInnen; NEPS SC2: ErzieherInnen von 4-J‰hrigen; PAPI NA NA NA NA; NEPS SC5: Studierende (Rekrutierungsfragebogen -; NEPS SC5: Studierende (Rekrutierungsfragebogen -; NEPS TH: allgemeiner Lehrerfragebogen, Sch¸lerInnen; NEPS SC2: ErzieherInnen von 4-J‰hrigen; NEPS SC2: Leitung der Bildungseinrichtung,; NEPS SC2/SC3/SC4: Eltern von KiGAKinder; 1), CATI NA NA NA; NEPS SC3: Sch¸lerInnen Klasse 5; NEPS SC3/SC4: allgemeiner Lehrerfragebogen, Sch¸ler; (Welle 1), PAPI NA NA; NEPS SC3/SC4: KlassenlehrerInnen von Sch¸lern; PAPI NA NA NA NA; NEPS SC3: Sch¸ler/Schulabsolventen Panelbefragung, Welle; NEPS SC4: Erwachsene, Welle 12; NEPS SC1: VO-DS-SC-DE, wave 8,",0,0,,,,,,,,,,,
+e227400_D,Class: number of female students (in %),,pCourseClass,pCourseClass,175,continuous,,1,0,,,,,,,,,,,
+e227400_g1D,"Class: number of students, total (simplified)",,pCourseClass,pCourseClass,179,continuous,below 10; 10 to 14; 15 to 19; 20 to 24; 25 to 29; 30 to 34; 35 and more,1,0,,,,,,,,,,,
+e227401_D,Class: number of male students (in %),,pCourseClass,pCourseClass,182,continuous,,1,0,,,,,,,,,,,
+e451000_D,Class: number of students with a migrant background (in %),,pCourseClass,pCourseClass,186,continuous,,1,0,,,,,,,,,,,
+e229400_D,Class: facilities: classroom size (aggregated),,pCourseClass,pCourseClass,196,continuous,under 30; 30 to 39; 40 to 49; 50 to 59; 60 and more,1,0,,,,,,,,,,,
+e22941a,"Class: facilities: visualization aids, blackboard",,pCourseClass,pCourseClass,199,effect code,yes; no,1,0,,,,,,,,,,,
+e22941b,"Class: facilities: visualization aids, pin board",,pCourseClass,pCourseClass,200,effect code,yes; no,1,0,,,,,,,,,,,
+e22941c,"Class: facilities: visualization aids, magnetic board",,pCourseClass,pCourseClass,201,effect code,yes; no,1,0,,,,,,,,,,,
+e22941d,"Class: facilities: visualization aids, overhead projector",,pCourseClass,pCourseClass,202,effect code,yes; no,1,0,,,,,,,,,,,
+e22941e,"Visualization aids, beamer",,pCourseClass,pCourseClass,203,effect code,yes; no,1,0,,,,,,,,,,,
+e22941f,"Visualization aids, computer",,pCourseClass,pCourseClass,204,effect code,yes; no,1,0,,,,,,,,,,,
+e22941g,"Visualization aids, map stand",,pCourseClass,pCourseClass,205,effect code,yes; no,1,0,,,,,,,,,,,
+e22941h,"Visualization aids, flip chart",,pCourseClass,pCourseClass,206,effect code,yes; no,1,0,,,,,,,,,,,
+e22941i,"Visualization aids, electronic board",,pCourseClass,pCourseClass,207,effect code,yes; no,1,0,,,,,,,,,,,
+e229410,Class: facilities: storage possibility in the classroom,,pCourseClass,pCourseClass,208,effect code,yes; no,1,0,,,,,,,,,,,
+e22940a,"Class: classroom condition, brightness",,pCourseClass,pCourseClass,209,continuous,bad; rather bad; rather good; good,1,0,,,,,,,,,,,
+e22940b,"Class: classroom condition, size",,pCourseClass,pCourseClass,210,continuous,bad; rather bad; rather good; good,1,0,,,,,,,,,,,
+e22940c,"Class: classroom condition, functionality",,pCourseClass,pCourseClass,211,continuous,bad; rather bad; rather good; good,1,0,,,,,,,,,,,
+e22940d,"Class: classroom condition, structural integrity",,pCourseClass,pCourseClass,212,continuous,bad; rather bad; rather good; good,1,0,,,,,,,,,,,
+e190011_D,Class: number of students with special needs (in %),,pCourseClass,pCourseClass,214,continuous,,1,0,,,,,,,,,,,
+ef0001a,Help write applications,,pCourseClass,pCourseClass,228,effect code,yes; no,1,0,,,,,,,,,,,
+ef0001b,Contact to training companies,,pCourseClass,pCourseClass,229,effect code,yes; no,1,0,,,,,,,,,,,
+ef0001c,Feeling of beeing responsible,,pCourseClass,pCourseClass,230,effect code,yes; no,1,0,,,,,,,,,,,
+ef0001d,Thematization Career choice Parentsí evening,,pCourseClass,pCourseClass,231,effect code,yes; no,1,0,,,,,,,,,,,
+ef0001e,Discuss individual opportunities,,pCourseClass,pCourseClass,232,effect code,yes; no,1,0,,,,,,,,,,,
+e229820_D,"Work in profession (years, categorized)",,pEducator,pCourseClass,564,continuous,0 to less than 5; 5 to less than 10; 10 to less than 15; 15 to less than 20; 20 to less than 25; 25 to less than 30; 30 to less than 35; 35 and more,1,0,,,,,,,,,,,
+ed1008a,Stress in class - learning ability,,pEducator,pCourseClass,570,continuous,not stressful at all; rather not stressful; partly stressful; rather stressful; very stressful,1,0,,,,,,,,,,,
+ed1008b,Stress in class - methods,,pEducator,pCourseClass,571,continuous,not stressful at all; rather not stressful; partly stressful; rather stressful; very stressful,1,0,,,,,,,,,,,
+ed1008c,Stress in class - studentsí behavior,,pEducator,pCourseClass,572,continuous,not stressful at all; rather not stressful; partly stressful; rather stressful; very stressful,1,0,,,,,,,,,,,
+ed1008d,Stress in class - time pressure,,pEducator,pCourseClass,573,continuous,not stressful at all; rather not stressful; partly stressful; rather stressful; very stressful,1,0,,,,,,,,,,,
+ed1008e,Stress in class - planning,,pEducator,pCourseClass,574,continuous,not stressful at all; rather not stressful; partly stressful; rather stressful; very stressful,1,0,,,,,,,,,,,
+ed1009a,Stress at school - appreciation,,pEducator,pCourseClass,575,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply; Not a stress factor,1,0,,,,,,,,,5,,
+ed1011a,Attitude towards profession - enjoyment,,pEducator,pCourseClass,578,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_pos,0,,,,,,,,
+ed1011b,Attitude towards profession - overcoming,,pEducator,pCourseClass,579,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+ed1011c,Attitude towards profession - career choice,,pEducator,pCourseClass,580,continuous,does not apply at; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_pos,0,,,,,,,,
+ed1011d,I am relieved when I close the school door behind me,,pEducator,pCourseClass,581,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+ed1011e,Attitude towards profession - contentment,,pEducator,pCourseClass,582,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_pos,0,,,,,,,,
+ed1011f,Attitude towards profession - satisfaction,,pEducator,pCourseClass,583,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+ed1011g,I can imagine other jobs that I would prefer,,pEducator,pCourseClass,584,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+ed1011h,Attitude towards profession - fun,,pEducator,pCourseClass,585,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+ed1011i,Attitude towards profession - nervous tension,,pEducator,pCourseClass,586,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,ed1011_neg,0,,,,,,,,
+e22282x,Teacher: Further education: financial compensation,,pEducator,pCourseClass,587,effect code,yes; no,1,0,,,,,,,,,,,
+ed1010a,Teacher: Collaboration: Preparing teaching/learning materials,,pEducator,pCourseClass,607,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,ed1010,0,,,,,,,,
+ed1010b,Teacher: Collaboration: Preparing teaching units,,pEducator,pCourseClass,608,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,ed1010,0,,,,,,,,
+ed1010c,Teacher: Collaboration: Diagnosing and discussing learning progress,,pEducator,pCourseClass,609,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,ed1010,0,,,,,,,,
+ed1010d,Teacher: Collaboration: Jointly planning classes,,pEducator,pCourseClass,610,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,ed1010,0,,,,,,,,
+e22200a_v1,Teacher: Participation: Meetings and discussions,,pEducator,pCourseClass,618,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200b_v1,Teacher: Participation: Development of school curriculum,,pEducator,pCourseClass,619,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200c_v1,Teacher: Participation: Discussing teaching media,,pEducator,pCourseClass,620,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200d_v1,Teacher: Participation: Exchange of teaching materials,,pEducator,pCourseClass,621,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200e_v1,Teacher: Participation: Team discussions,,pEducator,pCourseClass,622,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,,,,,,,,,,
+e22200f_v1,Teacher: Participation: Discussions about learning development,,pEducator,pCourseClass,623,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,,,,,,,,,,
+e22200g_v1,Teacher: Participation: Team teaching in a class,,pEducator,pCourseClass,624,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200h_v1,Teacher: Participation: Professional learning activities,,pEducator,pCourseClass,625,continuous,never; less than once a; once a year; three to four times; monthly; weekly,1,0,,,,,,,,,,,
+e22200i_v1,Teacher: Participation: Sitting in on classes,,pEducator,pCourseClass,626,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200j_v1,Teacher: Participation: Cross-class activities,,pEducator,pCourseClass,627,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22200k_v1,Teacher: Participation: Discussing homework practice,,pEducator,pCourseClass,628,continuous,never; less than once a year; once a year; three to four times a; monthly; weekly,1,0,,,,,,,,,,,
+e22683a,Teacher: Importance of influential factors: Parentsí financial situation,,pEducator,pCourseClass,629,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683b,Teacher: Importance of influential factors: Willingness to make an effort,,pEducator,pCourseClass,630,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683c,Teacher: Importance of influential factors: Parentsí educational background,,pEducator,pCourseClass,631,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683d,Teacher: Importance of influential factors: Motherís employment,,pEducator,pCourseClass,632,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683e,Teacher: Importance of influential factors: Childís talent,,pEducator,pCourseClass,633,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683f,Teacher: Importance of influential factors: Childís language proficiency,,pEducator,pCourseClass,634,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683g,Teacher: Importance of influential factors: Method of teaching,,pEducator,pCourseClass,635,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683h,Teacher: Importance of influential factors: Coordination among teachers,,pEducator,pCourseClass,636,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22683i,Teacher: Importance of influential factors: Teaching quality,,pEducator,pCourseClass,637,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22680a,Teacher: orientation: making decisions,,pEducator,pCourseClass,638,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680b,Teacher: orientation: role as a teacher as to investigate/explore,,pEducator,pCourseClass,639,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680c,Teacher: orientation: learning by doing,,pEducator,pCourseClass,640,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680d,Teacher: orientation: lessons with clear answers,,pEducator,pCourseClass,641,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680e,Teacher: orientation: teaching of facts,,pEducator,pCourseClass,642,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680f,Teacher: orientation: reflecting on solutions themselves,,pEducator,pCourseClass,643,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680g,Teacher: orientation: quiet in the classroom,,pEducator,pCourseClass,644,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22680h,Teacher: orientation: thinking and reasoning processes,,pEducator,pCourseClass,645,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+e22681a,Teacher: orientation: educational goals: systematic expert knowledge,,pEducator,pCourseClass,646,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681b,Teacher: orientation: educational goals: understand the subject,,pEducator,pCourseClass,647,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681c,Teacher: orientation: educational goals: exemplary knowledge,,pEducator,pCourseClass,648,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681d,Teacher: orientation: educational goals: professional problem solving,,pEducator,pCourseClass,649,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681e,Teacher: orientation: educational goals: knowledge for later job,,pEducator,pCourseClass,650,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681f,Teacher: orientation: educational goals: self-confidence,,pEducator,pCourseClass,651,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681g,Teacher: orientation: educational goals: social competence,,pEducator,pCourseClass,652,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681h,Teacher: orientation: educational goals: identity,,pEducator,pCourseClass,653,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681i,Teacher: orientation: educational goals: cope with life demands,,pEducator,pCourseClass,654,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22681j,Teacher: orientation: self-assessment capability,,pEducator,pCourseClass,655,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682a,Teacher: Orientation: importance in profession: relationship with students,,pEducator,pCourseClass,656,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682b,Teacher: Orientation: importance in prof.: teaching structure/knowledge transfer,,pEducator,pCourseClass,657,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682c,Teacher: Orientation: importance in profession: objective criteria for assessing,,pEducator,pCourseClass,658,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682d,Teacher: Orientation: importance in profession: considering personal situation,,pEducator,pCourseClass,659,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682e,Teacher: Orientation: importance in profession: order and discipline,,pEducator,pCourseClass,660,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682f,Teacher: Orientation: importance in profession: informed about personal problems,,pEducator,pCourseClass,661,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682g,Teacher: Orientation: importance in profession: knowing the family background,,pEducator,pCourseClass,662,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682h,Teacher: Orientation: importance in profession: knowledge transfer,,pEducator,pCourseClass,663,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682i,Teacher: Orientation: importance in profession: focusing on tasks in syllabus,,pEducator,pCourseClass,664,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682j,Teacher: Orientation: importance in profession: evaluation of my lesson,,pEducator,pCourseClass,665,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682k,Teacher: Orientation: importance in profession: awake interest in subject,,pEducator,pCourseClass,666,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e22682l,"Teacher: Orientation: importance profession: enjoyment in learning, performing",,pEducator,pCourseClass,667,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536010,Time Career choice,,pEducator,pCourseClass,668,continuous,before starting school; during school time; immediately after acquiring higher education; one year or more after,1,0,,,,,,,,,,,
+e536020_D,Age Career choice (categorized),,pEducator,pCourseClass,671,continuous,,1,0,,,,,,,,,,,
+e536031,Aspects of career choice - compatibility with my family,,pEducator,pCourseClass,673,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536032,Aspects of career choice - contact with people,,pEducator,pCourseClass,674,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536033,Aspects of career choice - a lot of free time,,pEducator,pCourseClass,675,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536034,Aspects of career choice - good pay,,pEducator,pCourseClass,676,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536035,Aspects of career choice - new challenges,,pEducator,pCourseClass,677,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536036,Aspects of career choice - enjoyment in teaching,,pEducator,pCourseClass,678,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536037,Aspects of career choice - job security,,pEducator,pCourseClass,679,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536038,Aspects of career choice - prestige of the teaching profession,,pEducator,pCourseClass,680,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536039,Aspects of career choice - achieve something above average,,pEducator,pCourseClass,681,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e536040,Aspects of career choice - enjoyment (in subject) / passing on expert knowledge,,pEducator,pCourseClass,682,continuous,very unimportant; rather unimportant; rather important; very important,1,0,,,,,,,,,,,
+e537010,Teaching experience before college,,pEducator,pCourseClass,683,effect code,yes; no,1,0,,,,,,,,,,,
+e53702y_D,Year of university entrance qualification (categorized),,pEducator,pCourseClass,684,continuous,before 1970; 1970-1979; 1980-1989; 1990-1999; after 1999,1,0,,,,,,,,,,,
+e537022,does not acquire a higher education entrance qualification,,pEducator,pCourseClass,687,effect code,not specified; specified,1,0,,,,,,,,,,,
+e537041,Grade Higher education entrance qualification,,pEducator,pCourseClass,691,continuous,,1,0,,,,,,,,,,,
+e537042,no grade named,,pEducator,pCourseClass,693,effect code,not marked; No final grade received,1,0,,,,,,,,,,,
+e537050,Other higher degree program,,pEducator,pCourseClass,694,effect code,yes; no,1,0,,,,,,,,,,,
+e537061_g1,Other course of study 1 (KldB 1988),,pEducator,pCourseClass,695,categorical,"[0110] Landwirte, allgemein; [0111] Diplomlandwirte (nicht administrativ t‰tig); [0112] Ackerbauern; [0113] Viehhalter und Gr¸nlandwirte; [0114] Saat-, Pflanzenz¸chter; [0115] Pflanzensch¸tzer; [0116] Landwirte und Gastwirte bzw.Kaufleute; [0118] Landwirte und Winzer; [0119] andere Landwirte; [0120] Winzer, allgemein; [0121] Rebenveredler; [0129] andere Weinbauern; [9379] andere Maschinen-, Beh‰lterreiniger; [9711] Mithelfende Familienangehˆrige auﬂerhalb d.; [9811] Auszubildende mit noch nicht; [9821] Praktikanten, Volont‰re mit noch; [9829] Praktikanten; [9831] Schulentlassene (arbeitsuchend)",1,0,,,,,,e537061,0,,,,
+e537061_g2,Other course of study 1 (KldB 2010),,pEducator,pCourseClass,697,categorical,[01104] Commissioned officers; [01203] Senior non-commissioned officers and; [01302] Junior non-commissioned officers; [01402] Armed forces personnel in; [11101] Occupations in farming (without; [11102] Occupations in farming (without; [11103] Occupations in farming (without; [11104] Occupations in farming (without; [11113] Technical occupations in farming-complex; [11114] Technical occupations in farming-highly; [11123] Agricultural experts-complex tasks; [11124] Agricultural experts-high complex tasks; [94704] Occupations in museums (without; [94712] Technical occupations in museums; [94713] Technical occupations in museums; [94714] Technical occupations in museums; [94724] Art experts-highly complex tasks; [94794] Executives - museum,1,0,,,,,,e537061,0,,,,
+e537061_g3,Other course of study 1 (ISCO-88),,pEducator,pCourseClass,699,categorical,"[0100] Armed forces; [0110] Armed forces; [1000] Legislators, senior officials and; [1100] Legislators and senior officials; [1110] Legislators and senior government; [1120] Senior government officials; [1130] Tradidional chiefs and heads; [1140] Senior officials of special-interest; [1141] Senior officials of political; [1142] Senior officials of employersí,; [1143] Senior officials of humanitarian; [1200] Corporate managers; [9313] Building construction labourers; [9320] Manufacturing labourers; [9321] Assembling labourers; [9322] Hand packers and other; [9330] Transport labourers and freight; [9331] Hand or pedal vehicle",1,0,,,,,,e537061,0,,,,
+e537061_g4,Other course of study 1 (ISCO-08),,pEducator,pCourseClass,701,categorical,"[0] Armed forces occupations; [100] Commissioned armed forces officers; [110] Commissioned armed forces officers; [200] Non-commissioned armed forces officers; [210] Non-commissioned armed forces officers; [300] Armed forces occupations, other; [310] Armed forces occupations, other; [1000] Managers; [1100] Chief executives, senior officials; [1110] Legislators and senior officials; [1111] Legislators; [1112] Senior government officials; [9612] Refuse sorters; [9613] Sweepers and related labourers; [9620] Other elementary workers; [9621] Messengers, package deliverers and; [9622] Odd job persons; [9623] Meter readers and vending-machine",1,0,,,,,,e537061,0,,,,
+e537061_g5,Other course of study 1 (ISEI-88),,pEducator,pCourseClass,703,continuous,,1,0,,,,,,e537061,0,,,,
+e537061_g6,Other course of study 1 (SIOPS-88),,pEducator,pCourseClass,705,continuous,,1,0,,,,,,e537061,0,,,,
+e537061_g7,Other course of study 1 (MPS),,pEducator,pCourseClass,707,continuous,,1,0,,,,,,e537061,0,,,,
+e537061_g9,Other course of study 1 (BLK),,pEducator,pCourseClass,709,categorical,[AGR] Agricultural professions; [EMB] Simple manual professions; [QMB] Qualified manual professions; [TEC] Technician; [ING] engineers; [EDI] Simple services; [QDI] Qualified services; [SEMI] Semiprofessions; [PROF] Professions; [EVB] Common commercial and adminstrative; [QVB] Qualified commercial and adminstrative; [MAN] Manager,1,0,,,,,,e537061,0,,,,
+e537061_g14,Other course of study 1 (ISEI-08),,pEducator,pCourseClass,710,continuous,,1,0,,,,,,e537061,1,,,,
+e537061_g16,Other course of study 1 (SIOPS-08),,pEducator,pCourseClass,712,continuous,,1,0,,,,,,e537061,0,,,,
+e537062_g1,Other course of study 2 (KldB 1988),,pEducator,pCourseClass,714,categorical,"[0110] Landwirte, allgemein; [0111] Diplomlandwirte (nicht administrativ t‰tig); [0112] Ackerbauern; [0113] Viehhalter und Gr¸nlandwirte; [0114] Saat-, Pflanzenz¸chter; [0115] Pflanzensch¸tzer; [0116] Landwirte und Gastwirte bzw.Kaufleute; [0118] Landwirte und Winzer; [0119] andere Landwirte; [0120] Winzer, allgemein; [0121] Rebenveredler; [0129] andere Weinbauern; [9379] andere Maschinen-, Beh‰lterreiniger; [9711] Mithelfende Familienangehˆrige auﬂerhalb d.; [9811] Auszubildende mit noch nicht; [9821] Praktikanten, Volont‰re mit noch; [9829] Praktikanten",1,0,,,,,,e537062,0,,,,
+e537062_g2,Other course of study 2 (KldB 2010),,pEducator,pCourseClass,716,categorical,[01104] Commissioned officers; [01203] Senior non-commissioned officers and; [01302] Junior non-commissioned officers; [01402] Armed forces personnel in; [11101] Occupations in farming (without; [11102] Occupations in farming (without; [11103] Occupations in farming (without; [11104] Occupations in farming (without; [11113] Technical occupations in farming-complex; [11114] Technical occupations in farming-highly; [11123] Agricultural experts-complex tasks; [11124] Agricultural experts-high complex tasks; [94704] Occupations in museums (without; [94712] Technical occupations in museums; [94713] Technical occupations in museums; [94714] Technical occupations in museums; [94724] Art experts-highly complex tasks,1,0,,,,,,e537062,0,,,,
+e537062_g3,Other course of study 2 (ISCO-88),,pEducator,pCourseClass,718,categorical,"[0100] Armed forces; [0110] Armed forces; [1000] Legislators, senior officials and; [1100] Legislators and senior officials; [1110] Legislators and senior government; [1120] Senior government officials; [1130] Tradidional chiefs and heads; [1140] Senior officials of special-interest; [1141] Senior officials of political; [1142] Senior officials of employersí,; [1143] Senior officials of humanitarian; [1200] Corporate managers; [9313] Building construction labourers; [9320] Manufacturing labourers; [9321] Assembling labourers; [9322] Hand packers and other; [9330] Transport labourers and freight",1,0,,,,,,e537062,0,,,,
+e537062_g4,Other course of study 2 (ISCO-08),,pEducator,pCourseClass,720,categorical,"[0] Armed forces occupations; [100] Commissioned armed forces officers; [110] Commissioned armed forces officers; [200] Non-commissioned armed forces officers; [210] Non-commissioned armed forces officers; [300] Armed forces occupations, other; [310] Armed forces occupations, other; [1000] Managers; [1100] Chief executives, senior officials; [1110] Legislators and senior officials; [1111] Legislators; [1112] Senior government officials; [9612] Refuse sorters; [9613] Sweepers and related labourers; [9620] Other elementary workers; [9621] Messengers, package deliverers and; [9622] Odd job persons",1,0,,,,,,e537062,0,,,,
+e537062_g5,Other course of study 2 (ISEI-88),,pEducator,pCourseClass,722,continuous,,1,0,,,,,,e537062,0,,,,
+e537062_g6,Other course of study 2 (SIOPS-88),,pEducator,pCourseClass,724,continuous,,1,0,,,,,,e537062,0,,,,
+e537062_g7,Other course of study 2 (MPS),,pEducator,pCourseClass,726,continuous,,1,0,,,,,,e537062,0,,,,
+e537062_g9,Other course of study 2 (BLK),,pEducator,pCourseClass,728,categorical,[AGR] Agricultural professions; [EMB] Simple manual professions; [QMB] Qualified manual professions; [TEC] Technician; [ING] engineers; [EDI] Simple services; [QDI] Qualified services; [SEMI] Semiprofessions; [PROF] Professions; [EVB] Common commercial and adminstrative; [QVB] Qualified commercial and adminstrative; [MAN] Manager,1,0,,,,,,e537062,0,,,,
+e537062_g14,Other course of study 2 (ISEI-08),,pEducator,pCourseClass,729,continuous,,1,0,,,,,,e537062,1,,,,
+e537062_g16,Other course of study 2 (SIOPS-08),,pEducator,pCourseClass,731,continuous,,1,0,,,,,,e537062,0,,,,
+e537070,Semesters another course of study,,pEducator,pCourseClass,733,continuous,,1,0,,,,,,,,,,,
+e537080,other higher education degree,,pEducator,pCourseClass,735,effect code,yes; no,1,0,,,,,,,,,,,
+e537090,Teaching degree course,,pEducator,pCourseClass,736,effect code,yes; no,1,0,,,,,,,,,,,
+e537121,Activity before teaching degree course - immediate start,,pEducator,pCourseClass,747,effect code,yes; no,1,0,,,,,,,,,,,
+e537123,Activity before teaching degree course - other profession,,pEducator,pCourseClass,749,effect code,yes; no,1,0,,,,,,,,,,,
+e537124,Activity before teaching degree course - vocational training started,,pEducator,pCourseClass,750,effect code,yes; no,1,0,,,,,,,,,,,
+e537125,Activity before teaching degree course - vocational training completed,,pEducator,pCourseClass,751,effect code,yes; no,1,0,,,,,,,,,,,
+e537126,Activity before teaching degree course - another training program started,,pEducator,pCourseClass,752,effect code,yes; no,1,0,,,,,,,,,,,
+e537127,Activity before teaching degree course - another training program completed,,pEducator,pCourseClass,753,effect code,yes; no,1,0,,,,,,,,,,,
+e537130,Admission restriction,,pEducator,pCourseClass,754,effect code,yes; no,1,0,,,,,,,,,,,
+e537161_g1,Subject combination (1st subject; study area),,pEducator,pCourseClass,755,categorical,"Linguistic and cultural studies in; Protestant theology/religious education; Catholic theology/religious education; Philosophy; History; Library science, documentation; General and comparative literature and; Classical philology, Modern Greek; German Studies (German, Germanic Languages; English and American studies; Romance studies; Slavic, Baltic, Finno-Ugrian studies; Civil engineering; Surveying; Industrial engineering and management with; Arts, art science in general; Fine arts; Design",1,0,,,,,,,,,,,
+e537162_g1,Subject combination (2nd subject; study area),,pEducator,pCourseClass,757,categorical,"Linguistic and cultural studies in; Protestant theology/religious education; Catholic theology/religious education; Philosophy; History; Library science, documentation; General and comparative literature and; Classical philology, Modern Greek; German Studies (German, Germanic Languages; English and American studies; Romance studies; Slavic, Baltic, Finno-Ugrian studies; Surveying; Industrial engineering and management with; Arts, art science in general; Fine arts; Design; Performing arts, motion pictures and",1,0,,,,,,,,,,,
+e537163_g1,Subject combination (3rd subject; study area),,pEducator,pCourseClass,759,categorical,"Linguistic and cultural studies in; Protestant theology/religious education; Catholic theology/religious education; Philosophy; History; Library science, documentation; General and comparative literature and; Classical philology, Modern Greek; German Studies (German, Germanic Languages; English and American studies; Romance studies; Slavic, Baltic, Finno-Ugrian studies; Surveying; Industrial engineering and management with; Arts, art science in general; Fine arts; Design; Performing arts, motion pictures and",1,0,,,,,,,,,,,
+e537140,Completed teaching degree course,,pEducator,pCourseClass,761,effect code,yes; no,1,0,,,,,,,,,,,
+e41100a_g1,Mother tongue (number references),,pEducator,pCourseClass,766,continuous,,1,0,,,,,,,,,,,
+e41100a_g2D,"Mother tongue (reference 1, aggregated)",,pEducator,pCourseClass,769,effect code,German; not German,1,0,,,,,,,,,,,
+e412600,Teacher use of first language - with students,,pEducator,pCourseClass,779,continuous,never; rarely; sometimes; often; always,1,0,,,,,,,,,,,
+e537180,Grade First state examination,,pEducator,pCourseClass,787,continuous,,1,0,,,,,,,,,,,
+e537190,Second state examination,,pEducator,pCourseClass,789,effect code,yes; no,1,0,,,,,,,,,,,
+e537210,Grade Second state examination,,pEducator,pCourseClass,793,continuous,,1,0,,,,,,,,,,,
+e400000,Migrant background teacher,,pEducator,pCourseClass,795,categorical,"yes, I was born abroad; yes, I was born in; No.",1,0,,,,,,,,,,,
+e412610,Teacher use of first language - with studentsí parents,,pEducator,pCourseClass,796,continuous,never; rarely; sometimes; often; always,1,0,,,,,,,,,,,
+e76212y_D,Year of birth (categorized),,pEducator,pCourseClass,810,continuous,before 1950; 1950-1959; 1960-1969; 1970-1979; after 1979,1,0,,,,,,,,,,,
+e762110,Gender,,pEducator,pCourseClass,811,effect code,[m] male; [w] female,1,0,,,,,,,,,,,
+e22280a,Teacher: further education: own needs: educational standards,,pEducator,pCourseClass,865,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280b,Teacher: further education: own needs: assessment methods,,pEducator,pCourseClass,866,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280c,Teacher: further education: own needs: conducting classes,,pEducator,pCourseClass,867,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280d,Teacher: further education: own needs: expert knowledge,,pEducator,pCourseClass,868,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280e,Teacher: further education: own needs: computer and internet abilities teaching,,pEducator,pCourseClass,869,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280f,Teacher: further education: own needs: learning needs students,,pEducator,pCourseClass,870,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280g,Teacher: further education: own needs: handling disciplinary behavioral problems,,pEducator,pCourseClass,871,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280h,Teacher: further education: own needs: school board and administration,,pEducator,pCourseClass,872,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280i,Teacher: further education: own needs: teaching in a multicultural environment,,pEducator,pCourseClass,873,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280j,Teacher: further education: own needs: counseling for students,,pEducator,pCourseClass,874,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22280k,Teacher: further education: own needs: integrative teaching,,pEducator,pCourseClass,875,continuous,no need at all; minor need; average need; high need,1,0,,,,,,,,,,,
+e22281a,Teacher: further education: courses/workshop,,pEducator,pCourseClass,876,effect code,yes; no,1,0,,,,,,,,,,,
+e22281b,Teacher: further education: educational conferences or seminars,,pEducator,pCourseClass,877,effect code,yes; no,1,0,,,,,,,,,,,
+e22281c,Teacher: further education: qualification programs,,pEducator,pCourseClass,878,effect code,yes; no,1,0,,,,,,,,,,,
+e22281d,Teacher: further education: sitting in on classes at other schools,,pEducator,pCourseClass,879,effect code,yes; no,1,0,,,,,,,,,,,
+e22281e,Teacher: further education: participation in working group for prof. development,,pEducator,pCourseClass,880,effect code,yes; no,1,0,,,,,,,,,,,
+e22281f,Teacher: further education: research work,,pEducator,pCourseClass,881,effect code,yes; no,1,0,,,,,,,,,,,
+e22281g,Teacher: further education: mentor programs and/or training programs,,pEducator,pCourseClass,882,effect code,yes; no,1,0,,,,,,,,,,,
+e22282a,Teacher: further education: days of participation,,pEducator,pCourseClass,883,continuous,,1,0,,,,,,,,,,,
+e22282b,Teacher: further education: no participation,,pEducator,pCourseClass,885,effect code,not specified; specified,1,0,,,,,,,,,,,
+e222821,Teacher: further education: costs,,pEducator,pCourseClass,886,categorical,The further education costs were; I paid a portion of; I paid the entire amount,1,0,,,,,,,,,,,
+e222822,Teacher: further education: release from teaching,,pEducator,pCourseClass,887,effect code,yes; no,1,0,,,,,,,,,,,
+e222823,Teacher: further education: prefer more further education programs,,pEducator,pCourseClass,888,effect code,yes; no,1,0,,,,,,,,,,,
+p731118,Start living together with partner - estimation,,pParent,pParent,1951,effect code,Estimated; not estimated,1,0,,,,,,,,,,,
+p510001,"monthly household income, open",,pParent,pParent,1952,continuous,,1,0,,,,,,,,,,,
+p510002,"monthly household income, split",,pParent,pParent,1954,effect code,"less than 2,500 euros; 2,500 euros and more",1,0,,,,,,,,,,,
+p510004,"monthly household income, categories over 2,500 euros",,pParent,pParent,1956,continuous,"2.500 to less than; 3,000 to less than; 4,000 to less than; 5,000 euros and more",1,0,,,,,,,,,,,
+p30300a,Assessment economic household situation,,pParent,pParent,1957,continuous,very bad; rather bad; partly good; rather good; very good,1,0,,,,,,,,,,,
+p412000,Interaction language household,,pParent,pParent,1969,categorical,only German; mostly German; mostly another language; only another language; equally often German and other,1,0,,,,,,,,,,,
+p412070,Interaction language Interviewed parent - child,,pParent,pParent,1970,categorical,only German; mostly German; mostly another language; only another language; equally often German and other,1,0,,,,,,,,,,,
+p412080,Interactive language partner ñ child,,pParent,pParent,1971,categorical,only German; mostly German; mostly another language; only another language; equally often German and other,1,0,,,,,,,,,,,
+p412090,Interaction language interviewed parent - partner,,pParent,pParent,1972,categorical,only German; mostly German; mostly another language; only another language,1,0,,,,,,,,,,,
+p412030,Interaction language child - sibling,,pParent,pParent,1973,categorical,only German; mostly German; mostly another language; only another language; child doesnít speak yet; equally often German and language,1,0,,,,,,,,,,,
+p412040,Interaction language child ñ friends,,pParent,pParent,1974,categorical,only German; mostly German; mostly another language; only another language; equally often German and other,1,0,,,,,,,,,,,
+p414000_g1D,First language/mother tongue Partner (German/not German),,pParent,pParent,1939,effect code,German; not German,1,0,,,,,,,,,,,
+p413000_g1D,First language/mother tongue Respondent (German/not German),,pParent,pParent,1934,effect code,German; not German,1,0,,,,,,,,,,,
+p728000,Determination of special educational needs,,pParent,pParent,1993,effect code,yes; no,1,0,,,,,,,,,,,
+p72801a,Learning,,pParent,pParent,1994,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801b,Language,,pParent,pParent,1995,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801c,Physical and motor development,,pParent,pParent,1996,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801d,Emotional and social development,,pParent,pParent,1997,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801e,Mental development,,pParent,pParent,1998,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801f,Vision,,pParent,pParent,1999,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801g,Hearing,,pParent,pParent,2000,effect code,not specified; specified,1,0,,,,,,,,,,,
+p72801h,Autism,,pParent,pParent,2001,effect code,not specified; specified,1,0,,,,,,,,,,,
+p728040,Special educational support,,pParent,pParent,2002,effect code,yes; no,1,0,,,,,,,,,,,
+p524200,Other disabilities,,pParent,pParent,2032,effect code,yes; no,1,0,,,,,,,,,,,
+p524100,Hay fever,,pParent,pParent,2047,effect code,yes; no,1,0,,,,,,,,,,,
+p524101,Neurodermatitis,,pParent,pParent,2048,effect code,yes; no,1,0,,,,,,,,,,,
+p529000,Weight at birth,,pParent,pParent,2049,continuous,,1,0,,,,,,,,,,,
+p529001,Size at birth,,pParent,pParent,2051,continuous,,1,0,,,,,,,,,,,
+px80211,Survey/Test instrument,,ParentMethods,pParent,90,categorical,"NEPS TH: allgemeiner Lehrerfragebogen, Sch¸lerInnen; NEPS TH: Eltern von Sch¸lerInnen; NEPS SC2: ErzieherInnen von 4-J‰hrigen; NEPS SC5: Studierende (Rekrutierungsfragebogen -; NEPS SC5: Studierende (Rekrutierungsfragebogen -; NEPS TH: allgemeiner Lehrerfragebogen, Sch¸lerInnen; NEPS SC2: ErzieherInnen von 4-J‰hrigen; NEPS SC2: Leitung der Bildungseinrichtung,; NEPS SC2/SC3/SC4: Eltern von KiGAKinder; NEPS SC3: Sch¸lerInnen Klasse 5; NEPS SC3/SC4: allgemeiner Lehrerfragebogen, Schüler Klasse 5 (Welle 1) und Klasse 9 (Welle 1), PAPI ; NEPS SC3/SC4: KlassenlehrerInnen von Schülern Klasse 5 (Welle 1) und Klasse 9 (Welle 1), PAPI; NEPS SC3: DeutschlehrerInnen von Schülern Klasse 5, Welle 1, PAPI ; NEPS SC4: Erwachsene, Welle 12; NEPS SC1: VO-DS-SC-DE, wave 8,; NEPS SC3: Sch¸ler/Schulabsolventen, Welle 11,; NEPS SC1: Elternfragebogen, Welle 9,; NEPS SC1: RS-RX-MA, wave 9",0,0,,,,,,,,,,,
+p731702,Gender Respondent,,pParent,pParent,2155,effect code,[m] male; [w] female,1,0,,,,,,,,,,,
+p743040,Child in household,,pParent,pParent,2156,effect code,yes; no,1,0,,,,,,,,,,,
+p700010,Gender Target child,,pParent,pParent,2158,effect code,Boy; Girl,1,0,,,,,,,,,,,
+p70012m,Date of birth Target child (month),,pParent,pParent,2159,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+p70012y,Date of birth Target child (year),,pParent,pParent,2160,collapse date_year,,1,0,y,,,,,,,,,,
+p406000,Target child born in Germany?,,pParent,pParent,2161,effect code,yes; no,1,0,,,,,,,,,,,
+p406000_g1,Country of birth of target child (Germany/abroad; edited),,pParent,pParent,2162,effect code,yes; no,1,0,,,,,,,,,,,
+p407050_g1D,Citizenship Target child (German/not German),,pParent,pParent,1916,effect code,German; not German,1,0,,,,,,,,,,,
+p407055,Second citizenship Target child (yes/no),,pParent,pParent,2165,effect code,yes; no,1,0,,,,,,,,,,,
+p407060_g1D,Second citizenship Target child (German/not German),,pParent,pParent,1914,effect code,German; not German,1,0,,,,,,,,,,,
+p400500_g1v1,Generation status,,pParent,pParent,1911,continuous,no migrant background; 1st generation; 1.5th generation; 2nd generation; 2.25th generation; 2.5th generation; 2.75th generation; 3rd generation; 3.25th generation; 3.5th generation,1,0,,,,,,,,,,,
+p400500_g1,Generation status,,pParent,pParent,1905,continuous,no migrant background; 1st generation; 1.5th generation; 2nd generation; 2.25th generation; 2.5th generation; 2.75th generation; 3rd generation; 3.25th generation; 3.5th generation; 3.75th generation,1,0,,,,,,,,,,,
+p400500_g2v1,Missing/contradicting imformation about country of birth for generation status,,pParent,pParent,1907,categorical,Unique assignment possible; Information for target person unknown; Information for one parent unknown; Information for both parents unknown; Information for one grandparent unknown; Information for two grandparents unknown; Information for three grandparents unknown; Information for four grandparents unknown; no assignment to a generation,1,0,,,,,,,,,,,
+p400500_g2,Missing/contradicting imformation about country of birth for generation status,,pParent,pParent,1906,categorical,Unique assignment possible; Information for target person unknown; Information for one parent unknown; Information for both parents unknown; Information for one grandparent unknown; Information for two grandparents unknown; Information for three grandparents unknown; Information for four grandparents unknown; no assignment to a generation,1,0,,,,,,,,,,,
+p712020,Kindergarten attendance before starting school,,pParent,pParent,2167,effect code,yes; no,1,0,,,,,,,,,,,
+p71202m,Date of first Kindergarten attendance (month),,pParent,pParent,2168,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December,1,0,y,,,,,,,,,,
+p71202y,Date of first Kindergarten attendance (year),,pParent,pParent,2169,collapse date_year,,1,0,y,,,,,,,,,,
+p712030,"Premature enrollment, regular enrollment, or held back",,pParent,pParent,2170,categorical,early; regular; Deferral,1,0,,,,,,,,,,,
+p71203m,Date enrollment target child (month),,pParent,pParent,2171,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year,1,0,y,,,,,,,,,,
+p71203y,Date enrollment target child (year),,pParent,pParent,2172,collapse date_year,,1,0,y,,,,,,,,,,
+p725000,Held back/repeated grade,,pParent,pParent,2176,effect code,yes; no,1,0,,,,,,,,,,,
+p725001,Repeated grade: 1st grade,,pParent,pParent,2177,effect code,not specified; specified,1,0,,,,,,,,,,,
+p725002,Repeated grade: 2nd grade,,pParent,pParent,2178,effect code,not specified; specified,1,0,,,,,,,,,,,
+p725003,Repeated grade: 3rd grade,,pParent,pParent,2179,effect code,not specified; specified,1,0,,,,,,,,,,,
+p725004,Repeated grade: 4th grade,,pParent,pParent,2180,effect code,not specified; specified,1,0,,,,,,,,,,,
+p725005,Repeated grade: 5th grade,,pParent,pParent,2181,effect code,not specified; specified,1,0,,,,,,,,,,,
+p726000,Grade skipped,,pParent,pParent,2189,effect code,yes; no,1,0,,,,,,,,,,,
+p727000,Recommendation secondary school or course of education,,pParent,pParent,2202,effect code,yes; no,1,0,,,,,,,,,,,
+p727001_D,"Recommendation secondary school or course of education, which ones? (simplified)",,pParent,pParent,1904,categorical,"Hauptschule; Realschule; Gymnasium; Integrated comprehensive school; combined Hauptschule and Realschule; tended Realschule, Realschule plus,; Mittelschule/regular school/secondary school/Regionale Schule; Special needs school; Orientation stage/remedial stage; School for highly gifted",1,0,,,,,,,,,,,
+p727002_D,"Recommendation secondary school or course of education, further? (simplified)",,pParent,pParent,1903,categorical,"Hauptschule; Realschule; Gymnasium; Integrated comprehensive school; combined Hauptschule and Realschule ´also; tended Realschule, Realschule plus, Werkrealschule,; Mittelschule/regular school/secondary school/Regionale Schule; Special needs school; Orientation stage/remedial stage; School for highly gifted students; no second response",1,0,,,,,,,,,,,
+p19020j_O,Special needs OPEN,,pParent,pParent,2216,blank,,0,0,,,,,,,,,,,
+p72802m,Date of determination of special educational needs (month),,pParent,pParent,2217,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year,1,0,y,,,,,,,,,,
+p72802y,Date of determination of special educational needs (year),,pParent,pParent,2218,collapse date_year,,1,0,y,,,,,,,,,,
+p728050,Diagnosis of dyslexia,,pParent,pParent,2231,effect code,yes; no,1,0,,,,,,,,,,,
+p724102,Grade Annual report card Mathematics,,pParent,pParent,2233,continuous,very good; good; satisfactory; sufficient; inadequate; unsatisfactory; no grade provided,1,0,,,,,,,,,,,
+p724101,Grade Annual report card German,,pParent,pParent,2234,continuous,very good; good; satisfactory; sufficient; inadequate; unsatisfactory; no grade provided,1,0,,,,,,,,,,,
+pd0300g,German lessons: important to write error-free,,pParent,pParent,2242,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+pd0400g,"German: spelling skills no longer so important, because of writing aids on PC",,pParent,pParent,2243,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+pd0500g,German lessons: TC can only learn a lot if he/she likes to read,,pParent,pParent,2244,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+pd0600g,German lessons: good career prospects if TC reads a lot,,pParent,pParent,2245,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+pd0100g,German lessons: TC shall work hard in German class,,pParent,pParent,2246,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+pd0200g,German lessons: TC should learn to search information on the internet in class,,pParent,pParent,2247,continuous,disagree; rather disagree; rather agree; agree,1,0,,,,,,,,,,,
+p261100,Private tutoring - panel questions - occurrence,,pParent,pParent,2248,effect code,yes; no; child receives tutoring irregularly,1,0,,,,,,,,,,,
+p262101,Private tutoring - panel questions - subjects: mathematics,,pParent,pParent,2249,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262102,Private tutoring - panel questions - subjects: German,,pParent,pParent,2250,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262103,Private tutoring - panel questions - subjects: English,,pParent,pParent,2251,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262104,Private tutoring - panel questions - subjects: French,,pParent,pParent,2252,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262105,Private tutoring - panel questions - subjects: Latin,,pParent,pParent,2253,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262106,Private tutoring - panel questions - subjects: physics,,pParent,pParent,2254,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262107,Private tutoring - panel questions - subjects: chemistry,,pParent,pParent,2255,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262108,Private tutoring - panel questions - subjects: biology,,pParent,pParent,2256,effect code,not specified; specified,1,0,,,,,,,,,,,
+p262109,Private tutoring - panel questions - subjects: other subject(s),,pParent,pParent,2257,effect code,not specified; specified,1,0,,,,,,,,,,,
+p26210t_O,"Parents: tutoring, other subject (open)",,pParent,pParent,1950,blank,,0,0,,,,,,,,,,,
+pd0100n,Content of private tuition German: spelling and writing,,pParent,pParent,2258,effect code,not specified; specified,1,0,,,,,,,,,,,
+pd0200n,Content of private tuition German: reading and understanding texts,,pParent,pParent,2259,effect code,not specified; specified,1,0,,,,,,,,,,,
+pd0300n,Content of private tuition German: writing texts,,pParent,pParent,2260,effect code,not specified; specified,1,0,,,,,,,,,,,
+pd0400n,Content of private tuition German: speaking and oral comprehension,,pParent,pParent,2261,effect code,not specified; specified,1,0,,,,,,,,,,,
+pd0500n,Content of private tuition German: grammar,,pParent,pParent,2262,effect code,not specified; specified,1,0,,,,,,,,,,,
+p261101,Private tutoring - panel questions - scope,,pParent,pParent,2263,continuous,,1,0,,,,,,,,,,,
+pd0200u,Support - Frequency: purchasing additional study materials for TC,,pParent,pParent,2265,continuous,never; rarely; sometimes; often,1,0,,,,,,,,,,,
+pd0300u,Support - Frequency: look together with TC for information on the internet,,pParent,pParent,2266,continuous,never; rarely; sometimes; often; no internet available,1,0,,,,,,,,,,,
+pd0400u,Support - Frequency: support with speeches or presentations,,pParent,pParent,2267,continuous,never; rarely; sometimes; often; TC does not count lectures,1,0,,,,,,,,,,,
+pd0100u,Support - Frequency: talk with TC about books we have read together,,pParent,pParent,2268,continuous,never; rarely; sometimes; often; do not read together,1,0,,,,,,,,,,,
+p296402_O,Wish: What profession should TC learn,,pParent,pParent,2314,blank,,0,0,,,,,,,,,,,
+p73170y,Date of birth respondent: year,,pParent,pParent,2352,date_year,,1,0,,,,,,,,,,,
+p400070_g1D,Country of birth Mother Respondent (Germany/abroad; edited),,pParent,pParent,1867,categorical,Germany; not Germany; Elternteil nicht vorhanden/unbekannt,1,0,,,,,,,,,,,
+p400090_g1D,Country of birth Father Respondent (Germany/abroad; edited),,pParent,pParent,1860,categorical,Germany; not Germany; Elternteil nicht vorhanden/unbekannt,1,0,,,,,,,,,,,
+p40003m,Date of respondentís move to Germany (month),,pParent,pParent,2356,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year,1,0,y,,,,,,,,,,
+p40003y,Date of respondentís move to Germany (year),,pParent,pParent,2357,collapse date_year,,1,0,y,,,,,,,,,,
+p401000,Migrant status Respondent,,pParent,pParent,2359,categorical,"as an resettler or ethnic; block countries in order to; as asylum seeker or refugee; as family member or partner; as student or study applicant; as employee (also intern, au; or for another reason",1,0,,,,,,,,,,,
+p401001_O,Immigration status other,,pParent,pParent,2360,blank,,0,0,,,,,,,,,,,
+p401100,Citizenship Respondent,,pParent,pParent,2361,categorical,"yes/yes, in the meantime Iíve; no; Question erroneously not asked",1,0,,,,,,,,,,,
+p40113m,Date when respondent obtained German citizenship (month),,pParent,pParent,2363,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year; Question erroneously not asked,1,0,y,,,,,,,,,,
+p40113y,Date when respondent obtained German citizenship (year),,pParent,pParent,2365,collapse date_year,,1,0,y,,,,,,,,,,
+p401160,Application German citizenship Respondent,,pParent,pParent,2371,categorical,"yes, I plan to apply; yes, I have already applied; no, neither; Question erroneously not asked",1,0,,,,,,,,,,,
+p401170,Residency in Germany Respondent legally limited,,pParent,pParent,2372,effect code,legally limited; legally unlimited; Question erroneously not asked,1,0,,,,,,,,,,,
+p731801,Highest educational qualification Respondent in Germany,,pParent,pParent,2373,effect code,yes; no; no school-leaving qualification,1,0,,,,,,,,,,,
+p731801_g1,Highest educational qualification Respondent in Germany (edited),,pParent,pParent,2374,effect code,"yes; no; no school-leaving qualification; Germany and another country, not",1,0,,,,,,,,,,,
+p731802,"Highest educational qualification Respondent, type",,pParent,pParent,2376,categorical,"basic school‐leaving qualification from a Hauptschule, Volksschule, 8th grade polytechnic secondary school (POS); qualifying school‐leaving qualification from a Hauptschule; Mittlere Reife (school‐leaving qualification from a Realschule, Wirtschaftschule, Fachschulreife, Fachober‐schulreife, 10th grade polytechnic secondary school (POS)); Fachhochschulreife [entry qualification for universities of applied sciences], school‐leaving qualification from a Fachoberschule; general/subject‐related higher education entrance qualification (Abitur/12th grade extended Oberschule (EOS)); school‐leaving qualification from a special needs school; other qualification; no school‐leaving qualification ",0,0,,,,,,,,,,,have picked single variable
+p731802_g1,Highest educational qualification Respondent (ISCED),,pParent,pParent,2377,categorical,"[0A/1A] no qualification; [2B] school-leaving qualification of a; [2A] Mittlere Reife (intermediate school‐leaving qualification), school‐leaving qualification from a Realschule; [3A] Fachhochschulreife [entry qualification for universities of applied sciences], Hochschulreife [higher education entrance qualification]; [3B] apprenticeship, vocational school, school; subclerical class, basic professional skills; [3C] civil servant clerical class; [4A] Fachhochschulreife [entry qualification for universities of applied sciences], Hochschulreife [higher ed‐ucation entrance qualification] (second cycle); [4B] apprenticeship, vocational school, school of public health (less than two years), civil servant subclerical class, basic professional skills (second cycle); [5B] diploma from a Fachakademie and Berufsakademie, college of public administration, school of public health (at least two years), master craftsman/craftswoman/technician certificate, other qualification from a Fachschule, civil servant executive class; [5A] Bachelor, Master, Diploma, Magister, state examination, civil servant in administrative class; [6] doctorate, habilitation",0,0,,,,,,,,,,,have picked single variable
+p731802_g2,Highest educational qualification Respondent (CASMIN),,pParent,pParent,2379,categorical,[1a] no qualification; [1b]  school‐leaving qualification from a Hauptschule without vocational qualification; [1c] school‐leaving qualification from a Hauptschule with vocational qualification; [2b]  Mittlere Reife (intermediate school‐leaving qualification) without vocational qualificaton; [2a] Mittlere Reife (intermediate school‐leaving qualification) with vocational qualificaton; [2c_gen]  higher education entrance qualification without vocational qualification; [2c_voc]  higher education entrance qualification with vocational qualification ; [3a] degree from university of  applied sciences; [3b] university degree,0,0,,,,,,,,,,,have picked single variable
+p731802_g3,Highest educational qualification Respondent (education years = fCASMIN),,pParent,pParent,2380,continuous,no qualification,1,0,,,,,,,,,,,
+p731803_O,"Highest educational qualification Respondent, type open",,pParent,pParent,2381,blank,,0,0,,,,,,,,,,,
+p731807,"School-leaving qualification Respondent abroad, German equivalent",,pParent,pParent,2386,categorical,"basic school‐leaving qualification from a Hauptschule, Volksschule; qualifying school‐leaving qualification from a Hauptschule; Mittlere Reife (school‐leaving qualification from a Realschule/Wirtschaftschule, Fachschulreife, Fachober‐schulreife); Fachhochschulreife [entry qualification for universities of applied sciences], qualification Fachoberschule [type of vocational school leading to a higher education entrance qualification]; general or subject‐related higher education entrance qualification (Abitur/extended Oberschule (EOS) 12th grade); school‐leaving qualification from a special needs school; other qualification",1,0,,,,,,,,,,,
+p731808,Duration of respondentís school attendance abroad in years,,pParent,pParent,2387,continuous,,1,0,,,,,,,,,,,
+p731809,Permission to study at higher education institution with foreign school qualif,,pParent,pParent,2389,effect code,yes; no,1,0,,,,,,,,,,,
+p731810,Vocational qualification/higher education Respondent,,pParent,pParent,2390,effect code,yes; no,1,0,,,,,,,,,,,
+p731811,Highest vocational qualification respondent in Germany or abroad,,pParent,pParent,2391,categorical,in Germany; in country of origin; in another country,1,0,,,,,,,,,,,
+p731812,Type of training Respondent,,pParent,pParent,2392,categorical,I was trained in a; I did a longer vocational; I attended a vocational school; I attended a higher education; other,1,0,,,,,,,,,,,
+p731813,(Highest) professional qualification Respondent,,pParent,pParent,2394,categorical,"completed apprenticeship (administrative, company‐based, industrial, agricultural) journey‐ man’s/journeywoman’s certificate, dual vocational education, GDR: craft certificate;
+master craftsman/craftswoman, technician certificate;
+civil service training (civil service examination);
+certificate from a school of public health;
+certificate from a Berufsfachschule [vocational school] or a Handelsschule [type of vocational school for commercial professions];
+certificate from a Fachschule (also certificate from a Fachakademie [school‐based institutions of profes‐ sional development in Bavaria]);
+leaving qualification from a Fachschule in the GDR; Bachelor (e.g. B.A., B.Sc.);
+Diploma, Master (M.A.);
+Magister, state examination;
+doctorate, habilitation;
+Berufsakademie [university of cooperative education], cooperative state university without further specifi‐ cation;
+college of public administration without further specification;
+university of applied sciences, former college of engineering without further specification; university without further specification; higher education degree (degree course) without further specification",1,0,,,,,,,,,,,
+p731814_O,Vocational qualification respondent (open),,pParent,pParent,2396,blank,,0,0,,,,,,,,,,,
+p731817_O,Type Tertiary qualification Respondent (open),,pParent,pParent,2397,blank,,0,0,,,,,,,,,,,
+p731816,Type Tertiary qualification Respondent,,pParent,pParent,2398,categorical,"Bachelor (e.g., B.A., B.Sc., B.Eng.,; Diploma, Master (e.g. M.A., M.Sc.,; Magister, state examination; doctorate; other qualification",1,0,,,,,,,,,,,
+p731818,Type Tertiary educational institution Respondent,,pParent,pParent,2399,categorical,"Berufsakademie [university of cooperative education]; college of public administration; university of applied sciences or; university (including technical university, medical; college, veterinary college as well; other institution",1,0,,,,,,,,,,,
+p731820,Doctorate Respondent,,pParent,pParent,2400,categorical,"yes, doctorate completed; yes, doctorate ongoing; no",1,0,,,,,,,,,,,
+p731901,Employment Respondent,,pParent,pParent,2402,categorical,full-time employed; part-time employed; in a side job; unemployed,1,0,,,,,,,,,,,
+p731902,Working hours Respondent,,pParent,pParent,2403,continuous,,1,0,,,,,,,,,,,
+p731903,Status Respondent,,pParent,pParent,2406,categorical,"unemployed; short-time work; one-euro-job, ABM job [labor market; ployment agency/job center or ARGE; partial retirement, regardless of phase; general school education; vocational training; master craftsman/craftswoman or technician training; course of study; doctorate; retraining, further training or further; on maternity leave /parental leave; housewife/househusband; ill/temporarily unable to work; retiree, pensioner, (early) retirement; voluntary military service, federal volunteers; something else",1,0,,,,,,,,,,,
+p731904_g1,Occupation Respondent (KldB 1988),,pParent,pParent,2407,categorical,"[0110] Landwirte, allgemein; [0111] Diplomlandwirte (nicht administrativ t‰tig); [0112] Ackerbauern; [0113] Viehhalter und Gr¸nlandwirte; [0114] Saat-, Pflanzenz¸chter; [0115] Pflanzensch¸tzer; [0116] Landwirte und Gastwirte bzw.Kaufleute; [0118] Landwirte und Winzer; [0119] andere Landwirte; [0120] Winzer, allgemein; [0121] Rebenveredler; [0129] andere Weinbauern; [9711] Mithelfende Familienangehˆrige auﬂerhalb d.; [9811] Auszubildende mit noch nicht; [9821] Praktikanten, Volont‰re mit noch",1,0,,,,,,p731904,0,,,,
+p731904_g2,Occupation Respondent (KldB 2010),,pParent,pParent,2409,categorical,[01104] Commissioned officers; [01203] Senior non-commissioned officers and; [01302] Junior non-commissioned officers; [01402] Armed forces personnel in; [11101] Occupations in farming (without; [11102] Occupations in farming (without; [11103] Occupations in farming (without; [11104] Occupations in farming (without; [11113] Technical occupations in farming-complex; [11114] Technical occupations in farming-highly; [11123] Agricultural experts-complex tasks; [11124] Agricultural experts-high complex tasks; [94712] Technical occupations in museums; [94713] Technical occupations in museums; [94714] Technical occupations in museums,1,0,,,,,,p731904,0,,,,
+p731904_g3,Occupation Respondent (ISCO-88),,pParent,pParent,2411,categorical,"[0100] Armed forces; [0110] Armed forces; [1000] Legislators, senior officials and; [1100] Legislators and senior officials; [1110] Legislators and senior government; [1120] Senior government officials; [1130] Tradidional chiefs and heads; [1140] Senior officials of special-interest; [1141] Senior officials of political; [1142] Senior officials of employersí,; [1143] Senior officials of humanitarian; [1200] Corporate managers; [9320] Manufacturing labourers; [9321] Assembling labourers; [9322] Hand packers and other",1,0,,,,,,p731904,0,,,,
+p731904_g4,Occupation Respondent (ISCO-08),,pParent,pParent,2413,categorical,"[0] Armed forces occupations; [100] Commissioned armed forces officers; [110] Commissioned armed forces officers; [200] Non-commissioned armed forces officers; [210] Non-commissioned armed forces officers; [300] Armed forces occupations, other; [310] Armed forces occupations, other; [1000] Managers; [1100] Chief executives, senior officials; [1110] Legislators and senior officials; [1111] Legislators; [1112] Senior government officials; [9613] Sweepers and related labourers; [9620] Other elementary workers; [9621] Messengers, package deliverers and",1,0,,,,,,p731904,0,,,,
+p731904_g5,Occupation Respondent (ISEI-88),,pParent,pParent,2415,continuous,,1,0,,,,,,p731904,0,,,,
+p731904_g6,Occupation Respondent (SIOPS-88),,pParent,pParent,2417,continuous,,1,0,,,,,,p731904,0,,,,
+p731904_g7,Occupation Respondent (MPS),,pParent,pParent,2419,continuous,,1,0,,,,,,p731904,0,,,,
+p731904_g8,Occupation Respondent (EGP),,pParent,pParent,2421,categorical,[I] Upper service class; [II] Lower service class with; [IIIa] Employees performing non-manual class; [IIIb] Employees performing non-manual class; [IVa] Self-employed with employees; [IVb] Self-employed without employees; [IVc] Self-employed farmers and fishermen; [V] Supervisors in trade and; woman and those of equal; [VI] Skilled worker and other; [VIIa] Unskilled and semi-skilled workers; [VIIb] Agricultural and fishing workers; Has never been employed,1,0,,,,,,p731904,0,,,,
+p731904_g9,Occupation Respondent (BLK),,pParent,pParent,2422,categorical,[AGR] Agricultural professions; [EMB] Simple manual professions; [QMB] Qualified manual professions; [TEC] Technician; [ING] engineers; [EDI] Simple services; [QDI] Qualified services; [SEMI] Semiprofessions; [PROF] Professions; [EVB] Common commercial and adminstrative; [QVB] Qualified commercial and adminstrative; [MAN] Manager; Has never been employed,1,0,,,,,,p731904,0,,,,
+p731904_g14,Occupation Respondent (ISEI-08),,pParent,pParent,2424,continuous,,1,0,,,,,,p731904,1,,,,
+p731904_g15,Occupation Respondent (CAMSIS),,pParent,pParent,2426,continuous,,1,0,,,,,,p731904,0,,,,
+p731904_g16,Occupation Respondent (SIOPS-08),,pParent,pParent,2428,continuous,,1,0,,,,,,p731904,0,,,,
+p731905,Professional status Respondent,,pParent,pParent,2430,categorical,"worker; employee, also civil service employees; civil servant, including judge, excluding; regular/professional soldier; self-employed; assisting family member; freelancer",1,0,,,,,,,,,,,
+p731906,Exact professional position Respondent - worker,,pParent,pParent,2431,categorical,"unskilled worker; skilled worker, semi-skilled worker; skilled worker, journeyman/journeywoman; supervisor, group leader, brigadier; master craftsman/craftswoman, construction foreman/forewoman",1,0,,,,,,,,,,,
+p731907,Exact professional status Respondent - employee,,pParent,pParent,2432,categorical,"low-skill occupation, e.g. salesperson; qualified occupation, e.g. clerk, technical; highly qualified occupation or management position, e.g., engineer, research associate, head of department; occupation with extensive management tasks, e.g., director, CEO, member of the executive board; industrial and plant foreman/forewoman",1,0,,,,,,,,,,,
+p731908,Exact professional position Respondent - civil service category,,pParent,pParent,2433,categorical,"in subclerical class, up to and including Oberamtsmeister [title of a senior civil servant in the salary bracket A5];
+in clerical class, from assistant up to and including chief secretary or senior public official;
+in executive class, from inspector up to and including senior administration official or senior civil servant as well as teacher at primary school, Hauptschule or Realschule;
+in administrative class, judge, state council or higher, e.g. teacher from educational councillor upwards",1,0,,,,,,,,,,,
+p731910,Exact professional position Respondent - self-employed,,pParent,pParent,2435,categorical,"self‐employed in an academic freelance profession, e.g., physician, lawyer or architect; self‐employed in agriculture;
+self‐employed in trade, commerce, industry, services; other forms of self‐employment or other entrepreneurship",1,0,,,,,,,,,,,
+p731911_D,Number of employees Respondent (aggregated),,pParent,pParent,2437,continuous,none; 1 to less than 5; 5 to less than 10; 10 to less than 20; 20 and more,1,0,,,,,,,,,,,
+p731912,Management position Respondent,,pParent,pParent,2438,effect code,yes; no,1,0,,,,,,,,,,,
+p731913,Managerial authority Respondent Number,,pParent,pParent,2439,continuous,0; 1 to 2; 3 to 9; 10 and more,1,0,,,,,,,,,,,
+p401200,Comparison current professional situation - situation respondent in home country,,pParent,pParent,2440,continuous,worsened a lot; worsened; remained the same; improved; improved a lot; was not employed in country,1,0,,,,,,,,,,,
+p731915,Government benefits Respondent,,pParent,pParent,2445,effect code,yes; no,1,0,,,,,,,,,,,
+p731110,Respondentís marital status,,pParent,pParent,2446,categorical,"married and live with your; married and live apart from; divorced,; widowed,; single,; or do you live in",1,0,,,,,,,,,,,
+p731111,Living together with a partner,,pParent,pParent,2447,effect code,yes; no,1,0,,,,,,,,,,,
+p731112,Permanent partner,,pParent,pParent,2448,effect code,yes; no,1,0,,,,,,,,,,,
+p731113,Request Consent Partner,,pParent,pParent,2450,effect code,Target person does not disagrees; Target person disagrees,0,0,,,,,,,,,,,
+p731114,Request Subsequent agreement,,pParent,pParent,2451,effect code,yes; no,0,0,,,,,,,,,,,
+p731115,Informed consent Partner,,pParent,pParent,2452,effect code,yes; no,0,0,,,,,,,,,,,
+p73111y,Start living together with partner (year),,pParent,pParent,2454,collapse date_year,,1,0,y,,,,,,,,,,
+p73111m,Start living together with partner (month),,pParent,pParent,2456,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year,1,0,y,,,,,,,,,,
+p731117,Relationship Partner to target child,,pParent,pParent,2458,categorical,biological mother; biological father; adoptive mother; adoptive father; foster mother; foster father; partner of father/mother; partner of mother/father; stepmother; stepfather; other relationship,1,0,,,,,,,,,,,
+p73175y,Year of birth Partner,,pParent,pParent,2459,date_year,,1,0,,,,,,,,,,,
+p403030,Age Partner when moving to Germany,,pParent,pParent,2466,continuous,,1,0,,,,,,,,,,,
+p403040,Migrant status Partner,,pParent,pParent,2468,categorical,"as an resettler or ethnic; block countries in order to; as asylum seeker or refugee; as family member or partner; as a student or applying; as employee (also intern, au; or for another reason",1,0,,,,,,,,,,,
+p403090_g1D,Country of birth Partnerís father (Germany/abroad; edited),,pParent,pParent,2471,categorical,"Germany; not Germany; Ausland, aber nicht kodierbar; Elternteil nicht vorhanden/unbekannt",1,0,,,,,,,,,,,
+p403070_g1D,Country of birth Partnerís mother (Germany/abroad; edited),,pParent,pParent,2476,categorical,"Germany; not Germany; Ausland, aber nicht kodierbar; Elternteil nicht vorhanden/unbekannt",1,0,,,,,,,,,,,
+p40403m,"Acquisition German citizenship Partner, date (month)",,pParent,pParent,2481,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year,1,0,y,,,,,,,,,,
+p40403y,"Acquisition German citizenship Partner, date (year)",,pParent,pParent,2483,collapse date_year,,1,0,y,,,,,,,,,,
+p404070,Residency in Germany Partner legally limited,,pParent,pParent,2488,effect code,legally limited; legally unlimited,1,0,,,,,,,,,,,
+p731851,Highest educational qualification Partner in Germany,,pParent,pParent,2489,effect code,yes; no; no school-leaving qualification,1,0,,,,,,,,,,,
+p731851_g1,Highest educational qualification Partner in Germany (edited),,pParent,pParent,2490,effect code,"yes; no; no school-leaving qualification; Germany and another country, not",1,0,,,,,,,,,,,
+p731852,"Highest educational qualification Partner, type",,pParent,pParent,2492,categorical,"basic school‐leaving qualification from a Hauptschule, Volksschule, 8th grade polytechnic secondary school (POS);
+qualifying school‐leaving qualification from a Hauptschule;
+Mittlere Reife (school‐leaving qualification from a Realschule, Wirtschaftschule, Fachschulreife, Fachober‐ schulreife, 10th grade polytechnic secondary school (POS));
+Fachhochschulreife [entry qualification for universities of applied sciences], school‐leaving qualification from a Fachoberschule;
+general/subject‐related higher education entrance qualification (Abitur/12th grade extended Oberschule (EOS));
+school‐leaving qualification from a special needs school; other qualification; no school-leaving qualification",0,0,,,,,,,,,,,have picked single variable
+p731852_g1,Highest educational qualification Partner (ISCED),,pParent,pParent,2493,categorical,"[0A/1A] no qualification;
+[2B] school‐leaving qualification from a Hauptschule, Volksschule, vocational preparation measure;
+[2A] Mittlere Reife (intermediate school‐leaving qualification), school‐leaving qualification from a Realschule;
+[3A] Fachhochschulreife [entry qualification for universities of applied sciences], Hochschulreife [higher ed‐ ucation entrance qualification];
+[3B] apprenticeship, vocational school, school of public health (less than two years), civil servant subclerical class, basic professional skills;
+[3C] civil servant clerical class;
+[4A] Fachhochschulreife [entry qualification for universities of applied sciences], Hochschulreife [higher ed‐ ucation entrance qualification] (second cycle);
+[4B] apprenticeship, vocational school, school of public health (less than two years), civil servant subclerical class, basic professional skills (second cycle);
+[5B] diploma from a Fachakademie and Berufsakademie, college of public administration, school of public health (at least two years), master craftsman/craftswoman/technician certificate, other qualification from a Fachschule, civil servant executive class;
+[5A] Bachelor, Master, Diploma, Magister, state examination, civil servant in administrative class;
+[6] doctorate, habilitation",0,0,,,,,,,,,,,have picked single variable
+p731852_g2,Highest educational qualification Partner (CASMIN),,pParent,pParent,2495,categorical,[1a] no qualification; [1b] school-leaving qualification of; [1c] school-leaving qualification of; [2b] Mittlere Reife (intermediate; [2a] Mittlere Reife (intermediate; [2c_gen] higher education entrance; [2c_voc] higher education entrance; [3a] degree from university; [3b] university degree,0,0,,,,,,,,,,,have picked single variable
+p731852_g3,Highest educational qualification Partner (education years = fCASMIN),,pParent,pParent,2496,continuous,no qualification,1,0,,,,,,,,,,,
+p731853_O,"Highest educational qualification Partner, type open",,pParent,pParent,2497,blank,,0,0,,,,,,,,,,,
+p731857,"School-leaving qualification Partner abroad, German equivalent",,pParent,pParent,2502,categorical,"basic school‐leaving qualification from a Hauptschule, Volksschule; qualifying school‐leaving qualification from a Hauptschule;
+Mittlere Reife (intermediate school‐leaving qualification) (school‐leaving qualification from a Realschule, Wirtschaftschule, Fachschulreife, Fachoberschulreife);
+Fachhochschulreife [entry qualification for universities of applied sciences]/ school‐leaving qualification of Fachoberschule;
+general or subject‐related higher education entrance qualification (Abitur/extended Oberschule (EOS) 12th grade);
+school‐leaving qualification from a special needs school; other qualification",1,0,,,,,,,,,,,
+p731858,Duration of partnerís school attendance abroad in years,,pParent,pParent,2503,continuous,,1,0,,,,,,,,,,,
+p731859,Eligibility to study at higher educ. inst. with foreign school qualif. Partner,,pParent,pParent,2505,effect code,yes; no,1,0,,,,,,,,,,,
+p731860,Vocational qualification/higher education Partner,,pParent,pParent,2506,effect code,yes; no,1,0,,,,,,,,,,,
+p731861,Highest vocational qualification partner in Germany or abroad,,pParent,pParent,2507,categorical,in Germany; in country of origin; in another country,1,0,,,,,,,,,,,
+p731862,Type of training Partner,,pParent,pParent,2508,categorical,"He was trained in a company/ She was trained in a company;
+He did a longer vocational training in a company/ She did a longer vocational training in a company;
+He attended a vocational school/ She attended a vocational school;
+He attended a higher education institution/university/ She attended a higher education institution/university;
+other",1,0,,,,,,,,,,,
+p731863,(Highest) professional qualification Partner,,pParent,pParent,2510,categorical,"completed apprenticeship (administrative, company‐based, industrial, agricultural) journey‐ man’s/journeywoman’s certificate, dual vocational education, GDR: craft certificate;
+master craftsman/craftswoman, technician certificate;
+civil service training (civil service examination);
+certificate from a school of public health;
+certificate from a Berufsfachschule [vocational school] or a Handelsschule [type of vocational school for commercial professions];
+certificate from a Fachschule «(also certificate from a Fachakademie [school‐based institutions of profes‐ sional development in Bavaria])»;
+leaving qualification from a Fachschule in the GDR Bachelor (e.g. B.A., B.Sc.);
+Diploma, Master (M.A.);
+Magister, state examination;
+doctorate, habilitation;
+Berufsakademie [university of cooperative education], cooperative state university without further specifi‐ cation;
+college of public administration without further specification;
+university of applied sciences, former college of engineering without further specification; university without further specification; higher education degree (degree course) without further specification",1,0,,,,,,,,,,,
+p731864_O,Professional qualification Partner (open),,pParent,pParent,2512,blank,,0,0,,,,,,,,,,,
+p731867_O,Type Tertiary qualification Partner (open),,pParent,pParent,2513,blank,,0,0,,,,,,,,,,,
+p731866,Type Tertiary qualification Partner,,pParent,pParent,2514,categorical,"Bachelor (e.g., B.A., B.Sc., B.Eng.,; Diploma, Master (e.g. M.A., M.Sc.,; Magister, state examination; doctorate; other qualification",1,0,,,,,,,,,,,
+p731868,Type Tertiary educational institution Partner,,pParent,pParent,2515,categorical,"Berufsakademie [university of cooperative education]; college of public administration; university of applied sciences or; University (including technical university, medical; college, veterinary college as well; other institution",1,0,,,,,,,,,,,
+p731870,Doctorate Partner,,pParent,pParent,2516,categorical,"yes, doctorate completed; yes, doctorate ongoing; no",1,0,,,,,,,,,,,
+p731951,Employment Partner,,pParent,pParent,2518,categorical,full-time employed; part-time employed; in a side job; unemployed,1,0,,,,,,,,,,,
+p731952,Working hours partner,,pParent,pParent,2519,continuous,,1,0,,,,,,,,,,,
+p731953,Status partner,,pParent,pParent,2522,categorical,"unemployed; short-time work; one-euro-job, ABM job [labor market; ployment agency/job center or ARGE; partial retirement, regardless of phase; general school education; vocational training; master craftsman/craftswoman or technician training; course of study; doctorate; retraining, further training or further; on maternity leave /parental leave; housewife/househusband; ill/temporarily unable to work; retiree, pensioner, (early) retirement; voluntary military service, federal volunteers; something else",1,0,,,,,,,,,,,
+p731954_g1,Occupation Partner (KldB 1988),,pParent,pParent,2523,categorical,"[0110] Landwirte, allgemein; [0111] Diplomlandwirte (nicht administrativ t‰tig); [0112] Ackerbauern; [0113] Viehhalter und Gr¸nlandwirte; [0114] Saat-, Pflanzenz¸chter; [0115] Pflanzensch¸tzer; [0116] Landwirte und Gastwirte bzw.Kaufleute; [0118] Landwirte und Winzer; [0119] andere Landwirte; [0120] Winzer, allgemein; [0121] Rebenveredler; [0129] andere Weinbauern; [9811] Auszubildende mit noch nicht; [9821] Praktikanten, Volont‰re mit noch; [9829] Praktikanten; [9831] Schulentlassene (arbeitsuchend)",1,0,,,,,,p731954,0,,,,
+p731954_g2,Occupation Partner (KldB 2010),,pParent,pParent,2525,categorical,[01104] Commissioned officers; [01203] Senior non-commissioned officers and; [01302] Junior non-commissioned officers; [01402] Armed forces personnel in; [11101] Occupations in farming (without; [11102] Occupations in farming (without; [11103] Occupations in farming (without; [11104] Occupations in farming (without; [11113] Technical occupations in farming-complex; [11114] Technical occupations in farming-highly; [11123] Agricultural experts-complex tasks; [11124] Agricultural experts-high complex tasks; [94713] Technical occupations in museums; [94714] Technical occupations in museums; [94724] Art experts-highly complex tasks; [94794] Executives - museum,1,0,,,,,,p731954,0,,,,
+p731954_g3,Occupation Partner (ISCO-88),,pParent,pParent,2527,categorical,"[0100] Armed forces; [0110] Armed forces; [1000] Legislators, senior officials and; [1100] Legislators and senior officials; [1110] Legislators and senior government; [1120] Senior government officials; [1130] Tradidional chiefs and heads; [1140] Senior officials of special-interest; [1141] Senior officials of political; [1142] Senior officials of employersí,; [1143] Senior officials of humanitarian; [1200] Corporate managers; [9321] Assembling labourers; [9322] Hand packers and other; [9330] Transport labourers and freight; [9331] Hand or pedal vehicle",1,0,,,,,,p731954,0,,,,
+p731954_g4,Occupation Partner (ISCO-08),,pParent,pParent,2529,categorical,"[0] Armed forces occupations; [100] Commissioned armed forces officers; [110] Commissioned armed forces officers; [200] Non-commissioned armed forces officers; [210] Non-commissioned armed forces officers; [300] Armed forces occupations, other; [310] Armed forces occupations, other; [1000] Managers; [1100] Chief executives, senior officials; [1110] Legislators and senior officials; [1111] Legislators; [1112] Senior government officials; [9620] Other elementary workers; [9621] Messengers, package deliverers and; [9622] Odd job persons; [9623] Meter readers and vending-machine",1,0,,,,,,p731954,0,,,,
+p731954_g5,Occupation Partner (ISEI-88),,pParent,pParent,2531,continuous,,1,0,,,,,,p731954,0,,,,
+p731954_g6,Occupation Partner (SIOPS-88),,pParent,pParent,2533,continuous,,1,0,,,,,,p731954,0,,,,
+p731954_g7,Occupation Partner (MPS),,pParent,pParent,2535,continuous,,1,0,,,,,,p731954,0,,,,
+p731954_g8,Occupation Partner (EGP),,pParent,pParent,2537,categorical,[I] Upper service class; [II] Lower service class with; [IIIa] Employees performing non-manual class; [IIIb] Employees performing non-manual class; [IVa] Self-employed with employees; [IVb] Self-employed without employees; [IVc] Self-employed farmers and fishermen; [V] Supervisors in trade and; woman and those of equal; [VI] Skilled worker and other; [VIIa] Unskilled and semi-skilled workers; [VIIb] Agricultural and fishing workers; No occupation as of yet,1,0,,,,,,p731954,0,,,,
+p731954_g9,Occupation Partner (BLK),,pParent,pParent,2539,categorical,[AGR] Agricultural professions; [EMB] Simple manual professions; [QMB] Qualified manual professions; [TEC] Technician; [ING] engineers; [EDI] Simple services; [QDI] Qualified services; [SEMI] Semiprofessions; [PROF] Professions; [EVB] Common commercial and adminstrative; [QVB] Qualified commercial and adminstrative; [MAN] Manager; No occupation as of yet,1,0,,,,,,p731954,0,,,,
+p731954_g14,Occupation Partner (ISEI-08),,pParent,pParent,2541,continuous,,1,0,,,,,,p731954,1,,,,
+p731954_g15,Occupation Partner (CAMSIS),,pParent,pParent,2543,continuous,,1,0,,,,,,p731954,0,,,,
+p731954_g16,Occupation Partner (SIOPS-08),,pParent,pParent,2545,continuous,,1,0,,,,,,p731954,0,,,,
+p731955,Professional status Partner,,pParent,pParent,2547,categorical,"worker; employee, also civil service employees; civil servant, including judge, excluding; regular/professional soldier; self-employed; assisting family member; freelancer",1,0,,,,,,,,,,,
+p731956,Exact professional status Partner - worker,,pParent,pParent,2548,categorical,"unskilled worker; skilled worker, semi-skilled worker; skilled worker, journeyman/journeywoman; supervisor, group leader, brigadier; master craftsman/craftswoman, construction foreman/forewoman",1,0,,,,,,,,,,,
+p731957,Exact professional status Partner - employee,,pParent,pParent,2549,categorical,"low‐skill occupation, e.g. salesperson;
+qualified occupation, e.g. clerk, technical drawer;
+highly qualified occupation or management position, e.g., engineer, research associate, head of department; occupation with extensive management tasks, e.g., director, CEO, member of the executive board; industrial and plant foreman/forewoman",1,0,,,,,,,,,,,
+p731958,Exact professional status Partner - civil service category,,pParent,pParent,2550,categorical,"in subclerical class, up to and including Oberamtsmeister [title of a senior civil servant in the salary bracket A5];
+in clerical class, from assistant up to and including chief secretary or senior public official;
+in executive class, from inspector up to and including senior administration official or senior civil servant as well as teacher at primary school, Hauptschule or Realschule;
+in administrative class, judge, state council or higher, e.g. teacher from educational councillor upwards",1,0,,,,,,,,,,,
+p731960,Exact professional position Partner - self-employed,,pParent,pParent,2552,categorical,"self‐employed in an academic freelance profession, e.g., physician, lawyer or architect; self‐employed in agriculture;
+self‐employed in trade, commerce, industry, services; other forms of self‐employment or other entrepre‐ neurship",1,0,,,,,,,,,,,
+p731961_D,Number of employees Partner (aggregated),,pParent,pParent,2554,continuous,none; 1 to less than 5; 5 to less than 10; 10 to less than 20; 20 and more,1,0,,,,,,,,,,,
+p731962,Management position Partner,,pParent,pParent,2555,effect code,yes; no,1,0,,,,,,,,,,,
+p404100,Comparison professional situation with situation in home country Partner,,pParent,pParent,2556,continuous,worsened a lot; worsened; remained the same; improved; improved a lot; was already not employed in,1,0,,,,,,,,,,,
+p731965,Government benefits Partner,,pParent,pParent,2562,effect code,yes; no,1,0,,,,,,,,,,,
+p41040a,Subjective linguistic competence child language of origin - comprehension,,pParent,pParent,2567,continuous,very well; rather well; rather badly; very badly; not at all; other non-German language of origin,1,0,,,,,,,,,,,
+p41040b,Subjective linguistic competence child language of origin - speaking,,pParent,pParent,2568,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+p41040d,Subjective linguistic competence child language of origin - writing,,pParent,pParent,2570,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+p413002_g1D,Further first language/mother tongue Respondent (German/not German),,pParent,pParent,2573,categorical,German; not German; no further language,1,0,,,,,,,,,,,
+p413050,Bilinguality Interviewed parent (auto variable),,pParent,pParent,2577,effect code,yes; no,1,0,,,,,,,,,,,
+p410000_g1D,First language/mother tongue Child (German/not German),,pParent,pParent,2581,effect code,German; not German,1,0,,,,,,,,,,,
+p410002_g1D,Further first language/mother tongue Child (German/not German),,pParent,pParent,2586,categorical,German; not German; no further language,1,0,,,,,,,,,,,
+p410040,German language Child (auto variable),,pParent,pParent,2589,effect code,yes; no,1,0,,,,,,,,,,,
+p410050,Bilingualism Child (auto variable),,pParent,pParent,2590,effect code,yes; no,1,0,,,,,,,,,,,
+p414002_g1D,Further first language/mother tongue Partner (German/not German),,pParent,pParent,2594,categorical,German; not German; no further language,1,0,,,,,,,,,,,
+p414040,German language Partner (auto variable),,pParent,pParent,2597,effect code,yes; no,1,0,,,,,,,,,,,
+p414050,Bilingualism Partner (auto variable),,pParent,pParent,2598,effect code,yes; no,1,0,,,,,,,,,,,
+p34001a_g1,"Frequency reading - free time, working day (summarized)",,pParent,pParent,2684,continuous,,1,0,,,,,,,,,,,
+p34001c_g1,"Frequency reading - free time, non-working day (summarized)",,pParent,pParent,2686,continuous,,1,0,,,,,,,,,,,
+p34005a,Number Books,,pParent,pParent,2688,continuous,0 to 10 books; 11 to 25 books; 26 to 100 books; 101 to 200 books; 201 to 500 books; more than 500 books,1,0,,,,,,,,,,,
+p34009a,Participation in high culture: museum or art exhibition,,pParent,pParent,2694,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,p34009,0,,,,,,,,
+p34009b,Participation in high culture: movies,,pParent,pParent,2695,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,p34009,0,,,,,,,,
+p34009c,"Participation in high culture: opera, ballet, classical concert",,pParent,pParent,2696,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,p34009,0,,,,,,,,
+p34009d,Participation in high culture: theater,,pParent,pParent,2697,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,p34009,0,,,,,,,,
+p34009e,Participation in high culture: rock/pop concert,,pParent,pParent,2698,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,p34009,0,,,,,,,,
+p741001,Size of household,,pParent,pParent,2699,continuous,,1,0,,,,,,,,,,,
+p742001,Persons under the age of 14 in the household,,pParent,pParent,2700,continuous,,1,0,,,,,,,,,,,
+p286711,Satisfaction school - school hours,,pParent,pParent,2721,continuous,does rather not apply; does rather apply; does apply,1,0,,,,,,,,,,,
+p286712,Satisfaction school - equipment and rooms,,pParent,pParent,2722,continuous,does rather not apply; does rather apply; does apply,1,0,,,,,,,,,,,
+p286713,Satisfaction school - meet childís needs,,pParent,pParent,2723,continuous,does rather not apply; does rather apply; does apply,1,0,,,,,,,,,,,
+p286714,Satisfaction school - performance demands,,pParent,pParent,2724,continuous,does rather not apply; does rather apply; does apply,1,0,,,,,,,,,,,
+p286715,Satisfaction school - general,,pParent,pParent,2725,continuous,does rather not apply; does rather apply; does apply,1,0,,,,,,,,,,,
+p751001_g1,Place of residence (west/east),,pParent,pParent,2726,categorical,West Germany; East Germany incl. Berlin; abroad; changing locations,1,0,,,,,,,,,,,
+tx20100,Data line recommended for linkage,,pTarget,pTarget,3463,effect code,no; yes,0,0,,,,,,,,,,,
+t523010,Days absent due to illness,,pTarget,pTarget,3464,continuous,,1,0,,,,,,,,,,,
+t291300,Filter question: Transition from elementary school,,pTarget,pTarget,3466,effect code,yes; no,1,0,,,,,,,,,,,
+t292301,"Comparison to elementary school, lessons are more fun",,pTarget,pTarget,3467,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t292302,"Comparison to elementary school, feel more comfortable in new class",,pTarget,pTarget,3468,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t292303,"Comparison to elementary school, like classmates more",,pTarget,pTarget,3469,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t292304,"Comparison to elementary school, Iím more popular",,pTarget,pTarget,3470,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t292305,"Comparison to elementary school, subjects are easier",,pTarget,pTarget,3471,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t292306,"Comparison to elementary school, I like teachers more",,pTarget,pTarget,3472,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+t34006i,HOMEPOS: own books,,pTarget,pTarget,3473,effect code,yes; no,1,0,,,,,,,,,,,
+t66003a_g1,Global self-esteem,,pTarget,pTarget,6337,continuous,,1,0,,,,,,,,,,,
+t410020,Age language acquisition,,pTarget,pTarget,3476,continuous,"as a small child (with about 0‐2 years);
+at kindergarten age (with about 3‐5 years);
+at elementary school age (with about 6‐9 years);
+at the age of 10 or later",1,0,,,,,,,,,,,
+t27111s,"Courses outside School: other courses, specifically:",,pTarget,pTarget,3477,effect code,not specified; specified,1,0,,,,,,,,,,,
+t27111t_O,"Courses outside School: other courses, open",,pTarget,pTarget,3478,blank,,0,0,,,,,,,,,,,
+tg50201_O,other higher education degree,,pTarget,pTarget,3834,blank,,0,0,,,,,,,,,,,
+t31060c_O,Idealistic educational aspirations: desired profession,,pTarget,pTarget,3839,blank,,0,0,,,,,,,,,,,
+t31160c_O,Realistic educational aspirations: expected profession,,pTarget,pTarget,3859,blank,,0,0,,,,,,,,,,,
+t242401_O,Subject of study other,,pTarget,pTarget,3901,blank,,0,0,,,,,,,,,,,
+t29172n_O,Admission Masterís program: other open,,pTarget,pTarget,3962,blank,,0,0,,,,,,,,,,,
+t29186m_O,"other sources of information, open",,pTarget,pTarget,3975,blank,,0,0,,,,,,,,,,,
+t29175i_O,"other information and qualification possibilities, open",,pTarget,pTarget,4000,blank,,0,0,,,,,,,,,,,
+tg7991f_O,Type of job: other - open,,pTarget,pTarget,4015,blank,,0,0,,,,,,,,,,,
+t531229_O,"other source of finance, open",,pTarget,pTarget,4055,blank,,0,0,,,,,,,,,,,
+t405531_O,Immigration status other,,pTarget,pTarget,3629,blank,,0,0,,,,,,,,,,,
+t731302_O,other school-leaving qualification Mother,,pTarget,pTarget,3537,blank,,0,0,,,,,,,,,,,
+t731304_O,other vocational qualification Mother (open),,pTarget,pTarget,3540,blank,,0,0,,,,,,,,,,,
+t731305_O,other educational institution Mother (open),,pTarget,pTarget,3541,blank,,0,0,,,,,,,,,,,
+t731307_O,other higher education qualification Mother (open),,pTarget,pTarget,3543,blank,,0,0,,,,,,,,,,,
+t731309_O,other institution awarding higher education degrees Mother (open),,pTarget,pTarget,3545,blank,,0,0,,,,,,,,,,,
+t731352_O,other school-leaving qualification Father,,pTarget,pTarget,3584,blank,,0,0,,,,,,,,,,,
+t731354_O,other vocational qualification Father (open),,pTarget,pTarget,3587,blank,,0,0,,,,,,,,,,,
+t731355_O,other educational institution Father (open),,pTarget,pTarget,3588,blank,,0,0,,,,,,,,,,,
+t731357_O,other higher education qualification Father (open),,pTarget,pTarget,3590,blank,,0,0,,,,,,,,,,,
+t731359_O,other institution awarding higher education degrees Father (open),,pTarget,pTarget,3592,blank,,0,0,,,,,,,,,,,
+tf24540_O,Text Selected occupation,,pTarget,pTarget,3716,blank,,0,0,,,,,,,,,,,
+td0021x_O,Favorite subject,,pTarget,pTarget,4123,blank,,0,0,,,,,,,,,,,
+t283621,"Student: homework, parental support, checking",,pTarget,pTarget,4132,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t283622,"Student: homework, parental support, having time",,pTarget,pTarget,4133,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t283623,"Student: homework, parental support, making sure homework is done",,pTarget,pTarget,4134,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t284624,"Student: homework, parental support, help with bad grades",,pTarget,pTarget,4135,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t285627,"Student: homework, parental support, expectation",,pTarget,pTarget,4136,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t284625,"Student: homework, parental support, encouragement",,pTarget,pTarget,4137,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t284626,"Student: homework, parental support, talk",,pTarget,pTarget,4138,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t285628,"Student: homework, parental support, understand subject matter",,pTarget,pTarget,4139,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t285629,"Student: homework, parental support, expect. regard. studying for class tests",,pTarget,pTarget,4140,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t281600,"Student: homework, duration",,pTarget,pTarget,4147,continuous,less than half an hour; about half an hour to; about 1 to 2 hours; about 2 to 3 hours; about 3 to 4 hours; more than 4 hours per,1,0,,,,,,,,,,,
+t28161a,"Student: homework, frequency help from parents",,pTarget,pTarget,4148,continuous,never; rarely; sometimes; often; always; does not apply to me,1,0,,,,,,,,6,,,
+t28161b,"Student: homework, frequency help from siblings",,pTarget,pTarget,4149,continuous,never; rarely; sometimes; often; always; does not apply to me,1,0,,,,,,,,6,,,
+t28161c,Student: homework: frequency help from friends/classmates,,pTarget,pTarget,4150,continuous,never; rarely; sometimes; often; always; does not apply to me,1,0,,,,,,,,6,,,
+t28161d,"Student: homework, frequency help from tutor",,pTarget,pTarget,4151,continuous,never; rarely; sometimes; often; always; does not apply to me,1,0,,,,,,,,6,,,
+t28161e,"Student: homework, frequency help from homework supervisor",,pTarget,pTarget,4152,continuous,never; rarely; sometimes; often; always; does not apply to me,1,0,,,,,,,,6,,,
+t31035a,Idealistic educational aspiration - highest school-leaving qualification,,pTarget,pTarget,4153,categorical,Hauptschulabschluss; Realschulabschluss/Mittlere Reife; Abitur; Leave school without qualification,1,0,,,,,,,,,,,
+t31135a,Realistic educational aspiration - highest school-leaving qualification,,pTarget,pTarget,4154,categorical,Hauptschulabschluss; Realschulabschluss/Mittlere Reife; Abitur; Leave school without qualification,1,0,,,,,,,,,,,
+td0001a,Learning how to spell interesting,,pTarget,pTarget,4159,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+td0001b,Spelling is difficult,,pTarget,pTarget,4160,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+td0002a_v1,Time required learning spelling,,pTarget,pTarget,4161,continuous,not at all; rather not; rather; very,1,0,,,,,,,,,,,
+td0002b_v1,Importance spelling performance for school-leaving qualification,,pTarget,pTarget,4163,continuous,not at all; rather not; rather; very,1,0,,,,,,,,,,,
+td0002c_v1,Importance spelling performance for profession,,pTarget,pTarget,4165,continuous,not at all; rather not; rather; very,1,0,,,,,,,,,,,
+td0002d_v1,Importance spelling performance for private life,,pTarget,pTarget,4167,continuous,not at all; rather not; rather; very,1,0,,,,,,,,,,,
+td0003a,Grade for next dictation is going to be good,,pTarget,pTarget,4169,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+td0003b,Spelling when writing texts good,,pTarget,pTarget,4170,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,1,0,,,,,,,,,,,
+td0004a_v1,Spelling more difficult than for classmates,,pTarget,pTarget,4171,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0004b_v1,Spelling more difficult than understanding texts,,pTarget,pTarget,4173,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0004c_v1,Spelling more difficult than writing texts,,pTarget,pTarget,4175,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0004d_v1,Spelling more difficult than grammar,,pTarget,pTarget,4177,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0005a,Spelling - learning - good grade,,pTarget,pTarget,4179,continuous,very little; rather little; rather much; very much,1,0,,,,,,,,,,,
+td0005b,Spelling - learning - good German grade,,pTarget,pTarget,4180,continuous,very little; rather little; rather much; very much,1,0,,,,,,,,,,,
+td0006a_v1,Spelling words correctly: Rules,,pTarget,pTarget,4181,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0006b_v1,Spelling words correctly: Pronounce clearly to myself,,pTarget,pTarget,4183,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0006c_v1,Spelling words correctly: Write by heart,,pTarget,pTarget,4185,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0006d_v1,Spelling words correctly: Guess,,pTarget,pTarget,4187,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0006e_v1,Spelling words correctly: Refer to dictionary,,pTarget,pTarget,4189,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+td0006f_v1,Spelling words correctly: Computer spell checking,,pTarget,pTarget,4191,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,,,,,,,,,,
+t34002f_O,Frequency reading (genre): namely,,pTarget,pTarget,4228,blank,,0,0,,,,,,,,,,,
+t34010a,Discussions with father/mother: books,,pTarget,pTarget,4258,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34010b,Discussions with father/mother: movies or TV shows,,pTarget,pTarget,4259,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34010c,Discussions with father/mother: political or social issues,,pTarget,pTarget,4260,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34010d,Discussions with father/mother: artwork or art in general,,pTarget,pTarget,4261,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34006a,HOMEPOS: desk,,pTarget,pTarget,4262,effect code,yes; no,1,0,,,,,,,,,,,
+t34006b,HOMEPOS: room,,pTarget,pTarget,4263,effect code,yes; no,1,0,,,,,,,,,,,
+t34006c,HOMEPOS: learning software,,pTarget,pTarget,4264,effect code,yes; no,1,0,,,,,,,,,,,
+t34006e,HOMEPOS: books with poems,,pTarget,pTarget,4266,effect code,yes; no,1,0,,,,,,,,,,,
+t34006f,HOMEPOS: works of art (e.g. paintings),,pTarget,pTarget,4267,effect code,yes; no,1,0,,,,,,,,,,,
+t34006g,HOMEPOS: books for homework,,pTarget,pTarget,4268,effect code,yes; no,1,0,,,,,,,,,,,
+t34006h,HOMEPOS: dictionary,,pTarget,pTarget,4269,effect code,yes; no,1,0,,,,,,,,,,,
+t34001a,Frequency reading - school day,,pTarget,pTarget,4271,continuous,Ö not at all outside; Ö up to half an; Ö between half an hour; Ö 1 to 2 hours.; Ö more than 2 hours.,1,0,,,,,,,,,,,
+t34001c,Frequency reading - non-school day,,pTarget,pTarget,4272,continuous,Ö not at all.; Ö up to half an; Ö between half an hour; Ö 1 to 2 hours.; Ö more than 2 hours.,1,0,,,,,,,,,,,
+t34002a,"Frequency reading (genre): detective novels, thrillers, horror or fantasy",,pTarget,pTarget,4273,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34002b,Frequency reading (genre): classic literature,,pTarget,pTarget,4274,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34002c,Frequency reading (genre): nonfiction books,,pTarget,pTarget,4275,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34002d,Frequency reading (genre): comics,,pTarget,pTarget,4276,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34002e,_g1 Frequency reading (genre): youth literature,,pTarget,pTarget,4229,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34003a,Frequency reading (periodicals): local newspaper,,pTarget,pTarget,4278,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34003b,"Frequency reading (periodicals): tabloids (such as BILD, BZ)",,pTarget,pTarget,4279,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34003c,Frequency reading (periodicals): youth pages in other supraregional papers,,pTarget,pTarget,4280,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34003d,"Frequency reading (periodicals): magazines (such as SPIEGEL, FOCUS Schule)",,pTarget,pTarget,4281,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34003e,"Frequency reading (periodicals): other youth magazines (such as Bravo, Popcorn)",,pTarget,pTarget,4282,continuous,never or seldom; several times a month; once a week; several times a week; daily,1,0,,,,,,,,,,,
+t34005a,Number of books,,pTarget,pTarget,4283,continuous,0 to 10 books; 11 to 25 books; 26 to 100 books; 101 to 200 books; 201 to 500 books; more than 500 books,1,0,,,,,,,,,,,
+t34009a,Participation in high culture: museum or art exhibition,,pTarget,pTarget,4284,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,t34009,0,,,,,,,,
+t34009b,Participation in high culture: movies,,pTarget,pTarget,4285,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,t34009,0,,,,,,,,
+t34009c,"Participation in high culture: opera, ballet, classical concert",,pTarget,pTarget,4286,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,t34009,0,,,,,,,,
+t34009d,Participation in high culture: theater,,pTarget,pTarget,4287,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,t34009,0,,,,,,,,
+t34009e,Participation in high culture: rock/pop concert,,pTarget,pTarget,4288,continuous,never; once; 2 to 3 times; 4 to 5 times; more than 5 times,1,0,,t34009,0,,,,,,,,
+t34009g,Participation in high culture - played musical instrument,,pTarget,pTarget,4289,continuous,,1,0,,t34009,0,,,,,,,,
+t34009l,Participation in high culture - listened to classical music,,pTarget,pTarget,4291,continuous,,1,0,,t34009,0,,,,,,,,
+td0032a,"German teacher: (org. of learning 1), notices everything",,pTarget,pTarget,4293,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0032,0,,,,,,,,
+td0032b,"German teacher: (org. of learning 2), involves me quickly",,pTarget,pTarget,4294,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0032,0,,,,,,,,
+td0032c,"German teacher: (org. of learning 3), immediately knows Iím not paying attention",,pTarget,pTarget,4295,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0032,0,,,,,,,,
+td0032d,"German teacher: (org. of learning 4), has the class under control",,pTarget,pTarget,4296,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0032,0,,,,,,,,
+td0033a,German teacher: expects me to make an effort,,pTarget,pTarget,4297,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0033,0,,,,,,,,
+td0033b,German teacher: thinks I can do better,,pTarget,pTarget,4298,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0033,0,,,,,,,,
+td0033c,German teacher: considers diligence to be very important,,pTarget,pTarget,4299,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0033,0,,,,,,,,
+td0033d,German teacher: students with good grades as an example for all,,pTarget,pTarget,4300,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0033,0,,,,,,,,
+td0033e,German teacher: comparison to classmates,,pTarget,pTarget,4301,continuous,does not apply at; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0033,0,,,,,,,,
+td0034a,perceived teacher autonomy 1,,pTarget,pTarget,4302,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0034,0,,,,,,,,
+td0034b,perceived teacher autonomy 2,,pTarget,pTarget,4303,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0034,0,,,,,,,,
+td0034c,perceived teacher autonomy 3,,pTarget,pTarget,4304,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0034,0,,,,,,,,
+td0035a,German teacher (prom. interaction 1): allows discussion of exercises,,pTarget,pTarget,4305,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0035,0,,,,,,,,
+td0035b,German teacher (prom. interaction 2): encourages to help each other,,pTarget,pTarget,4306,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0035,0,,,,,,,,
+td0035c,German teacher (prom. interaction 2): encourages to exchange ideas,,pTarget,pTarget,4307,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0035,0,,,,,,,,
+td0036a,German teacher: summarizes whatís most important at the end,,pTarget,pTarget,4308,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0036,0,,,,,,,,
+td0036b,German teacher: draws attention to the things that are of particular importance,,pTarget,pTarget,4309,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0036,0,,,,,,,,
+td0036c,German teacher: explains connection between old and new topics,,pTarget,pTarget,4310,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,1,0,,td0036,0,,,,,,,,
+tf00070_O,First career aspiration,,pTarget,pTarget,4350,blank,,0,0,,,,,,,,,,,
+tf0013b_O,Second career aspiration Indication,,pTarget,pTarget,4380,blank,,0,0,,,,,,,,,,,
+t725020,School year repeated,,pTarget,pTarget,4414,effect code,no; yes,1,0,,,,,,,,,,,
+t725021,School year repeated - frequency,,pTarget,pTarget,4415,continuous,,1,0,,,,,,,,,,,
+t400030,Age of immigration to Germany,,pTarget,pTarget,4416,continuous,,1,0,,,,,,,,,,,
+t41010a_g1,Mother: Mother tongue (number of specifications),,pTarget,pTarget,4419,continuous,5 and more,1,0,,,,,,,,,,,
+t41010a_g3D,"Mother: Mother tongue (reference 2, simplified)",,pTarget,pTarget,4425,effect code,German; not German,0,0,,,,,,,,,,,use generated variable (t41010a_g1)
+t41012a_g1,Father: Mother tongue (number of specifications),,pTarget,pTarget,4432,continuous,5 and more,1,0,,,,,,,,,,,
+t41012a_g3D,"Father: Mother tongue (Specification 2, simplified)",,pTarget,pTarget,4438,effect code,German; not German,0,0,,,,,,,,,,,use generated variable (t41012a_g1)
+t262400_O,Student: part-time job content,,pTarget,pTarget,4504,blank,,0,0,,,,,,,,,,,
+t261201_O,Student: Internship duration,,pTarget,pTarget,4529,blank,,0,0,,,,,,,,,,,
+t526012_O,Place warm meal: other place,,pTarget,pTarget,4589,blank,,0,0,,,,,,,,,,,
+td0041a,Social reading habits - communication with classmates,,pTarget,pTarget,4599,continuous,never or almost never; once to twice a; once to twice a; every day or almost,1,0,,td0041,0,,,,,,,,
+td0041b,Social reading habits - communication with friends,,pTarget,pTarget,4600,continuous,never or almost never; once to twice a month; once to twice a week; every day or almost every,1,0,,td0041,0,,,,,,,,
+td0041c,Social reading habits - communication with family,,pTarget,pTarget,4601,continuous,never or almost never; once to twice a month; once to twice a week; every day or almost every,1,0,,td0041,0,,,,,,,,
+td0042a,Attitude towards reading - enjoy reading books,,pTarget,pTarget,4602,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0042b,Attitude towards reading - reading is interesting,,pTarget,pTarget,4603,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0042c,Attitude towards reading - would read more,,pTarget,pTarget,4604,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0042d,Attitude towards reading - reading about new things,,pTarget,pTarget,4605,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0042e,Attitude towards reading - learning by reading,,pTarget,pTarget,4606,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0042f,Attitude towards reading - understanding things correctly,,pTarget,pTarget,4607,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0042,0,,,,,,,,
+td0043a,Self-concept reading: difficulties text comprehension,,pTarget,pTarget,4608,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0043,1,1,4,,,,,,
+td0043b,Self-concept reading: speed text comprehension,,pTarget,pTarget,4609,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0043,0,,,,,,,,
+td0043c,Self-concept reading: repeating text comprehension,,pTarget,pTarget,4610,continuous,completely disagree; rather disagree; rather agree; completely agree,1,0,,td0043,1,1,4,,,,,,
+tx80211_w2,Survey/Test instrument,,pTarget,pTarget,6035,categorical,"NEPS TH: allgemeiner Lehrerfragebogen,; Sch¸lerInnen Klasse 12, Welle 1,; NEPS TH: Eltern von Sch¸lerInnen; Welle 1, PAPI NA NA; NEPS SC2: ErzieherInnen von 4-J‰hrigen; gen zur Gruppe und zu; PAPI NA NA NA NA; NEPS SC5: Studierende (Rekrutierungsfrage-; bogen - persˆnlich), Welle 1,; NEPS SC5: Studierende (Rekrutierungsfrage-; bogen - per Post), Welle; NEPS TH: allgemeiner Lehrerfragebogen,; Sch¸lerInnen Klasse 12, Welle 2,; NEPS SC2: ErzieherInnen von 4-J‰hrigen; gen zum Kind), Welle 1,; NEPS SC2: Leitung der Bildungseinrichtung,; J‰hrige, Welle 1, PAPI NA; NEPS SC2/SC3/SC4: Eltern von KiGAKinder; (Welle 1), Sch¸ler Kls. 5; (Welle 1), CATI NA NA; NEPS SC3:; (Regelschulen), Welle 1, PAPI NA",0,0,,,,,,,,,,,
+te05017_O,"Idealistic educ. aspiration - higher ed. inst. type - other, namely",,pTarget,pTarget,4685,blank,,0,0,,,,,,,,,,,
+te05025_O,"Idealistic educ. asp. - type of voc. train. - something else, namely",,pTarget,pTarget,4687,blank,,0,0,,,,,,,,,,,
+t410010_g1,Second language (number of specifications),,pTarget,pTarget,4710,continuous,5 and more,1,0,,,,,,,,,,,
+t410010_g2D,"Second language (Specification 1, simplified)",,pTarget,pTarget,4713,categorical,German; not German; Letters of a non-Latin alphabet,0,0,,,,,,,,,,,use generated variable (t410010_g1)
+t27270h_O,"Student: Participation organization/ group: other, text",,pTarget,pTarget,4730,blank,,0,0,,,,,,,,,,,
+t26212a_O,Student: Tutoring subject 1. response,,pTarget,pTarget,4978,blank,,0,0,,,,,,,,,,,
+t26212b_O,Student: Tutoring subject 2. response,,pTarget,pTarget,4979,blank,,0,0,,,,,,,,,,,
+t26212c_O,Student: Tutoring subject 3. response,,pTarget,pTarget,4980,blank,,0,0,,,,,,,,,,,
+t268111_O,"Student: Tutoring Place somewhere else, Text",,pTarget,pTarget,4983,blank,,0,0,,,,,,,,,,,
+tf0029b_O,Application Profession 2,,pTarget,pTarget,5000,blank,,0,0,,,,,,,,,,,
+t41040c,Subjective linguistic competence Target language of origin - reading,,pTarget,pTarget,4735,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t41040d,Subjective linguistic competence Target language of origin - writing,,pTarget,pTarget,4736,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t41030a,Subjective linguistic competence Target German - comprehension,,pTarget,pTarget,4737,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t41030b,Subjective linguistic competence Target German - speaking,,pTarget,pTarget,4738,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t41030c,Subjective language competence Target German - reading,,pTarget,pTarget,4739,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t41030d,Subjective linguistic competence Target German - writing,,pTarget,pTarget,4740,continuous,very well; rather well; rather badly; very badly; not at all,1,0,,,,,,,,,,,
+t417000,Language of media use Target ñ Reading books,,pTarget,pTarget,4741,continuous,"only in German;
+mostly in German, sometimes in the other language;
+mostly in the other language, some‐ times in German;
+only in the other language; does not apply to me;
+doesn’t read books in free time; usesmostly/only a third language;
+equally often German and language of origin",1,0,,,,,,,,5,,,
+t417050,Language of media use Target ñ Watching TV,,pTarget,pTarget,4746,continuous,"only in German;
+mostly in German, sometimes in the other language;
+mostly in the other language, some‐ times in German;
+only in the other language; doesnotapplytome;
+doesn’t watch TV; usesmostly/onlyathirdlanguage;
+equally often German and language of origin",1,0,,,,,,,,5,,,
+t417060,"Language of media use Target ñ Video, Movie",,pTarget,pTarget,4747,continuous,"only in German;
+mostly in German, sometimes in the other language;
+mostly in the other language, some‐ times in German;
+only in the other language; doesnotapplytome;
+doesn’t watch video, DVD or Blu‐Ray Disc;
+usesmostly/onlyathirdlanguage;
+equally often German and language of origin",1,0,,,,,,,,5,,,
+t41000a_g1,Mother tongue (number references),,pTarget,pTarget,5076,continuous,5 and more,1,0,,,,,,,,,,,
+t41000a_g2D,"Mother tongue (reference 1, simplified)",,pTarget,pTarget,5079,effect code,German; not German,0,0,,,,,,,,,,,use generated variable (t41000a_g1)
+t41000a_g3D,"Mother tongue (reference 2, simplified)",,pTarget,pTarget,5082,effect code,German; not German,0,0,,,,,,,,,,,use generated variable (t41000a_g1)
+tx80211_w1,Survey/Test instrument,,pTarget,pTarget,5125,categorical,"NEPS TH: allgemeiner Lehrerfragebogen,; Sch¸lerInnen Klasse 12, Welle 1,; NEPS TH: Eltern von Sch¸lerInnen; Welle 1, PAPI NA NA; NEPS SC2: ErzieherInnen von 4-J‰hrigen; gen zur Gruppe und zu; PAPI NA NA NA NA; NEPS SC5: Studierende (Rekrutierungsfrage-; bogen - persˆnlich), Welle 1,; NEPS SC5: Studierende (Rekrutierungsfrage-; bogen - per Post), Welle; NEPS TH: allgemeiner Lehrerfragebogen,; Sch¸lerInnen Klasse 12, Welle 2,; NEPS SC2: ErzieherInnen von 4-J‰hrigen; gen zum Kind), Welle 1,; NEPS SC2: Leitung der Bildungseinrichtung,; J‰hrige, Welle 1, PAPI NA; NEPS SC2/SC3/SC4: Eltern von KiGAKinder; (Welle 1), Sch¸ler Kls. 5; (Welle 1), CATI NA NA; NEPS SC3:; (Regelschulen), Welle 1, PAPI NA",0,0,,,,,,,,,,,
+t400500_g1v1,Generation status,,pTarget,pTarget,5862,continuous,no migrant background; 1st generation; 1.5th generation; 2nd generation; 2.25th generation; 2.5th generation; 2.75th generation; 3rd generation; 3.25th generation; 3.5th generation,1,0,,,,,,,,,,,
+t400500_g1,v1 Generation status,,pTarget,pTarget,5862,continuous,no migrant background; 1st generation; 1.5th generation; 2nd generation; 2.25th generation; 2.5th generation; 2.75th generation; 3rd generation; 3.25th generation; 3.5th generation,1,0,,,,,,,,,,,
+t400500_g2v1,Missing/contradicting imformation about country of birth for generation status,,pTarget,pTarget,5864,categorical,Unique assignment possible; Information for target person unknown; Information for one parent unknown; Information for both parents unknown; Information for one grandparent unknown; Information for two grandparents unknown; Information for three grandparents unknown; Information for four grandparents unknown; no assignment to a generation,1,0,,,,,,,,,,,
+t400500_g2,v1 Missing/contradicting imformation about country of birth for generation status,,pTarget,pTarget,5864,categorical,Unique assignment possible; Information for target person unknown; Information for one parent unknown; Information for both parents unknown; Information for one grandparent unknown; Information for two grandparents unknown; Information for three grandparents unknown; Information for four grandparents unknown; no assignment to a generation,1,0,,,,,,,,,,,
+t400000_g1D,Country of birth (Germany/abroad),,pTarget,pTarget,5901,categorical,"Germany; not Germany; Ausland, aber nicht codierbar; Germany and another country,",1,0,,,,,,,,,,,
+t31060a_O,Idealistic career aspirations: career aspiration,,pTarget,pTarget,5795,blank,,0,0,,,,,,,,,,,
+t31160a_O,Realistic career aspirations: career aspiration,,pTarget,pTarget,5824,blank,,0,0,,,,,,,,,,,
+t521000,Self-rated health,,pTarget,pTarget,6606,continuous,very good; good; moderate; poor; very poor,1,0,,,,,,,,,,,
+te00013_O,Year/Grade School graduation - open,,pTarget,pTarget,6090,blank,,0,0,,,,,,,,,,,
+t74305a,"Household composition: biological, adoptive, foster mother",,pTarget,pTarget,6091,effect code,yes; no,1,0,,,,,,,,,,,
+t74305b,Household composition: stepmother or fatherís girlfriend,,pTarget,pTarget,6092,effect code,yes; no,1,0,,,,,,,,,,,
+t74305c,"Household composition: biological father, adoptive father, foster father",,pTarget,pTarget,6093,effect code,yes; no,1,0,,,,,,,,,,,
+t74305d,Household composition: stepfather or motherís boyfriend,,pTarget,pTarget,6094,effect code,yes; no,1,0,,,,,,,,,,,
+t74305e,Household composition: siblings and/or step siblings,,pTarget,pTarget,6095,effect code,yes; no,1,0,,,,,,,,,,,
+t74305f,Household composition: grandmother and/or grandfather,,pTarget,pTarget,6096,effect code,yes; no,1,0,,,,,,,,,,,
+t74305g,Household composition: other people,,pTarget,pTarget,6097,effect code,yes; no,1,0,,,,,,,,,,,
+t741002,Size of household,,pTarget,pTarget,6098,continuous,,1,0,,,,,,,,,,,
+t724101,Grade Annual report card - German,,pTarget,pTarget,6100,continuous,very good (1); good (2); satisfactory (3); sufficient (4); inadequate (5); unsatisfactory (6); no grade received,1,0,,,,,,,,,,,
+t724102,Grade Annual report card - Mathematics,,pTarget,pTarget,6101,continuous,very good (1); good (2); satisfactory (3); sufficient (4); inadequate (5); unsatisfactory (6); no grade received,1,0,,,,,,,,,,,
+te14116_O,other subjects at advanced requirement level - other subject,,pTarget,pTarget,6138,blank,,0,0,,,,,,,,,,,
+te05112_O,Idealistic educational aspiration - type of higher education institution - open,,pTarget,pTarget,6204,blank,,0,0,,,,,,,,,,,
+te05122_O,Idealistic educational aspiration - type of vocational training - open,,pTarget,pTarget,6206,blank,,0,0,,,,,,,,,,,
+te06010_O,Idealistic aspiration study subject,,pTarget,pTarget,6207,blank,,0,0,,,,,,,,,,,
+te06020_O,Idealistic aspiration study subject combination subject,,pTarget,pTarget,6211,blank,,0,0,,,,,,,,,,,
+te08010_O,Training profession,,pTarget,pTarget,6217,blank,,0,0,,,,,,,,,,,
+te09017_O,"Realistic educ. asp. - type higher educ. instit. - other, namely",,pTarget,pTarget,4700,blank,,0,0,,,,,,,,,,,
+te09025_O,"Realistic educ. asp. - type of voc. training - something else, namely",,pTarget,pTarget,4705,blank,,0,0,,,,,,,,,,,
+te10010_O,Realistic educational aspiration study subject,,pTarget,pTarget,6243,blank,,0,0,,,,,,,,,,,
+te10020_O,Realistic educational aspiration subject of study combination subject,,pTarget,pTarget,6247,blank,,0,0,,,,,,,,,,,
+te11010_O,Realistic educational aspiration: Vocational training,,pTarget,pTarget,6252,blank,,0,0,,,,,,,,,,,
+t261000,Student: sport activity: frequency,,pTarget,pTarget,5089,continuous,never; once a month or less; several times a month or; several times a week; almost daily or daily,1,0,,,,,,,,,,,
+t269000,Student: sport activity: where/what,,pTarget,pTarget,6298,categorical,"Club;
+School (outside classes such as sport workshop);
+Riding school, tennis school, martial arts school, dancing school, gym or similar;
+Volkshochschule (VHS);
+Togetherwithothers,but not in an organization; By myself; Filtered",1,0,,,,,,,,,,,
+t27111a,Students: courses outside the school: music school classes,,pTarget,pTarget,6299,effect code,"yes, namely [open]; no",1,0,,,,,,,,,,,
+t27111v_O,Students: courses outside the school: music school classes - open,,pTarget,pTarget,6300,blank,,0,0,,,,,,,,,,,
+t27111b,Courses outside the school - Volkshochschule (VHS),,pTarget,pTarget,6301,effect code,"yes, namely [open]; no",1,0,,,,,,,,,,,
+t27111w_O,Courses outside the school - Volkshochschule (VHS) - open,,pTarget,pTarget,6302,blank,,0,0,,,,,,,,,,,
+t27111c,Course; youth art school,,pTarget,pTarget,6303,effect code,"yes, namely [open]; no",1,0,,,,,,,,,,,
+t27111x_O,Course; youth art school - open,,pTarget,pTarget,6304,blank,,0,0,,,,,,,,,,,
+t27111u_O,"Student: courses outside the school: other courses: text, what",,pTarget,pTarget,6305,blank,,0,0,,,,,,,,,,,
+t27111d_O,"Student: courses outside the school: other courses: text, where",,pTarget,pTarget,6306,blank,,0,0,,,,,,,,,,,
+t731130,Role of mother,,pTarget,pTarget,3474,categorical,"my biological mother; my stepmother;
+my adoptive mother; my foster mother; my father’s girlfriend;
+another woman;
+I don’t have a mother(anymore)/I don’t know her;
+I don’t have a mother (anymore)/I don’t know her",1,0,,,,,,,,,,,
+t731140,Role of father,,pTarget,pTarget,3475,categorical,"my biological father; my stepfather;
+my adoptive father;
+my foster father;
+my mother’s boyfriend;
+another man;
+I don’t have a father (anymore)/I don’t know him;
+I don’t have a father (anymore)/I don’t know him",1,0,,,,,,,,,,,
+t66003a,Self esteem: satisfied with myself,,pTarget,pTarget,6336,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003b,Self esteem: no good at all,,pTarget,pTarget,6339,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003c,Self esteem: have good qualities,,pTarget,pTarget,6340,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003d,Self esteem: as well as the others,,pTarget,pTarget,6341,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003e,Self esteem: not much to be proud of,,pTarget,pTarget,6342,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003f,Self esteem: feel useless,,pTarget,pTarget,6343,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003g,Self esteem: as valuable as the others,,pTarget,pTarget,6344,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003h,Self esteem: wish more respect for myself,,pTarget,pTarget,6345,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003i,Self esteem: consider myself a loser,,pTarget,pTarget,6346,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66003j,Self esteem: positive attitude towards myself,,pTarget,pTarget,6347,continuous,does not apply at all; does rather not apply; does partly apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66003a_g1)
+t66000a_g1,Self concept: German,,pTarget,pTarget,6364,continuous,,1,0,,,,,,,,,,,
+t66001a_g1,Self concept: math,,pTarget,pTarget,6368,continuous,,1,0,,,,,,,,,,,
+t66002a_g1,Self concept school,,pTarget,pTarget,6372,continuous,,1,0,,,,,,,,,,,
+t66000a,Self-concept verbal: hopeless case,,pTarget,pTarget,6363,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66000a_g1)
+t66000b,Self-concept verbal: learn quickly,,pTarget,pTarget,6365,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66000a_g1)
+t66000c,Self-concept verbal: good grades,,pTarget,pTarget,6366,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66000a_g1)
+t66001a,Self-concept math: good grades,,pTarget,pTarget,6367,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66001a_g1)
+t66001b,Self-concept math: one of my best subjects,,pTarget,pTarget,6369,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66001a_g1)
+t66001c,Self-concept math: always been good at it,,pTarget,pTarget,6370,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66001a_g1)
+t66002a,Self-concept school: learn quickly,,pTarget,pTarget,6371,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66002a_g1)
+t66002b,Self-concept school: do well in class tests,,pTarget,pTarget,6373,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66002a_g1)
+t66002c,Self-concept school: good in most school subjects,,pTarget,pTarget,6374,continuous,does not apply at all; does rather not apply; does rather apply; does completely apply,0,0,,,,,,,,,,,use generated variable (t66002a_g1)
+te16010_O,Examination subject 1,,pTarget,pTarget,6383,blank,,0,0,,,,,,,,,,,
+te16020_O,Examination subject 2,,pTarget,pTarget,6388,blank,,0,0,,,,,,,,,,,
+te16030_O,Examination subject 3,,pTarget,pTarget,6393,blank,,0,0,,,,,,,,,,,
+te16040_O,Examination subject 4,,pTarget,pTarget,6398,blank,,0,0,,,,,,,,,,,
+te16050_O,Examination subject 5,,pTarget,pTarget,6403,blank,,0,0,,,,,,,,,,,
+t22260t_O,"School involvement: other, text",,pTarget,pTarget,6432,blank,,0,0,,,,,,,,,,,
+tf0021b_O,Vocational training,,pTarget,pTarget,6515,blank,,0,0,,,,,,,,,,,
+te09112_O,Realistic educational aspiration ñ type of higher education institution - open,,pTarget,pTarget,6240,blank,,0,0,,,,,,,,,,,
+te09122_O,Realistic educational aspiration ñ type of vocational training - open,,pTarget,pTarget,6242,blank,,0,0,,,,,,,,,,,
+tf00260_O,Application Profession 1,,pTarget,pTarget,6531,blank,,0,0,,,,,,,,,,,
+t42850x_O,Country of origin - family,,pTarget,pTarget,6582,blank,,0,0,,,,,,,,,,,
+t700031,Gender,,pTarget,pTarget,5128,effect code,[m] male; [w] female,1,0,,,,,,,,,,,
+t514001,Satisfaction with life,,pTargetCORONA,pTarget,2747,continuous,0 completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10 completely satisfied,1,0,,,,,,,,,,,
+t514002,Satisfaction with standard of living,,pTargetCORONA,pTarget,2748,continuous,0 completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10 completely satisfied,1,0,,,,,,,,,,,
+t514003,Satisfaction with health,,pTargetCORONA,pTarget,2749,continuous,0 completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10 completely satisfied,1,0,,,,,,,,,,,
+t514004,Satisfaction with family life,,pTargetCORONA,pTarget,2750,continuous,0 completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10 completely satisfied,1,0,,,,,,,,,,,
+t514005,Satisfaction with acquaintances and friends,,pTargetCORONA,pTarget,2751,continuous,0 completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10 completely satisfied,1,0,,,,,,,,,,,
+t514006,Satisfaction with school,,pTarget,pTarget,5141,continuous,completely dissatisfied; 1; 2; 3; 4; 5; 6; 7; 8; 9; completely satisfied,1,0,,,,,,,,,,,
+dgg5_sc3a,DGCF (perceptual speed): sum,,xTargetCompetencies,xTargetCompetencies,9015,continuous,,1,0,,,,,,,,,,,
+dgg5_sc3b,DGCF (reasoning): sum,,xTargetCompetencies,xTargetCompetencies,9017,continuous,,1,0,,,,,,,,,,,
+mag5_sc1,u Mathematical competence: WLE (uncorrected),,xTargetCompetencies,xTargetCompetencies,9018,continuous,,1,0,,,,,,,,,,,
+reg5_sc1,Reading comprehension: WLE,,xTargetCompetencies,Baseline,9113,continuous,,1,0,,,,,,,,,,,
+rsg5_sc3,Reading speed sum,,xTargetCompetencies,xTargetCompetencies,9172,continuous,,1,0,,,,,,,,,,,
+org5_sc1a,Orthography (set 1): WLE (corrected),,xTargetCompetencies,xTargetCompetencies,9203,continuous,,1,0,,,,,,,,,,,
+org5_sc1b,Orthography (set 2): WLE (corrected),,xTargetCompetencies,xTargetCompetencies,9388,continuous,,1,0,,,,,,,,,,,
+mpg5re_sc6,Procedural metacognition (reading total): proportion correct,,xTargetCompetencies,xTargetCompetencies,9029,continuous,,1,0,,,,,,,,,,,
+mpg5ma_sc6,Procedural metacognition (mathematics): proportion correct,,xTargetCompetencies,xTargetCompetencies,9048,continuous,,1,0,,,,,,,,,,,
+mpg5or01_sc6,Procedural metacognition (orthography set 1): proportion correct,,xTargetCompetencies,xTargetCompetencies,9052,continuous,,1,0,,,,,,,,,,,
+mpg5or02_sc6,Procedural metacognition (orthography set 2): proportion correct,,xTargetCompetencies,xTargetCompetencies,9056,continuous,,1,0,,,,,,,,,,,
+e41100a_g3D,"Mother tongue (reference 2, aggregated)",,pEducator,pCourseClass,772,effect code,German; not German,1,0,,,,,,,,,,,
+p510003,"monthly household income, categories under 2,500 euros",,pParent,pParent,1955,continuous,"less than 1,000 euros; 1,000 to less than; 1,500 to less than; 2,000 to less than",1,0,,,,,,,,,,,
+p524201_g1,"Type of impairment (reference 1; ICD-10, level 1)",,pParent,pParent,2033,categorical,"[A00-B99] Certain infectious and parasitic; [C00-D48] Neoplasms; [D50-D90] Diseases of the blood; mune mechanism NA NA NA; [E00-E90] Endocrine, nutritional and metabolic; [F00-F99] Mental and behavioural disorders; [G00-G99] Diseases of the nervous; [H00-H59] Diseases of the eye; [H60-H95] Diseases of the ear; [I00-I99] Diseases of the circulatory; [J00-J99] Diseases of the respiratory; [K00-K93] Diseases of the digestive; [L00-L99] Diseases of the skin; [M00-M99] Diseases of the musculoskeletal; [N00-N99] Diseases of the genitourinary; [O00-O99] Pregnancy, childbirth and the; [P00-P96] Certain conditions originating in; [Q00-Q99] Congenital malformations, deformations and; [R00-R94] Symptoms, signs and abnormal; [S00-T98] Injury, poisoning and certain",1,0,,,,,,,,,,,
+p524201_g2,"Type of impairment (reference 1; ICD-10, level 2)",,pParent,pParent,2035,categorical,[A00-A09] Intestinal infectious diseases; [A15-A19] Tuberculosis; [A20-A28] Certain zoonotic bacterial diseases; [A30-A49] Other bacterial diseases; [A50-A64] Infections with a predominantly; [A65-A69] Other spirochaetal diseases; [A70-A74] Other diseases caused by; [A75-A79] Rickettsioses; [A80-A89] Viral infections of the; [A90-A99] Arthropod-borne viral fevers and; [B00-B09] Viral infections characterized by; [B15-B19] Viral hepatitis; [Z00-Z13] Persons encountering health services; [Z20-Z29] Persons with potential health; [Z30-Z39] Persons encountering health services; [Z40-Z54] Persons encountering health services; [Z55-Z65] Persons with potential health; stances NA NA NA NA; [Z70-Z76] Persons encountering health services,1,0,,,,,,,,,,,
+p524201_g4,"Type of impairment (reference 2; ICD-10, level 1)",,pParent,pParent,2037,categorical,"[A00-B99] Certain infectious and parasitic; [C00-D48] Neoplasms; [D50-D90] Diseases of the blood; mune mechanism NA NA NA; [E00-E90] Endocrine, nutritional and metabolic; [F00-F99] Mental and behavioural disorders; [G00-G99] Diseases of the nervous; [H00-H59] Diseases of the eye; [H60-H95] Diseases of the ear; [I00-I99] Diseases of the circulatory; [J00-J99] Diseases of the respiratory; [K00-K93] Diseases of the digestive; [L00-L99] Diseases of the skin; [M00-M99] Diseases of the musculoskeletal; [N00-N99] Diseases of the genitourinary; [O00-O99] Pregnancy, childbirth and the; [P00-P96] Certain conditions originating in; [Q00-Q99] Congenital malformations, deformations and; [R00-R94] Symptoms, signs and abnormal; [S00-T98] Injury, poisoning and certain",1,0,,,,,,,,,,,
+p524201_g5,"Type of impairment (reference 2; ICD-10, level 2)",,pParent,pParent,2039,categorical,[A00-A09] Intestinal infectious diseases; [A15-A19] Tuberculosis; [A20-A28] Certain zoonotic bacterial diseases; [A30-A49] Other bacterial diseases; [A50-A64] Infections with a predominantly; [A65-A69] Other spirochaetal diseases; [A70-A74] Other diseases caused by; [A75-A79] Rickettsioses; [A80-A89] Viral infections of the; [A90-A99] Arthropod-borne viral fevers and; [B00-B09] Viral infections characterized by; [B15-B19] Viral hepatitis; [Z00-Z13] Persons encountering health services; [Z20-Z29] Persons with potential health; [Z30-Z39] Persons encountering health services; [Z40-Z54] Persons encountering health services; [Z55-Z65] Persons with potential health; stances NA NA NA NA; [Z70-Z76] Persons encountering health services,1,0,,,,,,,,,,,
+p524201_g7,"Type of impairment (reference 3; ICD-10, level 1)",,pParent,pParent,2041,categorical,"[A00-B99] Certain infectious and parasitic; [C00-D48] Neoplasms; [D50-D90] Diseases of the blood; mune mechanism NA NA NA; [E00-E90] Endocrine, nutritional and metabolic; [F00-F99] Mental and behavioural disorders; [G00-G99] Diseases of the nervous; [H00-H59] Diseases of the eye; [H60-H95] Diseases of the ear; [I00-I99] Diseases of the circulatory; [J00-J99] Diseases of the respiratory; [K00-K93] Diseases of the digestive; [L00-L99] Diseases of the skin; [M00-M99] Diseases of the musculoskeletal; [N00-N99] Diseases of the genitourinary; [O00-O99] Pregnancy, childbirth and the; [P00-P96] Certain conditions originating in; [Q00-Q99] Congenital malformations, deformations and; [R00-R94] Symptoms, signs and abnormal; [S00-T98] Injury, poisoning and certain",1,0,,,,,,,,,,,
+p524201_g8,"Type of impairment (reference 3; ICD-10, level 2)",,pParent,pParent,2043,categorical,[A00-A09] Intestinal infectious diseases; [A15-A19] Tuberculosis; [A20-A28] Certain zoonotic bacterial diseases; [A30-A49] Other bacterial diseases; [A50-A64] Infections with a predominantly; [A65-A69] Other spirochaetal diseases; [A70-A74] Other diseases caused by; [A75-A79] Rickettsioses; [A80-A89] Viral infections of the; [A90-A99] Arthropod-borne viral fevers and; [B00-B09] Viral infections characterized by; [B15-B19] Viral hepatitis; [Z00-Z13] Persons encountering health services; [Z20-Z29] Persons with potential health; [Z30-Z39] Persons encountering health services; [Z40-Z54] Persons encountering health services; [Z55-Z65] Persons with potential health; stances NA NA NA NA; [Z70-Z76] Persons encountering health services,1,0,,,,,,,,,,,
+p524202,Year of recognition of disability,,pParent,pParent,2045,date_year,Missing by design; Donít know; system missing value,1,0,,,,,,,,,,,
+p524205,Degree of disability,,pParent,pParent,2046,continuous,Missing by design; Donít know; system missing value,1,0,,,,,,,,,,,
+p410031,"Identify language of origin - bilingual child, via parents",,pParent,pParent,2091,categorical,"as a child, and your; Label; Language of origin Interviewed parent; Language of origin Partner; Missing by design; Refused; Donít know; system missing value",1,0,,,,,,,,,,,
+p40603m,Date of target childís move to Germany (month),,pParent,pParent,2163,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Donít know; system missing value,1,0,y,,,,,,,,,,
+p40603y,Date of moving (year) of the target child to Germany,,pParent,pParent,2164,collapse date_year,system missing value,1,0,y,,,,,,,,,,
+p726001,"TC Grade skipped, which one? 1st grade",,pParent,pParent,2190,effect code,not specified; specified; system missing value,1,0,,,,,,,,,,,
+p726002,"TC Grade skipped, which one? 2nd grade",,pParent,pParent,2191,effect code,not specified; specified; system missing value,1,0,,,,,,,,,,,
+p726003,"TC Grade skipped, which one? 3rd grade",,pParent,pParent,2192,effect code,not specified; specified; system missing value,1,0,,,,,,,,,,,
+p726004,"TC Grade skipped, which one? 4th grade",,pParent,pParent,2193,effect code,not specified; specified; system missing value,1,0,,,,,,,,,,,
+p726005,"TC Grade skipped, which one? 5th grade",,pParent,pParent,2194,effect code,not specified; specified; system missing value,1,0,,,,,,,,,,,
+p731822,Years attended school,,pParent,pParent,2375,continuous,system missing value,1,0,,,,,,,,,,,
+p731821,Civil service training Respondent,,pParent,pParent,2401,categorical,subclerical class; clerical class; executive class; administrative class; system missing value,1,0,,,,,,,,,,,
+p401180,Right to pursue employment in Germany Respondent,,pParent,pParent,2405,effect code,yes; no; system missing value,1,0,,,,,,,,,,,
+p731909,Exact professional status Respondent - professional/regular soldier,,pParent,pParent,2434,categorical,"holder of a military team rank;
+non‐commissioned officer, staff NCO, sergeant, staff sergeant; officer, lieutenant, captain
+field officer from major",1,0,,,,,,,,,,,
+p731914,Registered as unemployed Respondent,,pParent,pParent,2441,effect code,yes; no; system missing value,1,0,,,,,,,,,,,
+p73191m,Registered as unemployed Respondent since: month,,pParent,pParent,2442,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year; Donít know; system missing value,1,0,y,,,,,,,,,,
+p73191y,Registered as unemployed Respondent since: year,,pParent,pParent,2443,collapse date_year,,1,0,y,,,,,,,,,,
+p731872,Partner: Number of years at school,,pParent,pParent,2491,continuous,Donít know; system missing value,1,0,,,,,,,,,,,
+p731871,Civil service training Partner,,pParent,pParent,2517,categorical,subclerical class; clerical class; executive class; administrative class; Donít know; system missing value,1,0,,,,,,,,,,,
+p404080,Right to pursue employment in Germany Partner,,pParent,pParent,2521,effect code,yes; no; system missing value,1,0,,,,,,,,,,,
+p731959,Exact professional status Partner - regular soldier,,pParent,pParent,2551,categorical,"holder of a military; non-commissioned officer, staff NCO,; officer, lieutenant, captain; field officer from major; system missing value",1,0,,,,,,,,,,,
+p731964,Registered as unemployed,,pParent,pParent,2557,effect code,yes; no; system missing value,1,0,,,,,,,,,,,
+p73195m,Partner: Duration of unemployment,,pParent,pParent,2558,collapse date_month,January; February; March; April; May; June; July; August; September; October; November; December; Beginning of the year/Winter; Spring/Easter; Mid-year/Summer; Fall; End of the year; Refused; Donít know,1,0,y,,,,,,,,,,
+p73195y,Partner: Duration of unemployment,,pParent,pParent,2560,collapse date_year,,1,0,y,,,,,,,,,,
+p413030,Determine first language/mother tongue - bilingual responding parent,,pParent,pParent,2578,categorical,First mother tongue Interviewed; Second mother tongue Interviewed; Missing by design; system missing value,1,0,,,,,,,,,,,
+p410030,"Determine first language/mother tongue - bilingual child, about child",,pParent,pParent,2591,categorical,First mother tongue Child; Second mother tongue Child; Missing by design; system missing value,1,0,,,,,,,,,,,
+p414030,Determine first language/mother tongue - bilingual partner,,pParent,pParent,2599,categorical,First mother tongue Partner; Second mother tongue Partner; Missing by design; system missing value,1,0,,,,,,,,,,,
+t41010a_g4D,"Mother: Mother tongue (reference 3, simplified)",,pTarget,pTarget,4428,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value; Donít know,0,0,,,,,,,,,,,use generated variable (t41010a_g1)
+t41010a_g5D,"Mother: Mother tongue (reference 4, simplified)",,pTarget,pTarget,4431,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value; Donít know,0,0,,,,,,,,,,,use generated variable (t41010a_g1)
+t41012a_g4D,"Father: Mother tongue (Specification 3, simplified)",,pTarget,pTarget,4441,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value; Donít know,0,0,,,,,,,,,,,use generated variable (t41012a_g1)
+t41012a_g5D,"Father: Mother tongue (Specification 4, simplified)",,pTarget,pTarget,4444,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value; Donít know,0,0,,,,,,,,,,,use generated variable (t41012a_g1)
+t410010_g3D,"Second language (Specification 2, simplified)",,pTarget,pTarget,4716,effect code,German; not German; Missing by design; Unspecific missing; Does not apply,0,0,,,,,,,,,,,use generated variable (t410010_g1)
+t410010_g4D,"Second language (Specification 3, simplified)",,pTarget,pTarget,4719,effect code,German; not German; Missing by design; Unspecific missing; Does not apply,0,0,,,,,,,,,,,use generated variable (t410010_g1)
+t410010_g5D,"Second language (Specification 4, simplified)",,pTarget,pTarget,4722,effect code,German; not German; Missing by design; Unspecific missing; Does not apply,0,0,,,,,,,,,,,use generated variable (t410010_g1)
+t41000a_g4D,"Mother tongue (reference 3, simplified)",,pTarget,pTarget,5085,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value,0,0,,,,,,,,,,,use generated variable (t41000a_g1)
+t41000a_g5D,"Mother tongue (reference 4, simplified)",,pTarget,pTarget,5088,effect code,German; not German; Missing by design; Unspecific missing; Does not apply; Implausible value,0,0,,,,,,,,,,,use generated variable (t41000a_g1)
+teacher_changed_state,the change of state for the teachers - whether they have ever changed the states (1) or not (0),,created,pCourseClass,,effect code,,,,,,,,,,,,,,
+teacher_stress_factors_avg,"stress factor of teachers, an average of ed1009b and ed1009c",,created,pTarget,,continuous,,,,,,,,,,,,,,
+command_of_other_lang,"the command of the other language, average of t41040b (speaking) and t41040a (comprehension)",,created,pTarget,,continuous,,,,,,,,,,,,,,
+lang_of_media,"the language of media use, an average of t417030 (internet) and t417040 (text messages, email)",,created,pTarget,,continuous,,,,,,,,,,,,,,
+family_lang,"interaction language for parents and peers: an average of mother, father, and parents (t412010, t412020, t412060)",,created,pTarget,,continuous,,,,,,,,,,,,,,
+lang_of_friends,"interaction language for parents and peers: an average of best friend and classmates (t412040, t412050)",,created,pTarget,,continuous,,,,,,,,,,,,,,
+dob_in_days_at_Target_survey,DOB (days),,created,pTarget,,continuous,,,,,,,,,,,,,,

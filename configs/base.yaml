@@ -1,0 +1,42 @@
+params:
+  seed: 93 # random seed for reproducibility
+  decimal_places: 3 # for rounding of results
+
+run:
+  train_models: true # trains models using CV, if false uses optimal model parameters saved from a previous run (using load_id passed to subset yaml) and refits model to training data
+  test_models: true # runs evaluation of model performance (if false, still plots results loaded from previous run using load_id passed in subset yaml)
+  interpret_models: true # runs model interpretation, if false then neither SHAP nor permutation importance will run
+  run_permutation: true # runs permutation importance, otherwise loads results and plots
+  run_grouped_permutation: true # calculates and plots grouped permutation importance
+  run_SHAP: true # runs SHAP, otherwise loads results and plots
+  run_grouped_SHAP: true # calculates and plots grouped SHAP
+  plot_nice_names: true # plots with nice variable names where possible
+  count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
+  
+parallel:
+  enabled: true # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
+  max_workers: 4 # number of parallel workers (4 or null)
+
+paths:
+  data_raw: "Data/neps.csv" # raw data path
+  preprocessed_data: "Data/Preprocessed/X_and_y.csv" # preprocessed data path
+  var_info_csv: Data/Meta/variable_info_agreed_Feb_2_2026.csv # variable information path
+  categorical_features_csv: Data/Meta/categorical_variables.csv # categorical variables path
+
+modelling:
+  test_size: 0.2 # proportion of data for testing
+  scoring: r2 # metric to select and score the final model
+  cv: 5 # number of folds in cross-validation (***increase to 10 in final run)
+  skl_n_jobs: 1 # number of parallel jobs for sklearn ---> set to 1 when using parallel processing of subsets
+
+interpretation:
+  plot_n_features: 20 # number of features to inspect on SHAP plot
+  n_permutations: 2 # ***10 for actual run
+
+preprocessing:
+  smallest_category_count: 30 # minimum category size for categorical variables
+
+test_run_params:
+  test_run: true # runs test run of code (fixed grid) 
+  test_cv: 2 # number of folds in cross-validation for test run
+  test_n_permutations: 1 # number of permutations for permutation importance in test run

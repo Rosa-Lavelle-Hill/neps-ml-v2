@@ -3,6 +3,11 @@ import json
 import subprocess
 import pandas as pd
 import numpy as np
+import yaml
+import shutil
+import shutil
+import subprocess
+from pathlib import Path
 from sklearn.metrics import r2_score
 from sklearn.feature_selection import mutual_info_regression
 from itertools import combinations
@@ -13,36 +18,54 @@ from sklearn.linear_model import LinearRegression
 from Functions.preprocessing_functions import get_top_abs_correlations, remove_highly_correlated_columns, \
     check_condition, get_top_abs_phi, find_matching_rows, count_categories_to_file
 from Functions.stat_checks import is_binary, phi_coefficient
-from fixed_params import (missing_thresh_col, missing_thresh_row, date_variables, keep_vars, remove_vars, \
-                          variance_feature_selection_threshold, IV_cor_threshold, dv_t1_name, school_track, target_id,
-                          institution_id, dob_var, smallest_category_count, var_info_sheet)
+from fixed_params import (date_variables, keep_vars, remove_vars, dv_t1_name, school_track, target_id,
+                          institution_id, dob_var)
 from Functions.gen_data import add_noise
+from Functions.subsets import cfg_get
 from sklearn.feature_selection import VarianceThreshold
 import matplotlib.pyplot as plt
 import seaborn as sns
 #  -----------------------------------------------------------------------------------------
-# rerun additional checks?
-create_corr_drop_list = True # (True/False) whether to iterate through the high multicollinearity list of variables or not to find the ones best to drop
-check_mutual_information = True # (True/False) whether to re-check mutual information (takes a while to run), otherwise uses precalculated
-# make the manual changes?
-merge_categories = True # (True/False) whether to merge some categories in categorical variables due to small category sizes
-create_new_vars = True # (True/False) whether to create new variables from existing ones due to high multicollinearity
-remove_manual = True # (True/False) whether to remove the manually decided variables due to high multicollinearity
-# Re-run R script or use the output of previously ran file?
-run_R = False # Run preprocessing R script first? (True/False)
+with open("configs/preprocessing.yaml", "r") as f:
+    cfg = yaml.safe_load(f) or {}
+with open("configs/base.yaml", "r") as f:
+    cfg_base = yaml.safe_load(f) or {}
 #  -----------------------------------------------------------------------------------------
-outputs_folder = "Outputs"
+var_info_sheet = cfg_get(cfg_base, ["paths", "var_info_csv"])
+data_raw = cfg_get(cfg_base, ["paths", "data_raw"])
 
+outputs_folder = cfg_get(cfg, ["paths", "outputs_folder"])
+missing_thresh_col = cfg_get(cfg, ["preprocessing", "missing_thresh_col"])
+missing_thresh_row = cfg_get(cfg, ["preprocessing", "missing_thresh_row"])
+variance_feature_selection_threshold = cfg_get(cfg, ["preprocessing", "variance_feature_selection_threshold"])
+smallest_category_count = cfg_get(cfg, ["preprocessing", "smallest_category_count"])
+IV_cor_threshold = cfg_get(cfg, ["preprocessing", "IV_cor_threshold"])
+
+run_R = cfg_get(cfg, ["switches", "run_R"])
+use_synthetic_y = cfg_get(cfg, ["switches", "use_synthetic_y"])
+create_corr_drop_list = cfg_get(cfg, ["switches", "create_corr_drop_list"])
+check_mutual_information = cfg_get(cfg, ["switches", "check_mutual_information"])
+merge_categories = cfg_get(cfg, ["switches", "merge_categories"])
+create_new_vars = cfg_get(cfg, ["switches", "create_new_vars"])
+remove_manual = cfg_get(cfg, ["switches", "remove_manual"])
+
+# save a copy of the config params in outputs folder
+Path(outputs_folder).mkdir(parents=True, exist_ok=True)
+shutil.copy("configs/preprocessing.yaml", Path(outputs_folder) / "preprocessing_config.yaml")
+#  -----------------------------------------------------------------------------------------
 # check shape before R script:
-df_pre_R = pd.read_csv("Data/Pilot_data_without_validT2_2026_01_13.csv", low_memory=False, index_col=[0])
+df_pre_R = pd.read_csv(data_raw, low_memory=False, index_col=[0])
 print(f"Data shape before R preprocessing: {df_pre_R.shape[1]} columns, {df_pre_R.shape[0]} rows")
 
-## PREPROCESSING IN R
+## PREPROCESSING IN R (switched over to Python for simplicity)
 if run_R == True:
-    r_script = 'Scripts/R_pre-processing_v2.R'
-
-    # Run the R script
-    subprocess.call(['Rscript', r_script])
+    # r_script = 'Scripts/R_pre-processing.R'
+    # # Run the R script
+    # subprocess.call(['Rscript', r_script])
+    from Scripts import R_preprocessing_script_into_Python as rprep
+    rprep.main()
+    print("Done running R pre-processing script (now in Python)!" \
+    "------------------------------------------------------------")
 #  -----------------------------------------------------------------------------------------
 ## IMPORT META DATA
 # Import variable information & meta data:
@@ -60,8 +83,8 @@ var_info_all_dict = dict(zip(var_info_all['var'], var_info_all['varname']))
 #  -----------------------------------------------------------------------------------------
 ## IMPORT PROCESSED DATA
 # Import R pre-processed data:
-df = pd.read_csv("Data/Preprocessed/df_R_processed.csv", low_memory=False, index_col=[0])
-print(f"Data shape: {df.shape[1]} columns, {df.shape[0]} rows")
+df = pd.read_csv("Data/Preprocessed/df_R_to_python_processed.csv", low_memory=False)
+print(f"Data shape after R preprocessing: {df.shape[1]} columns, {df.shape[0]} rows")
 
 # retain original school track info
 school_track_dict = {}
@@ -77,6 +100,11 @@ scale_vars_to_drop = var_info.iloc[matching_rows]["var"]
 print(f"num of Edu and SES scale vars dropped: {len(scale_vars_to_drop)}")
 df.drop(scale_vars_to_drop, axis=1, inplace=True)
 print(f"num cols after dropping Edu and SES scales: {df.shape[1]}")
+print(f"Dropping the following Edu and SES scale variables: {scale_vars_to_drop.tolist()}")
+
+matching_rows_keep = find_matching_rows(column_data=list(var_info.varname), search_list=scale_keep)
+scale_vars_to_keep = var_info.iloc[matching_rows_keep]["var"]
+print(f"Keeping the following Edu and SES scale variables: {scale_vars_to_keep.tolist()}")
 #  -----------------------------------------------------------------------------------------
 ## RECODE VARS
 # Some variables are not truely ordinal, and need some additional pre-processing...
@@ -448,6 +476,7 @@ print(f"New data shape after dropping rows >{missing_thresh_row*100}% missing: {
 
 # Calculate the overall percentage of missing values in the DataFrame
 overall_missing_percentage = df.isnull().sum().sum() / df.size * 100
+overall_missing_percentage = round(overall_missing_percentage, 2)
 print("\nOverall percentage of missing values in the DataFrame:", overall_missing_percentage)
 
 # Check the shape and overall missing values
@@ -665,7 +694,7 @@ if check_mutual_information == True:
     # Calculate mutual information between all pairs of variables
     mi_scores = {}
     for col1, col2 in combinations(df_fill.iloc[:,2:].columns, 2):
-        print(f'Calculating mutual information between {col1} and {col2}')
+        # print(f'Calculating mutual information between {col1} and {col2}')
         mi_score = mutual_info_regression(df_fill[[col1]], df_fill[col2])[0]
         mi_scores[(col1, col2)] = mi_score
         mi_scores[(col2, col1)] = mi_score  # Mutual information is symmetric
@@ -687,7 +716,7 @@ if check_mutual_information == True:
     # Save the DataFrame to a CSV file
     mi_df.to_csv(f'{outputs_folder}/mutual_information/mutual_information_scores.csv', index=False)
 
-else:
+elif check_mutual_information == False:
     mi_df = pd.read_csv(f'{outputs_folder}/mutual_information/mutual_information_scores.csv')
 
 # Plot MI scores above 1.3:
@@ -792,46 +821,48 @@ categorical_features_series = pd.DataFrame(categorical_features, columns=["Categ
 categorical_features_series.to_csv("Data/Meta/final_categorical_variables_after_preprocessing.csv")
 
 #---------------------------- (only needed for the mock data) ----------------------------
-# create y variable:
-print("Calculating new y variable...")
-dv_t1 = df[dv_t1_name]
-plot_hist(save_name="dv_t1", x=dv_t1, save_path=f"{outputs_folder}/histograms/",
-          title="dv_t1", bins=50)
+if use_synthetic_y == True:
+    print("Creating mock y variable for piloting...")
+    # create y variable:
+    print("Calculating new y variable...")
+    dv_t1 = df[dv_t1_name]
+    plot_hist(save_name="dv_t1", x=dv_t1, save_path=f"{outputs_folder}/histograms/",
+            title="dv_t1", bins=50)
 
-# Predict y from X with fixed coefficients (b=1)
-y_pred = np.dot(dv_t1, 1)
+    # Predict y from X with fixed coefficients (b=1)
+    y_pred = np.dot(dv_t1, 1)
 
-# Add noise to y_pred so that X predicts y with a given r2 (0.5)
-y, iters_count = add_noise(y_pred, 0.5)
+    # Add noise to y_pred so that X predicts y with a given r2 (0.5)
+    y, iters_count = add_noise(y_pred, 0.5)
 
-# Create and fit the linear regression model to check R2
-model = LinearRegression()
-dv_t1_2d = np.array(dv_t1).reshape(-1, 1)
-model.fit(np.array(dv_t1_2d), y)
+    # Create and fit the linear regression model to check R2
+    model = LinearRegression()
+    dv_t1_2d = np.array(dv_t1).reshape(-1, 1)
+    model.fit(np.array(dv_t1_2d), y)
 
-# Predict values
-y_pred = model.predict(dv_t1_2d)
+    # Predict values
+    y_pred = model.predict(dv_t1_2d)
 
-# Calculate R² score
-r2 = r2_score(y, y_pred)
-print(f"R-squared score: {round(r2, 2)}")
+    # Calculate R² score
+    r2 = r2_score(y, y_pred)
+    print(f"R-squared score: {round(r2, 2)}")
 
-plot_hist(save_name="y", x=y, save_path=f"{outputs_folder}/histograms/",
-          title="y", bins=50)
+    plot_hist(save_name="y", x=y, save_path=f"{outputs_folder}/histograms/",
+            title="y", bins=50)
 
-# check correlation between dv_t1 and y
-corr, _ = pearsonr(dv_t1, y)
-print("Pearson's r between DV at time 1 and y:", round(corr, 2))
-plot_scatt(x=dv_t1, y=y, save_path=f"{outputs_folder}/", save_name="scatter_dvt1_and_y",
-           xlab="DV Time 1", ylab="DV Time 2 (generated)")
+    # check correlation between dv_t1 and y
+    corr, _ = pearsonr(dv_t1, y)
+    print("Pearson's r between DV at time 1 and y:", round(corr, 2))
+    plot_scatt(x=dv_t1, y=y, save_path=f"{outputs_folder}/", save_name="scatter_dvt1_and_y",
+            xlab="DV Time 1", ylab="DV Time 2 (generated)")
 
-# add y to data and save:
-y = pd.Series(y)
-y.name = "y"
-df.reset_index(inplace=True, drop=True)
-X_and_y = pd.concat([df, y], axis=1, join="inner")
-X_and_y.to_csv("Data/Preprocessed/X_and_y.csv")
-print(f"final data shape: {X_and_y.shape}")
+    # add y to data and save:
+    y = pd.Series(y)
+    y.name = "y"
+    df.reset_index(inplace=True, drop=True)
+    X_and_y = pd.concat([df, y], axis=1, join="inner")
+    X_and_y.to_csv("Data/Preprocessed/X_and_y.csv")
+    print(f"final data shape: {X_and_y.shape}")
 
 #---------------------------- (end of section for mock data only) ----------------------------
 ## DV CORS

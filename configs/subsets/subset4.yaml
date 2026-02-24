@@ -1,0 +1,13 @@
+subset:
+  name: all
+  include_groups:
+    - Baseline
+    - pTarget
+    - pCourseClass
+    - pParent
+  exclude_groups: []
+load:
+  enabled: false # set to true to load existing results
+  run_id: null   # e.g. "2026-01-22_121719__all"
+  # enabled: true # set to true to load existing results
+  # run_id: 2026-01-26_173957__all   

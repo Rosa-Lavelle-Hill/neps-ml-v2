@@ -8,7 +8,7 @@ dir.create("~/Library/R/4.5/library", recursive = TRUE, showWarnings = FALSE)
 .libPaths(c("~/Library/R/4.5/library", .libPaths()))
 
 # options(repos = "https://cran.r-project.org/")
-# install.packages("ggplot2", dependencies = TRUE)
+# install.packages("ggplot2", dependencies=TRUE)
 # install.packages("stringr")
 # install.packages("tidyr")
 # install.packages("psych")
@@ -36,13 +36,12 @@ as_numeric_trycatch <- function(column) {
 }
 
 # read in data ####
-print(getwd())
-df<-read.csv("Data/neps.csv")
-variable_info<-read.csv("Data/Meta/variable_info_agreed_Jan_21_2026.csv", stringsAsFactors = F)
+df<-read.csv("Data/neps.csv", stringsAsFactors = FALSE, sep=",")
+variable_info<-read.csv("Data/Meta/variable_info_agreed_Feb_2_2026.csv", sep=";")
+print("Data loaded")
 
 # subset to agreed variables ####
 variables<-as.character(variable_info[variable_info$include.as.predictor==1 | variable_info$include.as.ID==1,]$var)
-variables<-variables[!is.na(variables)]
 df<-df[,variables]
 
 # label missingness as either missing by design (-100) or random (-200) or editorial (-300) ####
@@ -197,11 +196,6 @@ for(i in aggregated_vars$var){
 ## evaluate goodness of aggregation ####
 aggregated_vars
 
-write.csv(aggregated_vars, "Outputs/R_preprocessing/alpha_for_aggregated_vars.csv")
+write.csv(df, "Data/df_R_processed.csv")
 
-write.csv(df, "Data/Preprocessed/df_R_processed.csv")
-
-dim(df)
 print("finished running R preprocessing script")
-
-
