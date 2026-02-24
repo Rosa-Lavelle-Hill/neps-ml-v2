@@ -6,11 +6,6 @@ import pandas as pd
 def main():
     print("Running pre pre-processing script (formerly R code)!")
 
-if __name__ == "__main__":
-    main()
-
-    print("Running Python preprocessing file (ported from R)...")
-
     # ----------------------------
     # Functions
     # ----------------------------
@@ -389,4 +384,10 @@ if __name__ == "__main__":
     print("Only in R:", set_r - set_py)
 
     print("done with check!")
+    #===============================================================================
+
+
+
+if __name__ == "__main__":
+    main()
 

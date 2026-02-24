@@ -62,8 +62,10 @@ if run_R == True:
     # r_script = 'Scripts/R_pre-processing.R'
     # # Run the R script
     # subprocess.call(['Rscript', r_script])
-    import Scripts.R_preprocessing_script_into_Python
-    Scripts.R_preprocessing_script_into_Python.main()
+    from Scripts import R_preprocessing_script_into_Python as rprep
+    rprep.main()
+    print("Done running R pre-processing script (now in Python)!" \
+    "------------------------------------------------------------")
 #  -----------------------------------------------------------------------------------------
 ## IMPORT META DATA
 # Import variable information & meta data:
