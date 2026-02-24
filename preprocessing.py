@@ -42,6 +42,7 @@ smallest_category_count = cfg_get(cfg, ["preprocessing", "smallest_category_coun
 IV_cor_threshold = cfg_get(cfg, ["preprocessing", "IV_cor_threshold"])
 
 run_R = cfg_get(cfg, ["switches", "run_R"])
+use_synthetic_y = cfg_get(cfg, ["switches", "use_synthetic_y"])
 create_corr_drop_list = cfg_get(cfg, ["switches", "create_corr_drop_list"])
 check_mutual_information = cfg_get(cfg, ["switches", "check_mutual_information"])
 merge_categories = cfg_get(cfg, ["switches", "merge_categories"])
@@ -56,12 +57,13 @@ shutil.copy("configs/preprocessing.yaml", Path(outputs_folder) / "preprocessing_
 df_pre_R = pd.read_csv(data_raw, low_memory=False, index_col=[0])
 print(f"Data shape before R preprocessing: {df_pre_R.shape[1]} columns, {df_pre_R.shape[0]} rows")
 
-## PREPROCESSING IN R
+## PREPROCESSING IN R (switched over to Python for simplicity)
 if run_R == True:
-    r_script = 'Scripts/R_pre-processing.R'
-
-    # Run the R script
-    subprocess.call(['Rscript', r_script])
+    # r_script = 'Scripts/R_pre-processing.R'
+    # # Run the R script
+    # subprocess.call(['Rscript', r_script])
+    import Scripts.R_preprocessing_script_into_Python
+    Scripts.R_preprocessing_script_into_Python.main()
 #  -----------------------------------------------------------------------------------------
 ## IMPORT META DATA
 # Import variable information & meta data:
@@ -79,7 +81,7 @@ var_info_all_dict = dict(zip(var_info_all['var'], var_info_all['varname']))
 #  -----------------------------------------------------------------------------------------
 ## IMPORT PROCESSED DATA
 # Import R pre-processed data:
-df = pd.read_csv("Data/Preprocessed/df_R_processed.csv", low_memory=False, index_col=[0])
+df = pd.read_csv("Data/Preprocessed/df_R_to_python_processed.csv", low_memory=False, index_col=[0])
 print(f"Data shape: {df.shape[1]} columns, {df.shape[0]} rows")
 
 # retain original school track info
@@ -817,46 +819,48 @@ categorical_features_series = pd.DataFrame(categorical_features, columns=["Categ
 categorical_features_series.to_csv("Data/Meta/final_categorical_variables_after_preprocessing.csv")
 
 #---------------------------- (only needed for the mock data) ----------------------------
-# create y variable:
-print("Calculating new y variable...")
-dv_t1 = df[dv_t1_name]
-plot_hist(save_name="dv_t1", x=dv_t1, save_path=f"{outputs_folder}/histograms/",
-          title="dv_t1", bins=50)
+if use_synthetic_y == True:
+    print("Creating mock y variable for piloting...")
+    # create y variable:
+    print("Calculating new y variable...")
+    dv_t1 = df[dv_t1_name]
+    plot_hist(save_name="dv_t1", x=dv_t1, save_path=f"{outputs_folder}/histograms/",
+            title="dv_t1", bins=50)
 
-# Predict y from X with fixed coefficients (b=1)
-y_pred = np.dot(dv_t1, 1)
+    # Predict y from X with fixed coefficients (b=1)
+    y_pred = np.dot(dv_t1, 1)
 
-# Add noise to y_pred so that X predicts y with a given r2 (0.5)
-y, iters_count = add_noise(y_pred, 0.5)
+    # Add noise to y_pred so that X predicts y with a given r2 (0.5)
+    y, iters_count = add_noise(y_pred, 0.5)
 
-# Create and fit the linear regression model to check R2
-model = LinearRegression()
-dv_t1_2d = np.array(dv_t1).reshape(-1, 1)
-model.fit(np.array(dv_t1_2d), y)
+    # Create and fit the linear regression model to check R2
+    model = LinearRegression()
+    dv_t1_2d = np.array(dv_t1).reshape(-1, 1)
+    model.fit(np.array(dv_t1_2d), y)
 
-# Predict values
-y_pred = model.predict(dv_t1_2d)
+    # Predict values
+    y_pred = model.predict(dv_t1_2d)
 
-# Calculate R² score
-r2 = r2_score(y, y_pred)
-print(f"R-squared score: {round(r2, 2)}")
+    # Calculate R² score
+    r2 = r2_score(y, y_pred)
+    print(f"R-squared score: {round(r2, 2)}")
 
-plot_hist(save_name="y", x=y, save_path=f"{outputs_folder}/histograms/",
-          title="y", bins=50)
+    plot_hist(save_name="y", x=y, save_path=f"{outputs_folder}/histograms/",
+            title="y", bins=50)
 
-# check correlation between dv_t1 and y
-corr, _ = pearsonr(dv_t1, y)
-print("Pearson's r between DV at time 1 and y:", round(corr, 2))
-plot_scatt(x=dv_t1, y=y, save_path=f"{outputs_folder}/", save_name="scatter_dvt1_and_y",
-           xlab="DV Time 1", ylab="DV Time 2 (generated)")
+    # check correlation between dv_t1 and y
+    corr, _ = pearsonr(dv_t1, y)
+    print("Pearson's r between DV at time 1 and y:", round(corr, 2))
+    plot_scatt(x=dv_t1, y=y, save_path=f"{outputs_folder}/", save_name="scatter_dvt1_and_y",
+            xlab="DV Time 1", ylab="DV Time 2 (generated)")
 
-# add y to data and save:
-y = pd.Series(y)
-y.name = "y"
-df.reset_index(inplace=True, drop=True)
-X_and_y = pd.concat([df, y], axis=1, join="inner")
-X_and_y.to_csv("Data/Preprocessed/X_and_y.csv")
-print(f"final data shape: {X_and_y.shape}")
+    # add y to data and save:
+    y = pd.Series(y)
+    y.name = "y"
+    df.reset_index(inplace=True, drop=True)
+    X_and_y = pd.concat([df, y], axis=1, join="inner")
+    X_and_y.to_csv("Data/Preprocessed/X_and_y.csv")
+    print(f"final data shape: {X_and_y.shape}")
 
 #---------------------------- (end of section for mock data only) ----------------------------
 ## DV CORS

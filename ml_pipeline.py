@@ -183,8 +183,12 @@ def run_pipeline(cfg: dict):
     X[categorical_features] = X[categorical_features].astype('category')
     X[numerical_features] = X[numerical_features].astype('float')
 
-    # check all drop vars are removed
+    # double check all drop vars are removed
+    number_before = X.shape[1]
     X = remove_variables(X, remove_vars)
+    number_after = X.shape[1]
+    print(f"Removed {number_before - number_after} variables as per manual remove_vars list.")
+    print("Final X shape is: " + str(X.shape))
 
     # Check category counts across train/test data
     numerical_features_in_data = [elem for elem in numerical_features if elem in list(X.columns)]
