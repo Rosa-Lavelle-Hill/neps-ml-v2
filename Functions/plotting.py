@@ -88,11 +88,12 @@ def plot_hist(save_name, x, bins, save_path, title, xlim=None, ylim=None,
         else:
             print("not int or float")
     else:
-            print("nas")
+        print("nas")
     if html==True:
-            data_uri = base64.b64encode(open(save_path+save_name+".png", 'rb').read()).decode('utf-8')
-            image_tag = '<img src="data:image/png;base64,{0}">'.format(data_uri)
-            return image_tag
+        with open(save_path+save_name+".png", 'rb') as image_file:
+            data_uri = base64.b64encode(image_file.read()).decode('utf-8')
+        image_tag = '<img src="data:image/png;base64,{0}">'.format(data_uri)
+        return image_tag
     else:
         return
 
@@ -404,7 +405,6 @@ def plot_permutation_bars(perm_imp_df, save_path, save_name, plot_n_features):
 
     fig, ax = plt.subplots(figsize=(8, 6))
     perm_imp_df.dropna(inplace=True)
-    # todo: ^^^^^^^^^^why na?
     plt.barh(perm_imp_df['Feature'], perm_imp_df['importance_mean'],
              xerr=perm_imp_df['importance_std'], align='center')
     plt.xlabel('Importance')

@@ -1,0 +1,321 @@
+/home/lavell0000/Documents/Rosa/neps-ml-v2/Scripts/R_preprocessing_script_into_Python.py:56: DtypeWarning: Columns (746,896,897,971,982,983) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv(data_path)
+/home/lavell0000/Documents/Rosa/neps-ml-v2/Scripts/R_preprocessing_script_into_Python.py:375: DtypeWarning: Columns (576,578) have mixed types. Specify dtype option on import or set low_memory=False.
+  df_r = pd.read_csv("Data/Preprocessed/df_R_processed.csv", index_col=[0])
+Data shape before R preprocessing: 3728 columns, 6112 rows
+Running pre pre-processing script (formerly R code)!
+Loaded df: 6112 rows, 3729 variables
+Loaded variable_info: 818 rows, 21 columns
+Subset to agreed variables | rows removed: 0, variables removed: 3058
+Numeric coercion check: 0 columns contain non-numeric entries that would coerce to NaN.
+Saved missing-code percentages to: Outputs/missing/R_mising_-100_perc.csv
+Recode missingness (no row/variable removal expected) | rows removed: 0, variables removed: 0
+Cells recoded to -100 (NA/-93): 1511930
+Cells recoded to -200 (random missing group): 359984
+Cells recoded to -300 (editorial missing group): 38046
+Date-merge month recode: changed 0 cells across 18 month columns.
+Merge month/year date variables (drops original m/y columns) | rows removed: 0, variables removed: 18
+Created date columns: 18; dropped m/y columns: 36
+df shape:  (6112, 653)
+Aggregate 'ed1011_pos' (dropped its item variables) | rows removed: 0, variables removed: 2
+ed1011_pos: 1/13 | items: 3 | alpha: 0.6488181613002524
+Aggregate 'ed1011_neg' (dropped its item variables) | rows removed: 0, variables removed: 5
+ed1011_neg: 2/13 | items: 6 | alpha: 0.8043007866965294
+Aggregate 'ed1010' (dropped its item variables) | rows removed: 0, variables removed: 3
+ed1010: 3/13 | items: 4 | alpha: 0.7702377086881249
+Aggregate 'p34009' (dropped its item variables) | rows removed: 0, variables removed: 4
+p34009: 4/13 | items: 5 | alpha: 0.6598161051058511
+Aggregate 't34009' (dropped its item variables) | rows removed: 0, variables removed: 6
+t34009: 5/13 | items: 7 | alpha: 0.20774972898616306
+Aggregate 'td0032' (dropped its item variables) | rows removed: 0, variables removed: 3
+td0032: 6/13 | items: 4 | alpha: 0.772273326587807
+Aggregate 'td0033' (dropped its item variables) | rows removed: 0, variables removed: 4
+td0033: 7/13 | items: 5 | alpha: 0.6919659070713718
+Aggregate 'td0034' (dropped its item variables) | rows removed: 0, variables removed: 2
+td0034: 8/13 | items: 3 | alpha: 0.7880940437640973
+Aggregate 'td0035' (dropped its item variables) | rows removed: 0, variables removed: 2
+td0035: 9/13 | items: 3 | alpha: 0.7681225478078015
+Aggregate 'td0036' (dropped its item variables) | rows removed: 0, variables removed: 2
+td0036: 10/13 | items: 3 | alpha: 0.7904851535304275
+Aggregate 'td0041' (dropped its item variables) | rows removed: 0, variables removed: 2
+td0041: 11/13 | items: 3 | alpha: 0.7437137075745226
+Aggregate 'td0042' (dropped its item variables) | rows removed: 0, variables removed: 5
+td0042: 12/13 | items: 6 | alpha: 0.8962279188874658
+Aggregate 'td0043' (dropped its item variables) | rows removed: 0, variables removed: 2
+td0043: 13/13 | items: 3 | alpha: 0.6795705897607263
+Total variables removed due to aggregation: 55
+df shape: (6112, 611)
+Saved alpha for aggregated vars to: Outputs/R_preprocessing/alpha_for_aggregated_vars.csv
+Saved processed df to: Data/Preprocessed/df_R_to_python_processed.csv
+Final df dimensions: 6112 rows, 611 variables
+finished running Pre-pre-Python preprocessing script (formerly R code)!
+Rows: python =6112, R =6112
+Columns: python =611, R =605
+Only in Python: {'org5_sc1a', 'mpg5or02_sc6', 'mpg5re_sc6', 'mpg5ma_sc6', 'mpg5or01_sc6', 'reg5_sc1u', 'org5_sc1b'}
+Only in R: {'reg5_sc1'}
+done with check!
+Done running R pre-processing script (now in Python)!------------------------------------------------------------
+Data shape after R preprocessing: 611 columns, 6112 rows
+Dropping parent-reported duplicate vars (keeping child-reported): ['p34005a', 'p724102', 'p741001', 'p410000_g1D', 'p406000']
+num of Edu and SES scale vars dropped: 40
+num cols after dropping Edu and SES scales: 566
+Dropping the following Edu and SES scale variables: ['e537061_g1', 'e537061_g2', 'e537061_g3', 'e537061_g4', 'e537061_g5', 'e537061_g6', 'e537061_g7', 'e537061_g9', 'e537061_g16', 'e537062_g1', 'e537062_g2', 'e537062_g3', 'e537062_g4', 'e537062_g5', 'e537062_g6', 'e537062_g7', 'e537062_g9', 'e537062_g16', 'p731904_g1', 'p731904_g2', 'p731904_g3', 'p731904_g4', 'p731904_g5', 'p731904_g6', 'p731904_g7', 'p731904_g8', 'p731904_g9', 'p731904_g15', 'p731904_g16', 'p731954_g1', 'p731954_g2', 'p731954_g3', 'p731954_g4', 'p731954_g5', 'p731954_g6', 'p731954_g7', 'p731954_g8', 'p731954_g9', 'p731954_g15', 'p731954_g16']
+Keeping the following Edu and SES scale variables: []
+Rows dropped where students dont aspire to finish school: -22
+Rows dropped where students in a special needs school: -19
+Dropping ID variables which are not needed for prediction and may cause data leakage...
+num cols after dropping 6 ID variables: 551
+Dropping variables which have been manually defined in the fixed_params.py file (redundant information)...
+dropping p731116
+dropping e537122
+dropping e53702y_D
+dropping e53710y_D
+dropping e537150_D
+dropping e229821_D
+dropping p413000_g1D
+dropping p400000
+dropping p400000_g1
+dropping p401110
+dropping p413040
+dropping t400240_g1D
+dropping t400220_g1D
+dropping t400070_g1D
+dropping p404000
+dropping p403000
+dropping p403000_g1
+dropping p404010
+dropping t400280_g1D
+dropping t400260_g1D
+dropping t400090_g1D
+dropping teacher_predominant_state
+dropping t70004
+dropping tx8050
+dropping t262000_g1
+num cols after dropping 25 manually defined redundant variables: 526
+Dropping 162 columns, where missingness >50.0%
+Dropped 162 columns where missingness >50.0%
+New data shape after dropping columns >50.0% missing: 6071 rows, 364 columns
+Rows dropped where no DV information at time 1: 916
+New data shape after dropping rows with no DV at time 1: 5155 rows, 364 columns
+Rows dropped where >50.0% missing: 590
+New data shape after dropping rows >50.0% missing: 4565 rows, 364 columns
+
+Overall percentage of missing values in the DataFrame: 19.37
+Shape of DataFrame: (4565, 364)
+Total number of missing values: 321850
+Calculated overall missing percentage: 19.37
+Missing percentages per column (top 10 highest):
+ e537180        43.26
+e22941i        42.26
+e22941h        41.51
+e22941e        40.53
+e22941f        40.09
+p414000_g1D    39.50
+p414040        39.39
+p414050        39.39
+p731852_g3     39.21
+e222821        39.06
+dtype: float64
+Dropped original date variables and created new variables for days since dob for each date variable and dob in days at target survey.
+New data shape after processing date variables: 4565 rows, 363 columns
+Columns dropped where low variance: 10
+New data shape after dropping low variance variables: 4565 rows, 353 columns
+Checking for multicollinearity... No. columns: 353
+No. correlated variables above 0.7 not in keep list: 26, vars in keep list: 1
+Dropping 22, no. of columns: 331
+No. correlated variables above 0.7 not in keep list: 4, vars in keep list: 1
+Dropping 4, no. of columns: 327
+No. correlated variables above 0.7 not in keep list: 1, vars in keep list: 0
+Dropping 1, no. of columns: 326
+No. correlated variables above 0.7 not in keep list: 0, vars in keep list: 0
+Columns dropped due to IV correlations >0.7: 27
+New data shape after dropping correlated variables: 4565 rows, 326 columns
+Total variables dropped: 293
+ICC: ID_i    0.17
+Name: ID_i, dtype: float64
+X -- column with less than 30 category counts: e537161_g1 -- 1
+X -- category counts for e537161_g1:
+  Category: 9: 914
+  Category: 9: 914
+  Category: 9 (Germanistik (Deutsch, germanische Sprachen ohne Anglistik)): 914
+  Category: 9: 914
+  Category: 9: 914
+  Category: 10: 505
+  Category: 10: 505
+  Category: 10 (Anglistik, Amerikanistik): 505
+  Category: 10: 505
+  Category: 10: 505
+  Category: 1003: 387
+  Category: 1003: 387
+  Category: 1003: 387
+  Category: 1003: 387
+  Category: 1003: 387
+  Category: 22: 296
+  Category: 22: 296
+  Category: 22 (Sport, Sportwissenschaft): 296
+  Category: 22: 296
+  Category: 22: 296
+  Category: 42: 143
+  Category: 42: 143
+  Category: 42 (Biologie): 143
+  Category: 42: 143
+  Category: 42: 143
+  Category: 40: 139
+  Category: 40: 139
+  Category: 40 (Chemie): 139
+  Category: 40: 139
+  Category: 40: 139
+  Category: 78: 123
+  Category: 78: 123
+  Category: 78 (Musik, Musikwissenschaft): 123
+  Category: 78: 123
+  Category: 78: 123
+  Category: 44: 88
+  Category: 44: 88
+  Category: 44 (Geographie): 88
+  Category: 44: 88
+  Category: 44: 88
+  Category: 1006: 79
+  Category: 1006: 79
+  Category: 1006: 79
+  Category: 1006: 79
+  Category: 1006: 79
+  Category: 5: 73
+  Category: 5: 73
+  Category: 5 (Geschichte): 73
+  Category: 5: 73
+  Category: 5: 73
+  Category: 39: 64
+  Category: 39: 64
+  Category: 39 (Physik, Astronomie): 64
+  Category: 39: 64
+  Category: 39: 64
+  Category: 1004: 63
+  Category: 1004: 63
+  Category: 1004: 63
+  Category: 1004: 63
+  Category: 1004: 63
+  Category: 8: 55
+  Category: 8: 55
+  Category: 8 (Altphilologie (klass. Philologie), Neugriechisch): 55
+  Category: 8: 55
+  Category: 8: 55
+  Category: 1005: 47
+  Category: 1005: 47
+  Category: 1005: 47
+  Category: 1005: 47
+  Category: 1005: 47
+  Category: 1002: 27
+  Category: 1002: 27
+  Category: 1002: 27
+  Category: 1002: 27
+  Category: 1002: 27
+  Category: 1001: 20
+  Category: 1001: 20
+  Category: 1001: 20
+  Category: 1001: 20
+  Category: 1001: 20
+X -- column with less than 30 category counts: e537162_g1 -- 2
+X -- category counts for e537162_g1:
+  Category: 10: 385
+  Category: 10: 385
+  Category: 10 (Anglistik, Amerikanistik): 385
+  Category: 10: 385
+  Category: 10: 385
+  Category: 44: 364
+  Category: 44: 364
+  Category: 44 (Geographie): 364
+  Category: 44: 364
+  Category: 44: 364
+  Category: 5: 341
+  Category: 5: 341
+  Category: 5 (Geschichte): 341
+  Category: 5: 341
+  Category: 5: 341
+  Category: 1003: 328
+  Category: 1003: 328
+  Category: 1003: 328
+  Category: 1003: 328
+  Category: 1003: 328
+  Category: 22: 234
+  Category: 22: 234
+  Category: 22 (Sport, Sportwissenschaft): 234
+  Category: 22: 234
+  Category: 22: 234
+  Category: 9: 203
+  Category: 9: 203
+  Category: 9 (Germanistik (Deutsch, germanische Sprachen ohne Anglistik)): 203
+  Category: 9: 203
+  Category: 9: 203
+  Category: 1001: 199
+  Category: 1001: 199
+  Category: 1001: 199
+  Category: 1001: 199
+  Category: 1001: 199
+  Category: 42: 186
+  Category: 42: 186
+  Category: 42 (Biologie): 186
+  Category: 42: 186
+  Category: 42: 186
+  Category: 39: 129
+  Category: 39: 129
+  Category: 39 (Physik, Astronomie): 129
+  Category: 39: 129
+  Category: 39: 129
+  Category: 1006: 113
+  Category: 1006: 113
+  Category: 1006: 113
+  Category: 1006: 113
+  Category: 1006: 113
+  Category: 1002: 107
+  Category: 1002: 107
+  Category: 1002: 107
+  Category: 1002: 107
+  Category: 1002: 107
+  Category: 1005: 78
+  Category: 1005: 78
+  Category: 1005: 78
+  Category: 1005: 78
+  Category: 1005: 78
+  Category: 78: 65
+  Category: 78: 65
+  Category: 78 (Musik, Musikwissenschaft): 65
+  Category: 78: 65
+  Category: 78: 65
+  Category: 4: 59
+  Category: 4: 59
+  Category: 4 (Philosophie): 59
+  Category: 4: 59
+  Category: 4: 59
+  Category: 25: 50
+  Category: 25: 50
+  Category: 25 (Politikwissenschaften): 50
+  Category: 25: 50
+  Category: 25: 50
+  Category: 40: 39
+  Category: 40: 39
+  Category: 40 (Chemie): 39
+  Category: 40: 39
+  Category: 40: 39
+  Category: 8: 27
+  Category: 8: 27
+  Category: 8 (Altphilologie (klass. Philologie), Neugriechisch): 27
+  Category: 8: 27
+  Category: 8: 27
+  Category: 60: 24
+  Category: 60: 24
+  Category: 60 (ErnÃ¤hrungs- und Haushaltswissenschaften): 24
+  Category: 60: 24
+  Category: 60: 24
+  Category: 1004: 22
+  Category: 1004: 22
+  Category: 1004: 22
+  Category: 1004: 22
+  Category: 1004: 22
+Creating mock y variable for piloting...
+Calculating new y variable...
+noise variance: 1.56; noise SD: 1.25; noise mean: -0.01
+R-squared score: 0.5
+Pearson's r between DV at time 1 and y: 0.7
+final data shape: (4565, 325)
+preprocessing done

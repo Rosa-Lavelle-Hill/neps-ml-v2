@@ -31,6 +31,7 @@ Data/*
 
 # Track changes to var_info sheet
 !Data/Meta/variable_info_agreed_Feb_2_2026.csv
+!Outputs/pre_processing_output.txt
 
 #Results
 Results/*

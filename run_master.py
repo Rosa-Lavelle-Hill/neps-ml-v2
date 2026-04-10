@@ -1,3 +1,4 @@
+# python run_master.py > ml_pipeline_logs 2>&1
 import sys
 import glob
 import yaml

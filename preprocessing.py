@@ -1,10 +1,9 @@
 # https://www.neps-data.de/Portals/0/NEPS/Datenzentrum/Forschungsdaten/SC6/13-0-0/SC6_13-0-0_DataManual.pdf
+# python preprocessing.py > preprocessing_logs 2>&1
 import json
-import subprocess
 import pandas as pd
 import numpy as np
 import yaml
-import shutil
 import shutil
 import subprocess
 from pathlib import Path
@@ -16,10 +15,10 @@ from Functions.plotting import plot_hist, plot_scatt
 from scipy.stats import pearsonr
 from sklearn.linear_model import LinearRegression
 from Functions.preprocessing_functions import get_top_abs_correlations, remove_highly_correlated_columns, \
-    check_condition, get_top_abs_phi, find_matching_rows, count_categories_to_file
+    check_condition, get_top_abs_phi, find_matching_rows, count_categories_to_file, log_drops
 from Functions.stat_checks import is_binary, phi_coefficient
 from fixed_params import (date_variables, keep_vars, remove_vars, dv_t1_name, school_track, target_id,
-                          institution_id, dob_var)
+                          institution_id, dob_var, parent_duplicate_vars)
 from Functions.gen_data import add_noise
 from Functions.subsets import cfg_get
 from sklearn.feature_selection import VarianceThreshold
@@ -86,6 +85,15 @@ var_info_all_dict = dict(zip(var_info_all['var'], var_info_all['varname']))
 df = pd.read_csv("Data/Preprocessed/df_R_to_python_processed.csv", low_memory=False)
 print(f"Data shape after R preprocessing: {df.shape[1]} columns, {df.shape[0]} rows")
 
+# Track all dropped variables and reasons
+dropped_vars_reasons = {}
+
+vars_to_drop = [v for v in parent_duplicate_vars if v in df.columns]
+if vars_to_drop:
+    print(f"Dropping parent-reported duplicate vars (keeping child-reported): {vars_to_drop}")
+    log_drops(dropped_vars_reasons, vars_to_drop, "Parent duplicate (kept child version)")
+    df.drop(vars_to_drop, axis=1, inplace=True)
+
 # retain original school track info
 school_track_dict = {}
 for index, row in df.iterrows():
@@ -98,6 +106,7 @@ scale_drop = list(scale_drop)
 matching_rows = find_matching_rows(column_data=list(var_info.varname), search_list=scale_drop)
 scale_vars_to_drop = var_info.iloc[matching_rows]["var"]
 print(f"num of Edu and SES scale vars dropped: {len(scale_vars_to_drop)}")
+log_drops(dropped_vars_reasons, scale_vars_to_drop.tolist(), "Dropped Edu/SES scale")
 df.drop(scale_vars_to_drop, axis=1, inplace=True)
 print(f"num cols after dropping Edu and SES scales: {df.shape[1]}")
 print(f"Dropping the following Edu and SES scale variables: {scale_vars_to_drop.tolist()}")
@@ -157,6 +166,7 @@ if create_new_vars == True:
     df['teacher_predominant_state'] = most_common_values
     # drop original columns:
     for var in teacher_loc_vars:
+        log_drops(dropped_vars_reasons, [var], "Dropped after creating teacher state vars")
         df.drop(var, axis=1, inplace=True)
     newly_created_vars.add("teacher_predominant_state")
 
@@ -166,6 +176,7 @@ if create_new_vars == True:
         df[i] = pd.to_numeric(df[i], errors='coerce')
     df["teacher_stress_factors_avg"] = df[df[stress_factors] > 0][stress_factors].apply(lambda x: np.nan if x.empty else x.mean(), axis=1)
     for var in stress_factors:
+        log_drops(dropped_vars_reasons, [var], "Dropped after creating teacher_stress_factors_avg")
         df.drop(var, axis=1, inplace=True)
     newly_created_vars.add("teacher_stress_factors_avg")
 
@@ -175,6 +186,7 @@ if create_new_vars == True:
         df[i] = pd.to_numeric(df[i], errors='coerce')
     df["command_of_other_lang"] = df[df[language_vars] > 0][language_vars].apply(lambda x: np.nan if x.empty else x.mean(), axis=1)
     for var in language_vars:
+        log_drops(dropped_vars_reasons, [var], "Dropped after creating command_of_other_lang")
         df.drop(var, axis=1, inplace=True)
     newly_created_vars.add("command_of_other_lang")
 
@@ -184,6 +196,7 @@ if create_new_vars == True:
         df[i] = pd.to_numeric(df[i], errors='coerce')
     df["lang_of_media"] = df[df[language_media_vars] > 0][language_media_vars].apply(lambda x: np.nan if x.empty else x.mean(), axis=1)
     for var in language_media_vars:
+        log_drops(dropped_vars_reasons, [var], "Dropped after creating lang_of_media")
         df.drop(var, axis=1, inplace=True)
     newly_created_vars.add("lang_of_media")
 
@@ -203,6 +216,7 @@ if create_new_vars == True:
     # NOTE. The item of siblings (t412030) should be removed and it is on the modified list of the dropped vars.
     all_vars_rem = fam_lang_vars + friend_lang_vars + ["t412030"]
     for var in all_vars_rem:
+        log_drops(dropped_vars_reasons, [var], "Dropped after creating family_lang/lang_of_friends")
         df.drop(var, axis=1, inplace=True)
     newly_created_vars.add("lang_of_friends")
     # Add newly created vars to keep list
@@ -373,15 +387,26 @@ print(f"Rows dropped where students in a special needs school: {rows_dropped}")
 ## REMOVE REDUNDANT VARS
 # Remove ID variables (except target ID_t, that gets removed at end):
 id_vars = ["cohort", "ID_cc", "ID_cm", "ID_tg_w1", "ID_e", "ID_cg"]
+print("Dropping ID variables which are not needed for prediction and may cause data leakage...")
 for var in id_vars:
+    if var in df.columns:
+        log_drops(dropped_vars_reasons, [var], "Dropped ID variable")
     df.drop(var, axis=1, inplace=True)
+print(f"num cols after dropping {len(id_vars)} ID variables: {df.shape[1]}")
 
 # Remove unwanted vars (duplicates and high multicollinearity):
+print("Dropping variables which have been manually defined in the fixed_params.py file (redundant information)...")
+
 if remove_manual == True:
+    count = 0
     for var in remove_vars:
         if var in df.columns:
             print('dropping ' + var)
+            log_drops(dropped_vars_reasons, [var], "Dropped manual remove_vars")
             df.drop(var, axis=1, inplace=True)
+            count += 1
+    print(f"num cols after dropping {count} manually defined redundant variables: {df.shape[1]}")
+
 else:
     # just remove IDs and redundant dob vars:
     remove_vars_basic = ["Unnamed:0", # Incase index creeps in
@@ -395,7 +420,10 @@ else:
     for var in remove_vars_basic:
         if var in df.columns:
             print('dropping ' + var)
+            log_drops(dropped_vars_reasons, [var], "Dropped basic redundant var")
             df.drop(var, axis=1, inplace=True)
+    print(f"num cols after dropping {len(remove_vars_basic)} basic redundant ID and dob variables: {df.shape[1]}")
+
 #  -----------------------------------------------------------------------------------------
 # COUNT MISSING
 # for now, code all -100, -200, and -300 as missing
@@ -449,28 +477,33 @@ plot_hist(save_name="cols_missing", x=missing_summary['Missing_Perc'],
 # drop cols in df where > X% missing (all types):
 drop_cols = missing_summary["Variable"][missing_summary["Missing_Perc"]>missing_thresh_col*100]
 print(f"Dropping {len(drop_cols)} columns, where missingness >{missing_thresh_col*100}%")
+count = 0
 for col in drop_cols:
     if col != dv_t1_name:
+        log_drops(dropped_vars_reasons, [col], f"Missing >{missing_thresh_col*100}% threshold")
         df.drop(col, axis=1, inplace=True)
+        count += 1
 drop_cols.to_csv(f"{outputs_folder}/missing/dropped_cols_{missing_thresh_col*100}%_miss.csv")
+print(f"Dropped {count} columns where missingness >{missing_thresh_col*100}%")
+print(f"New data shape after dropping columns >{missing_thresh_col*100}% missing: {df.shape[0]} rows, {df.shape[1]} columns")
 #  -----------------------------------------------------------------------------------------
 ## ROW DROPS
 # drop all rows where no DV at Time 1
 rows_before = df.shape[0]
 df.dropna(subset=[dv_t1_name], inplace=True, axis=0)
 rows_after = df.shape[0]
-rows_dropped = rows_after - rows_before
+rows_dropped = rows_before - rows_after
 print(f"Rows dropped where no DV information at time 1: {rows_dropped}")
+print(f"New data shape after dropping rows with no DV at time 1: {df.shape[0]} rows, {df.shape[1]} columns")
 
 # Drop rows where > X% missing:
 rows_before = df.shape[0]
 threshold = len(df.columns) * missing_thresh_row  # X% of the columns
 df.dropna(thresh=threshold, inplace=True)
 rows_after = df.shape[0]
-rows_dropped = rows_after - rows_before
-print(f"Rows dropped where >50% missing: {rows_dropped}")
+rows_dropped = rows_before - rows_after
+print(f"Rows dropped where >{missing_thresh_row*100}% missing: {rows_dropped}")
 print(f"New data shape after dropping rows >{missing_thresh_row*100}% missing: {df.shape[0]} rows, {df.shape[1]} columns")
-# todo: plot distribution of missing rows!!!!!!!!!!!!
 # ------------------
 # Final % of data missing descriptives:
 
@@ -486,7 +519,9 @@ print("Calculated overall missing percentage:", overall_missing_percentage)
 
 # Check the mean missingness for each column
 missing_percentages = df.isnull().mean() * 100
-print("Missing percentages per column:\n", missing_percentages)
+missing_percentages = missing_percentages.round(2)
+missing_percentages = missing_percentages.sort_values(ascending=False)
+print("Missing percentages per column (top 10 highest):\n", missing_percentages.head(10))
 
 # Plotting the distribution of missingness
 missing_percentages = df.isnull().mean() * 100
@@ -526,8 +561,12 @@ for col in date_variables:
 df[dob_var] = pd.to_datetime(df[dob_var], format='%Y-%m-%d', errors='coerce')
 date_of_Target_survey = pd.to_datetime(df["tx8600"], format='%Y-%m-%d', errors='coerce')
 df["dob_in_days_at_Target_survey"] = (date_of_Target_survey - df[dob_var]).dt.days
+log_drops(dropped_vars_reasons, [dob_var], "Dropped raw dob after deriving dob_in_days_at_Target_survey")
 df.drop(dob_var, axis=1, inplace=True)
+log_drops(dropped_vars_reasons, ["tx8600"], "Dropped target survey date after deriving dob_in_days_at_Target_survey")
 df.drop("tx8600", axis=1, inplace=True) # -> date of target questionnaire, used to calculate dob in days
+print(f"Dropped original date variables and created new variables for days since dob for each date variable and dob in days at target survey.")
+print(f"New data shape after processing date variables: {df.shape[0]} rows, {df.shape[1]} columns")
 #  -----------------------------------------------------------------------------------------
 ## ASSIGN DATA TYPES
 # Specify variable type:
@@ -580,6 +619,7 @@ drop_col_list = list(df[dropped_columns].columns)
 droped_col_df = pd.DataFrame(drop_col_list, columns=["Variable"])
 save_path = f"{outputs_folder}/Variance_dropped_variables/"
 droped_col_df.to_csv(save_path+"dropped_low_variance_{}.csv".format(variance_feature_selection_threshold))
+log_drops(dropped_vars_reasons, drop_col_list, f"Variance <{variance_feature_selection_threshold} threshold")
 df = df_selected.copy()
 print(f"New data shape after dropping low variance variables: {df.shape[0]} rows, {df.shape[1]} columns")
 #  -----------------------------------------------------------------------------------------
@@ -665,6 +705,7 @@ if create_corr_drop_list == True:
     # save drop list
     drop_list_series = pd.DataFrame(columns_to_remove_list, columns=["Variable"])
     drop_list_series.to_csv(f"{outputs_folder}/IV_correlations/dropped_vars_above_{IV_cor_threshold}.csv")
+    log_drops(dropped_vars_reasons, columns_to_remove_list, f"Multicollinearity >{IV_cor_threshold} threshold")
 
 if create_corr_drop_list == False:
     columns_to_remove = pd.read_csv(f"{outputs_folder}/IV_correlations/dropped_vars_above_{IV_cor_threshold}.csv", index_col=[0])
@@ -672,6 +713,7 @@ if create_corr_drop_list == False:
     columns_to_remove_list = list(columns_to_remove['Variable'])
     # Remove the identified columns from the DataFrame
     df_filtered = df.drop(columns=columns_to_remove_list)
+    log_drops(dropped_vars_reasons, columns_to_remove_list, f"Multicollinearity >{IV_cor_threshold} threshold")
 
 # define df as filtered df
 df = df_filtered.copy()
@@ -739,23 +781,14 @@ for index, row in mi_df.iterrows():
                save_name=f"{xvar}_{yvar}", jitter=True, fontsize=8)
 #  -----------------------------------------------------------------------------------------
 ## GET DROP INFO - Create a dataframe of all vars that get dropped and reason why
+drop_records = []
+for var, reasons in dropped_vars_reasons.items():
+    drop_records.append({
+        "Variable": var,
+        "Drop_Reason": "; ".join(sorted(reasons))
+    })
 
-# 1) missing vars
-A1_missing_cols = pd.read_csv(f"{outputs_folder}/missing/dropped_cols_{missing_thresh_col * 100}%_miss.csv", index_col=[0])
-A1_missing_cols['Drop_Reason'] = f"Missing >{missing_thresh_col*100}% threshold"
-
-# 2) low variance
-A2_low_var_cols = pd.read_csv(
-    f"{outputs_folder}/Variance_dropped_variables/dropped_low_variance_{variance_feature_selection_threshold}.csv", index_col=[0])
-A2_low_var_cols['Drop_Reason'] = f"Variance <{variance_feature_selection_threshold} threshold"
-
-# 3) multicollinearity
-A3_correlated_cols = pd.read_csv(f"{outputs_folder}/IV_correlations/dropped_vars_above_{IV_cor_threshold}.csv", index_col=[0])
-A3_correlated_cols.columns = ['Variable']
-A3_correlated_cols['Drop_Reason'] = f"Multicollinearity >{IV_cor_threshold} threshold"
-
-all_dropped_vars_df = pd.concat([A1_missing_cols, A2_low_var_cols, A3_correlated_cols], axis=0)
-all_dropped_vars_df.reset_index(inplace=True)
+all_dropped_vars_df = pd.DataFrame(drop_records)
 print(f"Total variables dropped: {all_dropped_vars_df.shape[0]}")
 # Split and create new column with original var (prefix)
 
@@ -803,6 +836,7 @@ icc = result.cov_re[institution_id] / (result.cov_re[institution_id] + result.sc
 print('ICC: {}'.format(round(icc, 2)))
 
 # Remove IDs
+log_drops(dropped_vars_reasons, [target_id, institution_id], "Dropped IDs before final modeling")
 df.drop([target_id, institution_id], axis=1, inplace=True)
 
 #----------------------------------------------------------------------------------------

@@ -135,10 +135,19 @@ def run_pipeline(cfg: dict):
     var_info = var_info[var_info["include as predictor"] == 1]
     var_names_dict = dict(zip(var_info['var'], var_info['varname']))
 
+    # double check all drop vars are removed
+    number_before = X.shape[1]
+    X = remove_variables(X, remove_vars)
+    number_after = X.shape[1]
+    print(f"Removed {number_before - number_after} variables as per manual remove_vars list.")
+    print("Final X shape is: " + str(X.shape))
+
     # Var info only for where columns exist in data
-    var_info = var_info[var_info['var'].isin(X_and_y.columns)]
-    print(f"num of variables in var_info and in X_and_y: {var_info.shape[0]}")
-    var_info.to_csv("Data/Meta/var_info_used_in_model.csv", index=False)   
+    var_info = var_info[var_info['var'].isin(X.columns)]
+    print(f"num of variables in var_info and in X: {var_info.shape[0]}")
+    vars_not_in_var_info = set(X.columns) - set(var_info['var'])
+    print(f"Variables in X but not in var_info: {vars_not_in_var_info}")
+    var_info.to_csv("Data/Meta/var_info_used_in_model_updated.csv", index=False)   
 
     # get block information for grouped importance
     block_dict = dict(zip(var_info['var'], var_info['Variable_Group']))
@@ -183,13 +192,6 @@ def run_pipeline(cfg: dict):
     X[categorical_features] = X[categorical_features].astype('category')
     X[numerical_features] = X[numerical_features].astype('float')
 
-    # double check all drop vars are removed
-    number_before = X.shape[1]
-    X = remove_variables(X, remove_vars)
-    number_after = X.shape[1]
-    print(f"Removed {number_before - number_after} variables as per manual remove_vars list.")
-    print("Final X shape is: " + str(X.shape))
-
     # Check category counts across train/test data
     numerical_features_in_data = [elem for elem in numerical_features if elem in list(X.columns)]
     categorical_features_in_data = [elem for elem in categorical_features if elem in list(X.columns)]
@@ -220,10 +222,10 @@ def run_pipeline(cfg: dict):
 
     # Save modelling data
     print("X_train shape: {}, X_test shape: {}".format(X_train.shape, X_test.shape))
-    X_train.to_csv(results_path / f"X_train{run}.csv")
-    X_test.to_csv(results_path / f"X_test{run}.csv")
-    y_train.to_csv(results_path / f"y_train{run}.csv")
-    y_test.to_csv(results_path / f"y_test{run}.csv")
+    X_train.to_csv(results_path / f"X_train{run}.csv", index=False)
+    X_test.to_csv(results_path / f"X_test{run}.csv", index=False)
+    y_train.to_csv(results_path / f"y_train{run}.csv", index=False)
+    y_test.to_csv(results_path / f"y_test{run}.csv", index=False)
 
     # Count category distributions across train and test data sets
     cat_save_path = outputs_path / "category_distributions"
@@ -255,8 +257,9 @@ def run_pipeline(cfg: dict):
         save_file = results_path / f"Prediction/{run_label}_{model_name}{run}.txt"
 
         if train_models == True:
-            print("{}: X_train = {}; X_test = {}".format(run_label, X_train.shape, X_test.shape), file=open(save_file, "w"))
-            print("{}: ".format(model_name), file=open(save_file, "a"))
+            with open(save_file, "w") as f:
+                print("{}: X_train = {}; X_test = {}".format(run_label, X_train.shape, X_test.shape), file=f)
+                print("{}: ".format(model_name), file=f)
             print("Running {} model".format(model_name))
 
             # Perform CV on train data to tune model hyper-parameters
@@ -276,16 +279,17 @@ def run_pipeline(cfg: dict):
             # end timer
             grid_end = dt.datetime.now()
             training_time = grid_end - grid_start
-            print("Training done. Time taken: {}".format(training_time), file=open(save_file, "a"))
+            with open(save_file, "a") as f:
+                print("Training done. Time taken: {}".format(training_time), file=f)
 
             # Store best hyper-paramters:
             best_params = grid_search.best_params_
             joblib.dump(best_params, params_save / f'{run_label}_{model_name}{run}.pkl', compress=1)
             best_train_score = round(abs(grid_search.best_score_), decimal_places)
-            print("params tried:\n{}\n".format(params), file=open(save_file, "a"))
-
-            print("Best training {} score: {}. Best model params:\n{}.\n".format(scoring, best_train_score, best_params),
-                file=open(save_file, "a"))
+            with open(save_file, "a") as f:
+                print("params tried:\n{}\n".format(params), file=f)
+                print("Best training {} score: {}. Best model params:\n{}.\n".format(scoring, best_train_score, best_params),
+                    file=f)
 
             best_params_dict[model_name] = best_params
         else:
@@ -357,8 +361,9 @@ def run_pipeline(cfg: dict):
             test_score_mae = round(metrics.mean_absolute_error(y_test, y_pred_m), decimal_places)
             test_score_rmse = round(metrics.root_mean_squared_error(y_test, y_pred_m), decimal_places)
 
-            print(f"Best {model_name} model performance on test data ({load_label}):\nR2: {test_score_r2}; mae: {test_score_mae}",
-                file=open(save_file, "a"))
+            with open(save_file, "a") as f:
+                print(f"Best {model_name} model performance on test data ({load_label}):\nR2: {test_score_r2}; mae: {test_score_mae}",
+                    file=f)
 
             test_scores[model_name] = {"R2": test_score_r2, "MAE": test_score_mae, "RMSE": test_score_rmse}
 

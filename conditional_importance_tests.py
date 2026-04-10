@@ -15,8 +15,6 @@ from fixed_params import categorical_features, var_info_sheet, seed, test_size, 
 from Params.Grids import dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid
 from tofi import CIT
 
-# todo: address missingess this way -> using a pipe as a sampler
-
 # set to true if want to reduce computation time to test code -- will only run for a sample of features
 test = "CPI" # "RPT" or "CPI"
 run_CIT = True 
