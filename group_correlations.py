@@ -45,19 +45,20 @@ if __name__ == "__main__":
 
     threshold = 0.6
     save_file = "Outputs/IV_correlations/Grouped/" + f"Cors_different_groups_above{threshold}.txt"
-    print(f"Correlations above {threshold} in different groups:", file=open(save_file, "w"))
     # Find correlations > 0.7 between variables from different groups
+    with open(save_file, "w") as f:
+        print(f"Correlations above {threshold} in different groups:", file=f)
 
-    for i in range(len(cor.columns)):
-        for j in range(i+1, len(cor.columns)):
-            col1, col2 = cor.columns[i], cor.columns[j]
-            if (extract_group(col1) != extract_group(col2) and
-                cor.iloc[i, j] > threshold):
-                print(f"---------> different group: {col1} - {col2}: {cor.iloc[i, j]:.2f}")
-                print(f"{col1} - {col2}: {cor.iloc[i, j]:.2f}", file=open(save_file, "a"))
+        for i in range(len(cor.columns)):
+            for j in range(i+1, len(cor.columns)):
+                col1, col2 = cor.columns[i], cor.columns[j]
+                if (extract_group(col1) != extract_group(col2) and
+                    cor.iloc[i, j] > threshold):
+                    print(f"---------> different group: {col1} - {col2}: {cor.iloc[i, j]:.2f}")
+                    print(f"{col1} - {col2}: {cor.iloc[i, j]:.2f}", file=f)
 
-            elif (cor.iloc[i, j] > threshold):
-                print(f"high cor, same group: {col1} - {col2}: {cor.iloc[i, j]:.2f}")
+                elif (cor.iloc[i, j] > threshold):
+                    print(f"high cor, same group: {col1} - {col2}: {cor.iloc[i, j]:.2f}")
 
 
 

@@ -874,7 +874,7 @@ t514006,Satisfaction with school,,pTarget,pTarget,5141,continuous,completely dis
 dgg5_sc3a,DGCF (perceptual speed): sum,,xTargetCompetencies,xTargetCompetencies,9015,continuous,,1,0,,,,,,,,,,,
 dgg5_sc3b,DGCF (reasoning): sum,,xTargetCompetencies,xTargetCompetencies,9017,continuous,,1,0,,,,,,,,,,,
 mag5_sc1,u Mathematical competence: WLE (uncorrected),,xTargetCompetencies,xTargetCompetencies,9018,continuous,,1,0,,,,,,,,,,,
-reg5_sc1,Reading comprehension: WLE,,xTargetCompetencies,Baseline,9113,continuous,,1,0,,,,,,,,,,,
+reg5_sc1u,Reading comprehension: WLE,,xTargetCompetencies,Baseline,9113,continuous,,1,0,,,,,,,,,,,
 rsg5_sc3,Reading speed sum,,xTargetCompetencies,xTargetCompetencies,9172,continuous,,1,0,,,,,,,,,,,
 org5_sc1a,Orthography (set 1): WLE (corrected),,xTargetCompetencies,xTargetCompetencies,9203,continuous,,1,0,,,,,,,,,,,
 org5_sc1b,Orthography (set 2): WLE (corrected),,xTargetCompetencies,xTargetCompetencies,9388,continuous,,1,0,,,,,,,,,,,

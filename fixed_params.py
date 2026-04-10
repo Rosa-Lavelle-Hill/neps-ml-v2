@@ -6,7 +6,7 @@ var_info_sheet = "Data/Meta/variable_info_agreed_Feb_2_2026.csv"
 target_id = "ID_t"
 school_track = "tx80106"
 institution_id = "ID_i"
-dv_t1_name = "reg5_sc1" # name of dv at time 1
+dv_t1_name = "reg5_sc1u" # name of dv at time 1
 dob_var = "p70012"
 date_variables = ["tx8602", "tx8611", "tx8620", "p40603", "p71202", "p71203", "tx8610",
                   "p72802", "p40003", "p40113", "p73191", "p73111", "p40403", "p73195"]
@@ -53,9 +53,17 @@ remove_vars = [
 # Other:
 "Unnamed:0", # Incase index creeps in
 "t262000_g1"] # Type of sports (too many categories, not relevant)
-
 # *Note that this list is not comprehensive; further variables are removed at other stages
 # such as when creating new variables due to multicollinearity and iteratively removing high collinear variables
 
-keep_vars = ["p731702", "e229820_D", "p751001_g1", "p410000_g1D", "p414040"] + [school_track] + [target_id] + [institution_id] #IDs removed later
+# Parent-reported duplicates to drop in favor of child-reported versions with higher N (t34005a, t724102, t741002, t41000a_g2D, t400000_g1D)
+parent_duplicate_vars = [
+"p34005a",     # Number Books
+"p724102",     # Grade Annual report card Mathematics
+"p741001",     # Size of household
+"p410000_g1D", # First language/mother tongue Child (German/not German)
+"p406000"      # Target child born in Germany?
+]
+
+keep_vars = ["p731702", "e229820_D", "p751001_g1", "t41000a_g2D", "p414040"] + [school_track] + [target_id] + [institution_id] #IDs removed later
             # ^ i.e., vars that should not be dropped due to multicollinearity or other reasons

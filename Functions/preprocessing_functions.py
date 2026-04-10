@@ -17,6 +17,24 @@ with open("configs/base.yaml", "r") as f:
 seed = cfg_get(cfg_base, ["params", "seed"])
 random_state = seed
 
+def log_drops(dropped_vars_reasons, vars_to_drop, reason):
+    """
+    Track dropped variables with reasons in a shared dict.
+
+    Parameters
+    ----------
+    dropped_vars_reasons : dict
+        Mapping of variable name -> set of reasons.
+    vars_to_drop : list-like
+        Variables being dropped.
+    reason : str
+        Reason for dropping.
+    """
+    for var in vars_to_drop:
+        if var not in dropped_vars_reasons:
+            dropped_vars_reasons[var] = set()
+        dropped_vars_reasons[var].add(reason)
+
 def get_redundant_pairs(df):
     """
     Return diagonal and lower-triangular column pairs for a correlation matrix.
@@ -685,6 +703,7 @@ def count_categories_to_file(df, output_file, categorical_columns, var_name_dict
                 if (category_counts.min() <= min_cat) == True:
                     # todo: neet to make sure works excluding -999
                     print(f"{data_name} -- column with less than {str(min_cat)} category counts: {column} -- {var_count}")
+                    print(f"{data_name} -- category counts for {column}:")
                     list.append(column)
                     long_name = var_name_dict[column]
                     file.write(f"{var_count}. {column}: {long_name} ...\n")
@@ -703,6 +722,10 @@ def count_categories_to_file(df, output_file, categorical_columns, var_name_dict
                             finally:
                                 if cat_name_bool == True:
                                     file.write(f"Category: {category} ({cat_name}): {count}\n")
+                                    print(f"  Category: {category} ({cat_name}): {count}")
+                                else:
+                                    file.write(f"Category: {category}: {count}\n")
+                                    print(f"  Category: {category}: {count}")
                     file.write("\n")
                     var_count += 1
     return var_count-1, list
