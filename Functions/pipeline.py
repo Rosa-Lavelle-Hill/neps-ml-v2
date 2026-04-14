@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import xgboost
 import yaml
+from catboost import CatBoostRegressor
 from sklearn.compose import ColumnTransformer
 from sklearn.experimental import enable_hist_gradient_boosting
 from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor, RandomForestClassifier
@@ -278,7 +279,20 @@ def construct_pipelines_all_no_imputation(categorical_features_index):
         ("regressor", random_forest)
     ])
 
-    return pipe_dt, pipe_rf, pipe_hgb, pipe_xgb
+    # CatBoost (uses the same OHE preprocessor; verbose=0 suppresses per-iteration output,
+    # allow_writing_files=False prevents catboost_info directories being created)
+    catboost_regressor = CatBoostRegressor(
+        loss_function="RMSE",
+        random_seed=random_state,
+        verbose=0,
+        allow_writing_files=False
+    )
+    pipe_cat = Pipeline([
+        ("preprocessor", preprocessor),
+        ("regressor", catboost_regressor)
+    ])
+
+    return pipe_dt, pipe_rf, pipe_hgb, pipe_xgb, pipe_cat
 
 
 

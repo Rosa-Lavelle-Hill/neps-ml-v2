@@ -200,11 +200,11 @@ def run_pipeline(cfg: dict):
     categorical_features_index = X[categorical_features_in_data].columns
 
     # Construct all pipelines with no imputation
-    pipe_dt, pipe_rf, pipe_hgb, pipe_xgb = construct_pipelines_all_no_imputation(categorical_features_index)
+    pipe_dt, pipe_rf, pipe_hgb, pipe_xgb, pipe_cat = construct_pipelines_all_no_imputation(categorical_features_index)
 
     # ******* define models ********
-    pipes = [pipe_dt, pipe_rf, pipe_hgb, pipe_xgb]
-    model_names = ["DT", "RF", "HGB", "XGB"]
+    pipes = [pipe_dt, pipe_rf, pipe_hgb, pipe_xgb, pipe_cat]
+    model_names = ["DT", "RF", "HGB", "XGB", "CAT"]
     # pipes = [pipe_dt]
     # model_names = ["DT"]
     # param_list = [dt_param_grid]
@@ -226,6 +226,7 @@ def run_pipeline(cfg: dict):
     X_test.to_csv(results_path / f"X_test{run}.csv", index=False)
     y_train.to_csv(results_path / f"y_train{run}.csv", index=False)
     y_test.to_csv(results_path / f"y_test{run}.csv", index=False)
+    print(f"[Timing] Setup & data loading: {dt.datetime.now() - script_start}")
 
     # Count category distributions across train and test data sets
     cat_save_path = outputs_path / "category_distributions"
@@ -253,6 +254,7 @@ def run_pipeline(cfg: dict):
     # loop through one model class at a time
     for counter, (model_name, pipe, params) in enumerate(zip(model_names, pipes, param_list)):
         model_train_start = dt.datetime.now()
+        print(f"\n{'='*60}\n[{counter+1}/{len(model_names)}] Starting model: {model_name}  |  {model_train_start.strftime('%H:%M:%S')}\n{'='*60}")
 
         save_file = results_path / f"Prediction/{run_label}_{model_name}{run}.txt"
 
@@ -279,6 +281,7 @@ def run_pipeline(cfg: dict):
             # end timer
             grid_end = dt.datetime.now()
             training_time = grid_end - grid_start
+            print(f"  [Timing] {model_name} GridSearchCV: {training_time}")
             with open(save_file, "a") as f:
                 print("Training done. Time taken: {}".format(training_time), file=f)
 
@@ -315,6 +318,7 @@ def run_pipeline(cfg: dict):
             # Add a baseline model 1: dv at T1 (linear regression) -----------------------------------------
             if counter == 0:
                 # only need to do onece...
+                baseline_start = dt.datetime.now()
                 lr = LinearRegression()
                 lr.fit(pd.DataFrame(X_train[dv_t1_name]), y_train)
 
@@ -348,6 +352,7 @@ def run_pipeline(cfg: dict):
                 # Save baseline test scores
                 test_scores["Prior Ach. Baseline"] = {"R2": dvt1_r_squared, "MAE": dvt1_mae, "RMSE": dvt1_rmse}
                 test_scores["Prior Ach.+ Track"] = {"R2": dvt1_r_squared2, "MAE": dvt1_mae2, "RMSE": dvt1_rmse2}
+                print(f"  [Timing] Baseline models: {dt.datetime.now() - baseline_start}")
             # ===================================================================================================
 
             # Test model on hold-out data:
@@ -439,6 +444,7 @@ def run_pipeline(cfg: dict):
 
                 # 1) Permutation importance
                 print("Starting permutation importance for {}".format(model_name))
+                perm_start = dt.datetime.now()
                 result = permutation_importance(pipe, X_test, y_test, n_repeats=n_permutations,
                                                 random_state=seed, n_jobs=skl_n_jobs, scoring=scoring)
                 vars=list(X_test.columns)
@@ -454,6 +460,7 @@ def run_pipeline(cfg: dict):
                 save_path_perm_p.mkdir(parents=True, exist_ok=True)
                 filename = f"{run_label}_{model_name}_permutation_importance{run}.csv"
                 perm_imp_df.to_csv(save_path_perm_p / filename)
+                print(f"  [Timing] {model_name} permutation importance: {dt.datetime.now() - perm_start}")
 
             else:
                 filename = f"{load_label}_{model_name}_permutation_importance{run}.csv"
@@ -479,6 +486,7 @@ def run_pipeline(cfg: dict):
 
             if run_grouped_permutation == True:
                 print("Starting grouped permutation importance")
+                grouped_perm_start = dt.datetime.now()
 
                 save_path_grouped = Path(perm_imp_save) / "Grouped/"
                 save_path_grouped.mkdir(parents=True, exist_ok=True)
@@ -504,6 +512,7 @@ def run_pipeline(cfg: dict):
                 plot_group_perm_importance(result, save_path=save_path_grouped_plots,
                                         save_name=f"Grouped_{run_label}_{model_name}{run}"
                                         )
+                print(f"  [Timing] {model_name} grouped permutation importance: {dt.datetime.now() - grouped_perm_start}")
 
             # 2) SHAP importance ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             save_path_shap_p = Path(shap_save)
@@ -518,24 +527,17 @@ def run_pipeline(cfg: dict):
                 # Fit the explainer
                 shap_results_dict = {}
 
-                # method_types = ["tree_path_dependent", "interventional"]
-                # tree_path_dependent": If features are collinear: Credit is shared or split - which feature gets credit depends on: 
-                # -Which one appears higher in the tree
-                # -Which one is used more often in splits
-                # # (see Lundberg et al., 2020) https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html
-                method_types = ["interventional"] #interventional: Treats features as if they were independently intervened on 
-                                                  # (if two features are highly correlated:Each one gets its own separate credit)
-                data_options = [shap.sample(X_test_p, 1000)] # returns: min(K, number_of_rows_in_data) - so if test_data <1000, will return all rows   
-                for method_type, data_option in zip(method_types, data_options):
-                        # print(method_type)
-                        # if (model_name == 'DT'):
-                        #     explainer = shap.TreeExplainer(model=opt_model,
-                        #                   data=data_option,
-                        #                   feature_perturbation=method_type)
-                        # else:
-                    explainer = shap.KernelExplainer(
-                        model=lambda x: opt_model.predict(x),
-                        data=data_option)
+                # tree_path_dependent: uses the training distribution stored in the trees themselves.
+                # No background dataset needed -> much faster than KernelExplainer or interventional.
+                # Credit for correlated features is shared based on tree structure
+                # (see Lundberg et al., 2020) https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html
+                # Works for all tree-based models: DT, RF (XGBoost), HGB, XGBoost, CatBoost.
+                method_types = ["tree_path_dependent"]
+                shap_start = dt.datetime.now()
+                for method_type in method_types:
+                    explainer = shap.TreeExplainer(
+                        model=opt_model,
+                        feature_perturbation=method_type)
 
                     # Calculate the SHAP values and save
                     shap_exp = explainer(X_test_p)
@@ -552,10 +554,11 @@ def run_pipeline(cfg: dict):
                     file_path_pkl = save_path_shap_p / filename_pkl
                     with open(file_path_pkl, 'wb') as handle:
                         pickle.dump(shap_results_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                print(f"  [Timing] {model_name} SHAP calculation: {dt.datetime.now() - shap_start}")
 
             else:
                 #load previously calculated SHAP values
-                method_type = "interventional" # todo: include "tree path dependent"?
+                method_type = "tree_path_dependent"
                 shap_values_df = pd.read_csv(shap_load + f"{load_label}_SHAP_{model_name}-{method_type}{run}.csv")
                 filename_pkl = f"{load_label}_SHAP_{model_name}{run}.pkl"
                 file_path_pkl = shap_load / filename_pkl
@@ -586,6 +589,7 @@ def run_pipeline(cfg: dict):
 
             if run_grouped_SHAP == True:
                 print('running grouped SHAP importance...')
+                grouped_shap_start = dt.datetime.now()
                 # Get extended mapping dict
                 shap_save_grouped = Path(shap_save) / "Grouped"
                 shap_save_grouped.mkdir(parents=True, exist_ok=True)
@@ -612,7 +616,7 @@ def run_pipeline(cfg: dict):
                     .sum()  # Aggregate within each group
                     .round(2)
                 )
-                method_type = "interventional"
+                method_type = "tree_path_dependent"
 
                 # Save values
                 group_shap_values_df = pd.DataFrame(group_shap_values, columns=["Importance"])
@@ -625,6 +629,7 @@ def run_pipeline(cfg: dict):
                 shap_save_grouped.mkdir(parents=True, exist_ok=True)
                 plot_group_SHAP_importance(group_shap_values,
                                         save_path=shap_save_grouped, save_name=filename)
+                print(f"  [Timing] {model_name} grouped SHAP importance: {dt.datetime.now() - grouped_shap_start}")
 
             model_interpretation_end = dt.datetime.now()
             model_interpretation_time = model_interpretation_end - model_interpretation_start
@@ -646,9 +651,10 @@ def run_pipeline(cfg: dict):
         print(f"Loading test results data from: {all_models_save / filename}")
 
     print("Plotting test performance to compare all models...")
+    plotting_start = dt.datetime.now()
 
     print(f"Loading test results data from: {all_models_save / filename}")
-    x_ticks = ["Prior Ach.", "Prior Ach.+ Track", "Decision Tree", "Random Forest", "Hist. G. Boost.", "XGBoost"]
+    x_ticks = ["Prior Ach.", "Prior Ach.+ Track", "Decision Tree", "Random Forest", "Hist. G. Boost.", "XGBoost", "CatBoost"]
 
     save_path_plots = all_models_save / "Plots"
     save_path_plots = Path(save_path_plots)
@@ -671,6 +677,7 @@ def run_pipeline(cfg: dict):
                 xlab="Prediction Models", ylab="RMSE",
                 title="",
                 x_ticks=x_ticks)
+    print(f"[Timing] Final results plotting: {dt.datetime.now() - plotting_start}")
     # =======================================================================================================
     # end timer 
     script_end = dt.datetime.now()

@@ -55,7 +55,16 @@ def get_param_grids(seed: int):
                     "regressor__n_estimators": [300]}
 
     # find more info on xgboost hyper-paramters here: https://xgboost.readthedocs.io/en/stable/python/python_api.html#module-xgboost.sklearn
-    return [dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid]
+
+    # CatBoost (random_seed is set at construction; only tunable params passed here)
+    cat_param_grid = {
+        "regressor__iterations": [300],
+        "regressor__learning_rate": [0.1, 0.05],
+        "regressor__depth": [4, 6],
+        "regressor__l2_leaf_reg": [1, 3],
+    }
+
+    return [dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid, cat_param_grid]
 # ------------------------------------------------------------------
 # test grids:
 
@@ -80,6 +89,12 @@ def get_test_param_grids(seed: int):
                     "regressor__num_parallel_tree": [50],
                     "regressor__random_state": [seed],
                     "regressor__learning_rate": [0.1]}
-    return [test_dt_param_grid, test_rf_param_grid, test_hgb_param_grid, test_xgb_param_grid]
+
+    test_cat_param_grid = {
+        "regressor__iterations": [50],
+        "regressor__learning_rate": [0.1],
+        "regressor__depth": [4],
+    }
+    return [test_dt_param_grid, test_rf_param_grid, test_hgb_param_grid, test_xgb_param_grid, test_cat_param_grid]
 
 # ------------------------------------------------------------------
