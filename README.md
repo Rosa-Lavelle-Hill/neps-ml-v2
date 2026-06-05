@@ -28,7 +28,7 @@ The exact configuration used for a preprocessing run is copied to `Outputs/prepr
 
 ## What Is On GitHub
 
-For this repository, we keep the full `Results/runs/2026-04-14_083401__*/` family only: `__all`, `__prior_reading__student`, `__prior_reading__student__parent`, and `__prior_reading__student__teacher`. That is the most recent complete run group in the workspace and it contains the key .csv outputs and plot files readers need without preserving the whole run history.
+For this repository, we keep the full `Results/runs/2026-06-05_142231__*/` family only: `__all`, `__prior_reading__student`, `__prior_reading__student__home`, and `__prior_reading__student__pedagogical`. That is the most recent complete run group in the workspace and it contains the key .csv outputs and plot files readers need without preserving the whole run history.
 
 Supplementary Online Resources for the Reader:
 
@@ -39,22 +39,22 @@ Supplementary Online Resources for the Reader:
 5. **Binary-variable association checks (phi):** see `Outputs/Phi_values/phi_matrix_before_changes.csv` and `Outputs/Phi_values/phi_pairs_above_0.7_before.csv`.
 6. **Mutual information summary:** see `Outputs/mutual_information/mutual_information_scores.csv`.
 7. **Category-count diagnostics:** see `Outputs/category_distributions/X_train_counts.txt`, `Outputs/category_distributions/X_test_counts.txt`, and `Outputs/category_distributions/X_counts.txt`.
-8. **Main model performance tables:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_test_scores_2026-04-14_083401__*_test.csv` and `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_model_errors_2026-04-14_083401__*_test.csv`.
-9. **Permutation and SHAP output tables:** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/*.csv`.
-10. **Interpretation figures (permutation and SHAP):** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Plots/*.png`, and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Grouped/Plots/*.png`.
-11. **Model prediction plots (predicted vs observed):** see `Results/runs/2026-04-14_083401__*/Prediction/Plots/*predicted_actual*.png`.
-12. **Aggregate model comparison plots:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/Plots/*.png` (e.g., R2, RMSE, MAE summaries).
-13. **Per-model run log files:** see `Results/runs/2026-04-14_083401__*/Prediction/*.txt`.
-14. **Best hyperparameter files:** see `Results/runs/2026-04-14_083401__*/Prediction/Best_Params/*`.
-15. **Run-level configuration provenance:** see `Results/runs/2026-04-14_083401__*/config.yaml` and `Results/runs/2026-04-14_083401__*/config.json`.
+8. **Main model performance tables:** see `Results/runs/2026-06-05_142231__*/Prediction/All_Models/all_test_scores_2026-06-05_142231__*_test.csv` and `Results/runs/2026-06-05_142231__*/Prediction/All_Models/all_model_errors_2026-06-05_142231__*_test.csv`.
+9. **Permutation and SHAP output tables:** see `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/*.csv`.
+10. **Interpretation figures (permutation and SHAP):** see `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/Plots/*.png`, and `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/Grouped/Plots/*.png`.
+11. **Model prediction plots (predicted vs observed):** see `Results/runs/2026-06-05_142231__*/Prediction/Plots/*predicted_actual*.png`.
+12. **Aggregate model comparison plots:** see `Results/runs/2026-06-05_142231__*/Prediction/All_Models/Plots/*.png` (e.g., R2, RMSE, MAE summaries).
+13. **Per-model run log files:** see `Results/runs/2026-06-05_142231__*/Prediction/*.txt`.
+14. **Best hyperparameter files:** see `Results/runs/2026-06-05_142231__*/Prediction/Best_Params/*`.
+15. **Run-level configuration provenance:** see `Results/runs/2026-06-05_142231__*/config.yaml` and `Results/runs/2026-06-05_142231__*/config.json`.
 16. **Statistical-comparison input table:** see `Results/stat_tests/best_models_errors_*.csv`.
 
 <!-- Suggested mapping from paper output to file:
 
-1. Model comparison tables: `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_test_scores_2026-04-14_083401__*_test.csv`.
-2. Per-model residual/error summaries: `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_model_errors_2026-04-14_083401__*_test.csv`.
-3. Permutation importance and SHAP summaries: `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/*.csv`.
-4. Figure panels: `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Grouped/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Prediction/Plots/*.png`, and `Results/runs/2026-04-14_083401__*/Prediction/All_Models/Plots/*.png`. -->
+1. Model comparison tables: `Results/runs/2026-06-05_142231__*/Prediction/All_Models/all_test_scores_2026-06-05_142231__*_test.csv`.
+2. Per-model residual/error summaries: `Results/runs/2026-06-05_142231__*/Prediction/All_Models/all_model_errors_2026-06-05_142231__*_test.csv`.
+3. Permutation importance and SHAP summaries: `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/*.csv`.
+4. Figure panels: `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Interpretation/SHAP/Grouped/Plots/*.png`, `Results/runs/2026-06-05_142231__*/Prediction/Plots/*.png`, and `Results/runs/2026-06-05_142231__*/Prediction/All_Models/Plots/*.png`. -->
 
 ## What Is Not Tracking In GitHub:
 
@@ -72,4 +72,4 @@ Supplementary Online Resources for the Reader:
 
 ## Notes
 
-The repository currently uses ignored output folders so that the working tree stays small. The `.gitignore` files are tuned to keep only the latest canonical run group in `Results/runs/2026-04-14_083401__*/` with selected .csv and plot outputs, while still ignoring older run history artifacts and split data files.
+The repository currently uses ignored output folders so that the working tree stays small. The `.gitignore` files are tuned to keep only the latest canonical run group in `Results/runs/2026-06-05_142231__*/` with selected .csv and plot outputs, while still ignoring older run history artifacts and split data files.

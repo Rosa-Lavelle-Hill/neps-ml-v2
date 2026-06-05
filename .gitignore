@@ -62,8 +62,8 @@ Results/*
 !Results/.gitkeep
 !Results/runs/
 Results/runs/*
-!Results/runs/2026-04-14_083401__*/
-!Results/runs/2026-04-14_083401__*/.gitignore
+!Results/runs/2026-06-05_142231__*/
+!Results/runs/2026-06-05_142231__*/.gitignore
 
 #Outputs
 Outputs/*

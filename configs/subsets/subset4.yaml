@@ -2,9 +2,9 @@ subset:
   name: all
   include_groups:
     - Baseline
-    - pTarget
-    - pCourseClass
-    - pParent
+    - Student
+    - Pedagogical
+    - Home
   exclude_groups: []
 load:
   enabled: false # set to true to load existing results

@@ -97,6 +97,8 @@ def run_pipeline(cfg: dict):
 
     # paths:
     var_info_sheet = cfg_get(cfg, ["paths", "var_info_csv"])
+    group_info_sheet = cfg.get("paths", {}).get("group_info_xls")
+    group_source_col = cfg.get("paths", {}).get("group_source_col", "Ai_classification")
     categorical_features_csv = cfg_get(cfg, ["paths", "categorical_features_csv"])
     preprocessed_data = cfg_get(cfg, ["paths", "preprocessed_data"])
 
@@ -129,10 +131,59 @@ def run_pipeline(cfg: dict):
     print("Initial X shape is: " + str(X.shape))
 
     # Import variable information & meta data:
-    var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=None, engine="python")
-    var_info.columns = var_info.columns.str.replace("\ufeff", "", regex=False).str.strip()
+    var_info_all = pd.read_csv(var_info_sheet, encoding="utf-8", sep=None, engine="python")
+    var_info_all.columns = var_info_all.columns.str.replace("\ufeff", "", regex=False).str.strip()
 
-    var_info = var_info[var_info["include as predictor"] == 1]
+    # Optionally override Variable_Group from external agreed group mapping.
+    # This is used for subset selection and grouped interpretation outputs.
+    if group_info_sheet:
+        group_info = pd.read_excel(group_info_sheet)
+        group_info.columns = group_info.columns.str.replace("\ufeff", "", regex=False).str.strip()
+
+        if "var" not in group_info.columns:
+            raise KeyError(f"Missing required column 'var' in {group_info_sheet}")
+        if group_source_col not in group_info.columns:
+            raise KeyError(f"Missing required column '{group_source_col}' in {group_info_sheet}")
+
+        group_info["var"] = group_info["var"].astype(str).str.strip()
+        group_info[group_source_col] = group_info[group_source_col].astype(str).str.strip()
+
+        rename_map = {
+            "teacher/school": "Pedagogical",
+            "student": "Student",
+            "parents/home": "Home",
+        }
+        group_map = (
+            group_info[["var", group_source_col]]
+            .dropna(subset=["var"])
+            .drop_duplicates(subset=["var"], keep="last")
+        )
+        group_map["Variable_Group_New"] = group_map[group_source_col].replace(rename_map)
+
+        def apply_final_group_mapping(df):
+            mapped = df.copy()
+            mapped["_keep_baseline_group"] = mapped["Variable_Group"].astype(str).str.strip().eq("Baseline")
+            mapped = mapped.merge(
+                group_map[["var", "Variable_Group_New"]],
+                on="var",
+                how="left",
+            )
+            mapped["Variable_Group"] = mapped["Variable_Group_New"]
+            mapped.loc[mapped["_keep_baseline_group"], "Variable_Group"] = "Baseline"
+            mapped["Variable_Group"] = mapped["Variable_Group"].fillna("Unmapped")
+            mapped.drop(columns=["Variable_Group_New", "_keep_baseline_group"], inplace=True)
+            return mapped
+
+        var_info_all = apply_final_group_mapping(var_info_all)
+
+    # Keep an explicit copy of the final grouping labels for downstream exports.
+    var_info_all["Final Groups"] = var_info_all["Variable_Group"]
+    var_info = var_info_all[var_info_all["include as predictor"] == 1].copy()
+    var_info["Final Groups"] = var_info["Variable_Group"]
+
+    # Save var info for all variables, including the new grouping column.
+    var_info_all.to_csv("Data/Meta/var_info_all_with_final_groups.csv", index=False)
+
     var_names_dict = dict(zip(var_info['var'], var_info['varname']))
 
     # double check all drop vars are removed
@@ -147,7 +198,9 @@ def run_pipeline(cfg: dict):
     print(f"num of variables in var_info and in X: {var_info.shape[0]}")
     vars_not_in_var_info = set(X.columns) - set(var_info['var'])
     print(f"Variables in X but not in var_info: {vars_not_in_var_info}")
-    var_info.to_csv("Data/Meta/var_info_used_in_model_updated.csv", index=False)   
+    var_info.to_csv("Data/Meta/var_info_used_in_model_updated.csv", index=False)
+    var_info.to_csv("Data/Meta/var_info_used_in_model_final_groups.csv", index=False)
+    var_info.to_csv(results_path / "var_info_used_in_model_final_groups.csv", index=False)
 
     # get block information for grouped importance
     block_dict = dict(zip(var_info['var'], var_info['Variable_Group']))

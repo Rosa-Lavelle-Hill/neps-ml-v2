@@ -21,6 +21,8 @@ paths:
   data_raw: "Data/neps.csv" # raw data path
   preprocessed_data: "Data/Preprocessed/X_and_y.csv" # preprocessed data path
   var_info_csv: Data/Meta/variable_info_agreed_Feb_2_2026.csv # variable information path
+  group_info_xls: Data/Meta/agreed_groups_Jun_4_2026.xls # agreed grouping source for subset/grouped analyses
+  group_source_col: Ai_classification # column in group_info_xls used to define Variable_Group
   categorical_features_csv: Data/Meta/categorical_variables.csv # categorical variables path
 
 modelling:

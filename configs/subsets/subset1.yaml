@@ -2,7 +2,7 @@ subset:
   name: prior_reading__student
   include_groups:
     - Baseline
-    - pTarget
+    - Student
   exclude_groups: []
 load:
   enabled: false # set to true to load existing results

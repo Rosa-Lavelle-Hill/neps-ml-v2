@@ -164,6 +164,7 @@ if create_new_vars == True:
         else:
             most_common_values.append(None)
     df['teacher_predominant_state'] = most_common_values
+
     # drop original columns:
     for var in teacher_loc_vars:
         log_drops(dropped_vars_reasons, [var], "Dropped after creating teacher state vars")

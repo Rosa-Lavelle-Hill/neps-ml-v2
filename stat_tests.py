@@ -6,7 +6,7 @@ from Functions.stat_tests import compare_models, plot_difference_normality, plot
 # Settings
 test = True # If True, extract data from a test run <-- only to check that the code works
 run_ids = ["2026-01-28_140927"] # <- might need to be a list of different IDs if comparing multiple runs not ran in parellel
-subsets = ["prior_reading__student", "prior_reading__student__parent", "prior_reading__student__teacher", "all"]
+subsets = ["prior_reading__student", "prior_reading__student__home", "prior_reading__student__pedagogical", "all"]
 best_from_ml_models_only = True  # If True, only consider ML models (DT, RF, HGB, XGB) when selecting best model per subset
 
 # ================== Extract best models errors from runs ==========================
