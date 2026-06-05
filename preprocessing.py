@@ -898,18 +898,4 @@ if use_synthetic_y == True:
     X_and_y.to_csv("Data/Preprocessed/X_and_y.csv")
     print(f"final data shape: {X_and_y.shape}")
 
-#---------------------------- (end of section for mock data only) ----------------------------
-## DV CORS
-# check no variables correlated with DV above 0.95 (accidental data leakage)
-corr_dv = pd.DataFrame(X_and_y.corrwith(other = X_and_y["y"], method='pearson'))
-# rename column
-corr_dv.columns = ["Pearson_r"]
-# calculate absolute correlation
-corr_dv['Absolute_corr'] = abs(corr_dv["Pearson_r"])
-# sort data frame on absolute correlation (highest first)
-corr_dv.sort_values(inplace=True, by='Absolute_corr', axis=0, ascending=False)
-# round to 4 decimal places
-corr_dv['Absolute_corr'] = round(corr_dv['Absolute_corr'], 4)
-corr_dv.to_csv(f"{outputs_folder}/DV_correlations/dv_correlations_check.csv")
-
 print('preprocessing done')
