@@ -32,21 +32,22 @@ For this repository, we keep the full `Results/runs/2026-04-14_083401__*/` famil
 
 Supplementary Online Resources for the Reader:
 
-1. **Preprocessing settings and run logs:** see `Outputs/preprocessing_config.yaml` and `Outputs/pre_processing_output.txt`.
-2. **Variables removed during preprocessing:** see `Outputs/dropped_variables_*.csv` and `Outputs/IV_correlations/*dropped_vars*.csv`.
-3. **Correlation screening before and after filtering:** see `Outputs/IV_correlations/*before*` and `Outputs/IV_correlations/*after*`.
-4. **Binary-variable association checks (phi):** see `Outputs/Phi_values/phi_matrix_before_changes.csv` and `Outputs/Phi_values/phi_pairs_above_0.7_before.csv`.
-5. **Mutual information summary:** see `Outputs/mutual_information/mutual_information_scores.csv`.
-6. **Category-count diagnostics:** see `Outputs/category_distributions/X_train_counts.txt`, `Outputs/category_distributions/X_test_counts.txt`, and `Outputs/category_distributions/X_counts.txt`.
-7. **Main model performance tables:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_test_scores_2026-04-14_083401__*_test.csv` and `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_model_errors_2026-04-14_083401__*_test.csv`.
-8. **Permutation and SHAP output tables:** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/*.csv`.
-9. **Interpretation figures (permutation and SHAP):** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Plots/*.png`, and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Grouped/Plots/*.png`.
-10. **Model prediction plots (predicted vs observed):** see `Results/runs/2026-04-14_083401__*/Prediction/Plots/*predicted_actual*.png`.
-11. **Aggregate model comparison plots:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/Plots/*.png` (e.g., R2, RMSE, MAE summaries).
-12. **Per-model run log files:** see `Results/runs/2026-04-14_083401__*/Prediction/*.txt`.
-13. **Best hyperparameter files:** see `Results/runs/2026-04-14_083401__*/Prediction/Best_Params/*`.
-14. **Run-level configuration provenance:** see `Results/runs/2026-04-14_083401__*/config.yaml` and `Results/runs/2026-04-14_083401__*/config.json`.
-15. **Statistical-comparison input table:** see `Results/stat_tests/best_models_errors_*.csv`.
+1. **Variable infomation:** see `Data/Meta/variable_info_agreed_Feb_2_2026.csv` for the information we use in preprocessing and `Data/Meta/var_info_used_in_model_updated.csv` for a more consise version including only variables used in the final model.
+2. **Preprocessing settings and run logs:** see `Outputs/preprocessing_config.yaml` and `Outputs/pre_processing_output.txt`.
+3. **Variables removed during preprocessing:** see `Outputs/dropped_variables_*.csv` and `Outputs/IV_correlations/*dropped_vars*.csv`.
+4. **Correlation screening before and after filtering:** see `Outputs/IV_correlations/*before*` and `Outputs/IV_correlations/*after*`.
+5. **Binary-variable association checks (phi):** see `Outputs/Phi_values/phi_matrix_before_changes.csv` and `Outputs/Phi_values/phi_pairs_above_0.7_before.csv`.
+6. **Mutual information summary:** see `Outputs/mutual_information/mutual_information_scores.csv`.
+7. **Category-count diagnostics:** see `Outputs/category_distributions/X_train_counts.txt`, `Outputs/category_distributions/X_test_counts.txt`, and `Outputs/category_distributions/X_counts.txt`.
+8. **Main model performance tables:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_test_scores_2026-04-14_083401__*_test.csv` and `Results/runs/2026-04-14_083401__*/Prediction/All_Models/all_model_errors_2026-04-14_083401__*_test.csv`.
+9. **Permutation and SHAP output tables:** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/*.csv` and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/*.csv`.
+10. **Interpretation figures (permutation and SHAP):** see `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/Permutation/Grouped/Plots/*.png`, `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Plots/*.png`, and `Results/runs/2026-04-14_083401__*/Interpretation/SHAP/Grouped/Plots/*.png`.
+11. **Model prediction plots (predicted vs observed):** see `Results/runs/2026-04-14_083401__*/Prediction/Plots/*predicted_actual*.png`.
+12. **Aggregate model comparison plots:** see `Results/runs/2026-04-14_083401__*/Prediction/All_Models/Plots/*.png` (e.g., R2, RMSE, MAE summaries).
+13. **Per-model run log files:** see `Results/runs/2026-04-14_083401__*/Prediction/*.txt`.
+14. **Best hyperparameter files:** see `Results/runs/2026-04-14_083401__*/Prediction/Best_Params/*`.
+15. **Run-level configuration provenance:** see `Results/runs/2026-04-14_083401__*/config.yaml` and `Results/runs/2026-04-14_083401__*/config.json`.
+16. **Statistical-comparison input table:** see `Results/stat_tests/best_models_errors_*.csv`.
 
 <!-- Suggested mapping from paper output to file:
 
