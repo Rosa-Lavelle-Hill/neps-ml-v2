@@ -1,0 +1,11 @@
+2026-06-05_142231__prior_reading__student__home: X_train = (3652, 176); X_test = (913, 176)
+DT: 
+Training done. Time taken: 0:00:00.074538
+params tried:
+{'regressor__max_depth': [5], 'regressor__min_samples_split': [2], 'regressor__max_features': [0.3], 'regressor__random_state': [93]}
+
+Best training r2 score: 0.227. Best model params:
+{'regressor__max_depth': 5, 'regressor__max_features': 0.3, 'regressor__min_samples_split': 2, 'regressor__random_state': 93}.
+
+Best DT model performance on test data (2026-06-05_142231__prior_reading__student__home):
+R2: 0.314; mae: 1.146
