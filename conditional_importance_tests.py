@@ -1,5 +1,6 @@
 # just use as a trial to see if it works
 from datetime import datetime as dt
+from pathlib import Path
 import json
 import joblib
 import random
@@ -12,20 +13,28 @@ from Functions.CIT import diagnose_degenerate_features
 from Functions.pipeline import construct_pipelines_all_no_imputation
 from Functions.preprocessing_functions import drop_cols, remove_variables
 from fixed_params import categorical_features, var_info_sheet, seed, test_size, remove_vars
-from Params.Grids import dt_param_grid, rf_param_grid, hgb_param_grid, xgb_param_grid
 from tofi import CIT
 
-# set to true if want to reduce computation time to test code -- will only run for a sample of features
-test = "CPI" # "RPT" or "CPI"
-run_CIT = True 
+
+# ==============================
+# Script controls / run settings
+# ==============================
+test = "CPI" # Type of test conducted "RPT" or "CPI"
+run_CIT = True # if False will skip CIT and just run diagnostics on 0 SE features; if True will run CIT and then diagnostics on 0 SE features
 sample_features = False # set to true if want to reduce computation time to test code -- will only run for a sample of features
-run_diagnostics = True
-n_iter = 1000
-# start_string = '26_Nov_2024__16.45'
-start_string = '12_Dec_2024__11.47_test'
-test_run = True
-model_name = "HGB" # model_names = ["DT", "RF", "HGB", "XGB"]
-handle_missing = False # if True will use HGB as a sampler (would still need to have remove as -999, so leave as False for now); otherwise if False will use default RF and simply fill missing data with -999
+run_diagnostics = True # whether to run diagnostics on 0 SE features after CIT; can set to False to skip diagnostics and just get CIT results
+n_iter = 1000 # number of iterations for null distribution; only used if test == "RPT" or if test == "CPI" and null_dist == "permutation"; ignored if test == "CPI" and null_dist == "normality"
+start_string = '2026-01-26_173957__all' # must match the run folder id used by ml_pipeline.py under Results/runs/<run_id>/
+test_run = True # controls ONLY the params filename suffix ("_test"); it does NOT modify run_id/path
+model_name = "HGB" # model_names = ["DT", "RF", "HGB", "XGB", "CAT"]
+handle_missing = False # sampler choice in CIT only: False -> RandomForest sampler, True -> HistGradientBoosting sampler
+
+# Missing-value handling strategy used across train/test preparation.
+# Options:
+# - "drop":   drop rows with any missing value in X or y
+# - "impute": fill missing values with -999 (categoricals get sentinel category)
+# NOTE: this controls learner/CIT input prep, not sampler class choice.
+missing_value_strategy = "drop"
 
 if sample_features == True:
     n_features = 10 # number of features to sample
@@ -35,9 +44,18 @@ else:
     t = ''
 
 start_time = dt.now()
-save_path = "Sim-CIT/"
-params_path = "Results/Prediction/Best_Params/"
+save_path = Path("Sim-CIT")
 
+# NOTE:
+# `start_string` should exactly match the run folder id used by ml_pipeline.py.
+# Best params are saved at: Results/runs/<run_id>/Prediction/Best_Params/
+# We reuse tuned hyperparameters from that run for the selected `model_name`.
+run_id = start_string
+params_path = Path("Results") / "runs" / run_id / "Prediction" / "Best_Params"
+
+# ======================
+# Load data + metadata
+# ======================
 # Import variable information & meta data:
 var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=';')
 var_info = var_info[var_info["include as predictor"] == 1]
@@ -74,6 +92,7 @@ X[numerical_features] = X[numerical_features].astype('float64')
 X = remove_variables(X, remove_vars)
 
 # Check category counts across train/test data
+# Lists are filtered after variable dropping so only valid columns remain.
 numerical_features_in_data = [elem for elem in numerical_features if elem in list(X.columns)]
 print("Data contains {} numerical features".format(len(numerical_features_in_data)))
 categorical_features_in_data = [elem for elem in categorical_features if elem in list(X.columns)]
@@ -84,8 +103,9 @@ categorical_features_index = X[categorical_features_in_data].columns
 
 # Construct all pipelines with no imputation
 print("Constructing pipelines...")
-pipe_dt, pipe_rf, pipe_hgb, pipe_xgb = construct_pipelines_all_no_imputation(numeric_features_index, categorical_features_index)
+pipe_dt, pipe_rf, pipe_hgb, pipe_xgb, pipe_cat = construct_pipelines_all_no_imputation(categorical_features_index)
 
+# Select which fitted pipeline is evaluated inside CIT.
 if model_name == "DT":
     pipe = pipe_dt
 elif model_name == "RF":
@@ -94,6 +114,10 @@ elif model_name == "HGB":
     pipe = pipe_hgb
 elif model_name == "XGB":
     pipe = pipe_xgb
+elif model_name == "CAT":
+    pipe = pipe_cat
+else:
+    raise ValueError(f"Unsupported model_name: {model_name}. Choose from ['DT','RF','HGB','XGB','CAT']")
 
 # Split into train and test
 X_train, X_test, y_train, y_test = train_test_split(X, y,
@@ -101,8 +125,58 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
 print("X_train shape: " + str(X_train.shape))
 print("X_test shape: " + str(X_test.shape))
 
+# Apply missing-value strategy (single control point for this script).
+if missing_value_strategy not in ["drop", "impute"]:
+    raise ValueError("missing_value_strategy must be either 'drop' or 'impute'.")
+
+if missing_value_strategy == "drop":
+    # Strict complete-case analysis: removes rows with NA in X or y.
+    # Use this if you prefer not to introduce sentinel values.
+    train_valid = y_train.notna() & ~X_train.isna().any(axis=1)
+    test_valid = y_test.notna() & ~X_test.isna().any(axis=1)
+
+    dropped_train = int((~train_valid).sum())
+    dropped_test = int((~test_valid).sum())
+    if dropped_train > 0:
+        print(f"Dropping {dropped_train} train rows due to missing values in X or y.")
+    if dropped_test > 0:
+        print(f"Dropping {dropped_test} test rows due to missing values in X or y.")
+
+    X_train = X_train.loc[train_valid].copy()
+    y_train = y_train.loc[train_valid].copy()
+    X_test = X_test.loc[test_valid].copy()
+    y_test = y_test.loc[test_valid].copy()
+
+elif missing_value_strategy == "impute":
+    print("Imputing missing values with sentinel -999...")
+    # Identify categorical vs numeric columns from train split.
+    # For categoricals we add a sentinel category first, then fill missing.
+    cat_cols = X_train.select_dtypes(include='category').columns
+    num_cols = X_train.select_dtypes(exclude='category').columns
+
+    # Fill categoricals: add sentinel category if needed, then fill.
+    for col in cat_cols:
+        cat_dtype = X_train[col].cat.categories.dtype
+        sentinel = -999 if pd.api.types.is_numeric_dtype(cat_dtype) else '-999'
+
+        if sentinel not in X_train[col].cat.categories:
+            X_train[col] = X_train[col].cat.add_categories([sentinel])
+        X_train[col] = X_train[col].fillna(sentinel)
+
+        if not isinstance(X_test[col].dtype, pd.CategoricalDtype):
+            X_test[col] = X_test[col].astype('category')
+        if sentinel not in X_test[col].cat.categories:
+            X_test[col] = X_test[col].cat.add_categories([sentinel])
+        X_test[col] = X_test[col].fillna(sentinel)
+
+    # Fill numerics and target with sentinel.
+    X_train[num_cols] = X_train[num_cols].fillna(-999)
+    X_test[num_cols] = X_test[num_cols].fillna(-999)
+    y_train = y_train.fillna(-999)
+    y_test = y_test.fillna(-999)
+
 # Load best params
-best_params = joblib.load(params_path + f'{start_string}_{model_name}{t}.pkl')
+best_params = joblib.load(params_path / f'{run_id}_{model_name}{t}.pkl')
 
 # Set pipeline to use best params
 pipe.set_params(**best_params)
@@ -126,42 +200,20 @@ print(f"R²: {pipe_r2:.3f}")
 # Create a sampler
 print("Creating sampler...")
 index_dict = {index:name for index, name in enumerate(X.columns)}
-with open(save_path+"index_dict.json", "w") as f:
+# Save mapping to make feature references explicit/reproducible across runs.
+save_path.mkdir(parents=True, exist_ok=True)
+with open(save_path / "index_dict.json", "w") as f:
     json.dump(index_dict, f, indent=4)
 
-# sampler does not work on missing data so first need to impute data, or to keep missing distribute fill with constant
-if handle_missing == False:
-    print("Filling missing data with -999...")
-    # Identify categorical vs numeric columns
-    cat_cols = X_train.select_dtypes(include='category').columns
-    num_cols = X_train.select_dtypes(exclude='category').columns
-
-# Fill categoricals: add sentinel category if needed, then fill
-for col in cat_cols:
-    cat_dtype = X_train[col].cat.categories.dtype
-    sentinel = -999 if pd.api.types.is_numeric_dtype(cat_dtype) else '-999'
-
-    # Train
-    if sentinel not in X_train[col].cat.categories:
-        X_train[col] = X_train[col].cat.add_categories([sentinel])
-    X_train[col] = X_train[col].fillna(sentinel)
-
-    # Test: ensure categorical dtype first, then add+fill
-    if not pd.api.types.is_categorical_dtype(X_test[col]):
-        X_test[col] = X_test[col].astype('category')
-    if sentinel not in X_test[col].cat.categories:
-        X_test[col] = X_test[col].cat.add_categories([sentinel])
-    X_test[col] = X_test[col].fillna(sentinel)
-
-# Fill numerics
-X_train[num_cols] = X_train[num_cols].fillna(-999)
-X_test[num_cols]  = X_test[num_cols].fillna(-999)
-
-# Target
-y_test = y_test.fillna(-999)
+# Missing values are already handled above using `missing_value_strategy`.
+# `handle_missing` below only controls sampler class family used by CIT.
+# - False => RandomForest samplers
+# - True  => HistGradientBoosting samplers
+print(f"Missing-value strategy in use: {missing_value_strategy}")
 
 if run_CIT == True:
-    # convert to numpy arrays for CIT
+    # Keep X as DataFrame (feature-name-based removal is used in CIT).
+    # y is converted to ndarray since CIT inference consumes array-like targets.
     feature_names = list(X_train.columns) 
 
     # WARNING: this means that sklearn loses info on categorical features 
@@ -203,6 +255,7 @@ if run_CIT == True:
             print(str(removal+1)+"/"+str(len(index_dict)) + ": " + str(name))
         
         # fit the sampler on all variables except the one to be removed
+        # Sampler learns P(feature_j | X_-j) to generate conditional replacements.
         _ = sampler.fit(
             X_train.drop(name, axis=1),
             # np.delete(X_train, name, axis = 1), 
@@ -230,7 +283,8 @@ if run_CIT == True:
                 sampler = sampler,
                 removal = index_dict[removal], # for DataFrame need to use the feature name
                 method = test,
-                null_dist="normality", #  construct a null distribution by assuming normality, other option "permutation" -> then set n_permutations=__
+                # "normality" is faster for large loops; "permutation" is heavier but more robust.
+                null_dist="normality", # other option "permutation" -> then set n_permutations=__
                 n_copies= 1,
                 random_state = seed,
                 loss_func="mean_squared_error")
@@ -250,16 +304,17 @@ if run_CIT == True:
             counter +=1
 
         results.append(result)
-        print(results)
+        # Keep console output compact during long runs.
+        print(f"Completed feature: {name}")
 
     # Add variable names back in
     result_df = pd.concat(results, ignore_index=True) 
 
     # Save results dataframe
     if sample_features == True:
-        result_df.to_csv(save_path + f"{test}/{start_string}_{model_name}_{n_features}_features_results.csv")
+        result_df.to_csv(save_path / f"{test}/{start_string}_{model_name}_{n_features}_features_results.csv")
     else:
-        result_df.to_csv(save_path + f"{test}/{start_string}_{model_name}_results.csv")
+        result_df.to_csv(save_path / f"{test}/{start_string}_{model_name}_results.csv")
 
 # todo:
 # "n categories in columns [1, 2, 3, ... 96] during transform.
@@ -270,29 +325,36 @@ if run_CIT == True:
 # run diagnostics
 if run_diagnostics == True:
     print("Running diagnostics...")
-    # X_imp =  X.fillna(-999)
+    # Use the same missing-value strategy for diagnostics input
+    # so degeneracy checks reflect actual modeling assumptions.
+    X_diag = X.copy()
+    if missing_value_strategy == "drop":
+        X_diag = X_diag.dropna(axis=0).copy()
+    else:
+        cat_cols = X_diag.select_dtypes(include='category').columns
+        for col in cat_cols:
+            cat_dtype = X_diag[col].cat.categories.dtype
+            sentinel = -999 if pd.api.types.is_numeric_dtype(cat_dtype) else '-999'
 
-    for col in cat_cols:
-        cat_dtype = X[col].cat.categories.dtype
-        sentinel = -999 if pd.api.types.is_numeric_dtype(cat_dtype) else '-999'
+            if sentinel not in X_diag[col].cat.categories:
+                X_diag[col] = X_diag[col].cat.add_categories([sentinel])
+            X_diag[col] = X_diag[col].fillna(sentinel)
 
-        # Train
-        if sentinel not in X[col].cat.categories:
-            X[col] = X[col].cat.add_categories([sentinel])
-        X[col] = X[col].fillna(sentinel)
+            if not isinstance(X_diag[col].dtype, pd.CategoricalDtype):
+                X_diag[col] = X_diag[col].astype('category')
+            if sentinel not in X_diag[col].cat.categories:
+                X_diag[col] = X_diag[col].cat.add_categories([sentinel])
+            X_diag[col] = X_diag[col].fillna(sentinel)
 
-        # Test: ensure categorical dtype first, then add+fill
-        if not pd.api.types.is_categorical_dtype(X[col]):
-            X[col] = X[col].astype('category')
-        if sentinel not in X[col].cat.categories:
-            X[col] = X[col].cat.add_categories([sentinel])
-        X[col] = X[col].fillna(sentinel)
-    X[numerical_features] = X[numerical_features].fillna(-999)
+        X_diag[numerical_features] = X_diag[numerical_features].fillna(-999)
 
     print("Running diagnostics on 0 SE...")
     if run_CIT == False:
-        result_df = pd.read_csv(save_path + f"{test}/{start_string}_{model_name}_{n_features}_features_results.csv")
-    deg = diagnose_degenerate_features(result_df, X)
+        if sample_features == True:
+            result_df = pd.read_csv(save_path / f"{test}/{start_string}_{model_name}_{n_features}_features_results.csv")
+        else:
+            result_df = pd.read_csv(save_path / f"{test}/{start_string}_{model_name}_results.csv")
+    deg = diagnose_degenerate_features(result_df, X_diag)
 
     if sample_features == True:
         deg.to_csv(f"Sim-CIT/{test}/Diagnostics/" + f'{start_string}_{model_name}_{n_features}_degenerate_features.csv',

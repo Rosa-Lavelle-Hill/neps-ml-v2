@@ -86,5 +86,6 @@ virtualenv==20.25.1
 wasabi==1.1.1
 wheel==0.41.3
 wrapt==1.16.0
+catboost
 xgboost==3.0.5
 zipp==3.15.0

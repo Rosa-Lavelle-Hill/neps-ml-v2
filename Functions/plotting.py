@@ -502,7 +502,7 @@ def plot_results(y, data, colour, save_path, save_name,
     -------
     None
     """
-    palette = ["plum", "cornflowerblue", "coral", "mediumaquamarine", "lightsteelblue", "khaki"]
+    palette = ["plum", "goldenrod", "cornflowerblue", "coral", "mediumaquamarine", "lightsteelblue", "khaki"]
 
     sns.set_palette(palette)
     fig, ax = plt.subplots()

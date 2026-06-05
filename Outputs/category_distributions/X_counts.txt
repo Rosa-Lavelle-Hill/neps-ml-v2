@@ -1,0 +1,180 @@
+Category counts for categorical variables where minimum category is <= 30
+1. e537161_g1: Subject combination (1st subject; study area) ...
+Category: 9: 914
+Category: 9: 914
+Category: 9 (Germanistik (Deutsch, germanische Sprachen ohne Anglistik)): 914
+Category: 9: 914
+Category: 9: 914
+Category: 10: 505
+Category: 10: 505
+Category: 10 (Anglistik, Amerikanistik): 505
+Category: 10: 505
+Category: 10: 505
+Category: 1003: 387
+Category: 1003: 387
+Category: 1003: 387
+Category: 1003: 387
+Category: 1003: 387
+Category: 22: 296
+Category: 22: 296
+Category: 22 (Sport, Sportwissenschaft): 296
+Category: 22: 296
+Category: 22: 296
+Category: 42: 143
+Category: 42: 143
+Category: 42 (Biologie): 143
+Category: 42: 143
+Category: 42: 143
+Category: 40: 139
+Category: 40: 139
+Category: 40 (Chemie): 139
+Category: 40: 139
+Category: 40: 139
+Category: 78: 123
+Category: 78: 123
+Category: 78 (Musik, Musikwissenschaft): 123
+Category: 78: 123
+Category: 78: 123
+Category: 44: 88
+Category: 44: 88
+Category: 44 (Geographie): 88
+Category: 44: 88
+Category: 44: 88
+Category: 1006: 79
+Category: 1006: 79
+Category: 1006: 79
+Category: 1006: 79
+Category: 1006: 79
+Category: 5: 73
+Category: 5: 73
+Category: 5 (Geschichte): 73
+Category: 5: 73
+Category: 5: 73
+Category: 39: 64
+Category: 39: 64
+Category: 39 (Physik, Astronomie): 64
+Category: 39: 64
+Category: 39: 64
+Category: 1004: 63
+Category: 1004: 63
+Category: 1004: 63
+Category: 1004: 63
+Category: 1004: 63
+Category: 8: 55
+Category: 8: 55
+Category: 8 (Altphilologie (klass. Philologie), Neugriechisch): 55
+Category: 8: 55
+Category: 8: 55
+Category: 1005: 47
+Category: 1005: 47
+Category: 1005: 47
+Category: 1005: 47
+Category: 1005: 47
+Category: 1002: 27
+Category: 1002: 27
+Category: 1002: 27
+Category: 1002: 27
+Category: 1002: 27
+Category: 1001: 20
+Category: 1001: 20
+Category: 1001: 20
+Category: 1001: 20
+Category: 1001: 20
+
+2. e537162_g1: Subject combination (2nd subject; study area) ...
+Category: 10: 385
+Category: 10: 385
+Category: 10 (Anglistik, Amerikanistik): 385
+Category: 10: 385
+Category: 10: 385
+Category: 44: 364
+Category: 44: 364
+Category: 44 (Geographie): 364
+Category: 44: 364
+Category: 44: 364
+Category: 5: 341
+Category: 5: 341
+Category: 5 (Geschichte): 341
+Category: 5: 341
+Category: 5: 341
+Category: 1003: 328
+Category: 1003: 328
+Category: 1003: 328
+Category: 1003: 328
+Category: 1003: 328
+Category: 22: 234
+Category: 22: 234
+Category: 22 (Sport, Sportwissenschaft): 234
+Category: 22: 234
+Category: 22: 234
+Category: 9: 203
+Category: 9: 203
+Category: 9 (Germanistik (Deutsch, germanische Sprachen ohne Anglistik)): 203
+Category: 9: 203
+Category: 9: 203
+Category: 1001: 199
+Category: 1001: 199
+Category: 1001: 199
+Category: 1001: 199
+Category: 1001: 199
+Category: 42: 186
+Category: 42: 186
+Category: 42 (Biologie): 186
+Category: 42: 186
+Category: 42: 186
+Category: 39: 129
+Category: 39: 129
+Category: 39 (Physik, Astronomie): 129
+Category: 39: 129
+Category: 39: 129
+Category: 1006: 113
+Category: 1006: 113
+Category: 1006: 113
+Category: 1006: 113
+Category: 1006: 113
+Category: 1002: 107
+Category: 1002: 107
+Category: 1002: 107
+Category: 1002: 107
+Category: 1002: 107
+Category: 1005: 78
+Category: 1005: 78
+Category: 1005: 78
+Category: 1005: 78
+Category: 1005: 78
+Category: 78: 65
+Category: 78: 65
+Category: 78 (Musik, Musikwissenschaft): 65
+Category: 78: 65
+Category: 78: 65
+Category: 4: 59
+Category: 4: 59
+Category: 4 (Philosophie): 59
+Category: 4: 59
+Category: 4: 59
+Category: 25: 50
+Category: 25: 50
+Category: 25 (Politikwissenschaften): 50
+Category: 25: 50
+Category: 25: 50
+Category: 40: 39
+Category: 40: 39
+Category: 40 (Chemie): 39
+Category: 40: 39
+Category: 40: 39
+Category: 8: 27
+Category: 8: 27
+Category: 8 (Altphilologie (klass. Philologie), Neugriechisch): 27
+Category: 8: 27
+Category: 8: 27
+Category: 60: 24
+Category: 60: 24
+Category: 60 (ErnÃ¤hrungs- und Haushaltswissenschaften): 24
+Category: 60: 24
+Category: 60: 24
+Category: 1004: 22
+Category: 1004: 22
+Category: 1004: 22
+Category: 1004: 22
+Category: 1004: 22
+
