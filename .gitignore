@@ -31,11 +31,39 @@ Data/*
 
 # Track changes to var_info sheet
 !Data/Meta/variable_info_agreed_Feb_2_2026.csv
+!Data/Meta/final_categorical_variables_after_preprocessing.csv
+!Data/Meta/var_info_used_in_model_updated.csv
+
+# Keep key preprocessing provenance and outputs
 !Outputs/pre_processing_output.txt
+!Outputs/preprocessing_config.yaml
+!Outputs/dropped_variables_miss50.0%_ivcor0.7_var_0.02.csv
+!Outputs/dropped_variables_miss50.0%_ivcor0.7_var_0.02_original_vars.csv
+!Outputs/IV_correlations/ALL_correlated_pairs_above_0.7_before_wINFO.csv
+!Outputs/IV_correlations/ALL_correlated_pairs_above_0.7_before_wINFO_original_vars.csv
+!Outputs/IV_correlations/ALL_correlated_pairs_above_0.7_after.csv
+!Outputs/IV_correlations/ALL_correlated_pairs_above_0.7_after_original_vars.csv
+!Outputs/IV_correlations/dropped_vars_above_0.7.csv
+!Outputs/IV_correlations/dropped_vars_above_0.7_wINFO.csv
+!Outputs/Phi_values/phi_matrix_before_changes.csv
+!Outputs/Phi_values/phi_pairs_above_0.7_before.csv
+!Outputs/Variance_dropped_variables/dropped_low_variance_0.02.csv
+!Outputs/mutual_information/mutual_information_scores.csv
+!Outputs/category_distributions/X_counts.txt
+!Outputs/category_distributions/X_train_counts.txt
+!Outputs/category_distributions/X_test_counts.txt
+!Outputs/category_distributions/cardinality.png
+!Outputs/histograms/dv_t1.png
+!Outputs/histograms/y.png
+!Outputs/scatter_dvt1_and_y.png
 
 #Results
 Results/*
-!Reults/**/.gitkeep
+!Results/.gitkeep
+!Results/runs/
+Results/runs/*
+!Results/runs/2026-04-14_083401__*/
+!Results/runs/2026-04-14_083401__*/.gitignore
 
 #Outputs
 Outputs/*

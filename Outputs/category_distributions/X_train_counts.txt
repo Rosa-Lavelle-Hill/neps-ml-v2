@@ -1,0 +1,1 @@
+Category counts for categorical variables where minimum category is <= 24.0

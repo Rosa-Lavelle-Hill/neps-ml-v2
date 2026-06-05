@@ -1,0 +1,11 @@
+2026-04-14_083401__all: X_train = (3652, 294); X_test = (913, 294)
+DT: 
+Training done. Time taken: 0:00:00.115570
+params tried:
+{'regressor__max_depth': [5], 'regressor__min_samples_split': [2], 'regressor__max_features': [0.3], 'regressor__random_state': [93]}
+
+Best training r2 score: 0.287. Best model params:
+{'regressor__max_depth': 5, 'regressor__max_features': 0.3, 'regressor__min_samples_split': 2, 'regressor__random_state': 93}.
+
+Best DT model performance on test data (2026-04-14_083401__all):
+R2: 0.375; mae: 1.113

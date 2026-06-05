@@ -1,0 +1,73 @@
+,Var1,Var1 name,Var2,Var2 name,Corr
+0,p400000,Respondent born in Germany?,p400000_g1,Country of birth Respondent (Germany/abroad; edited),1.0
+1,p731801,Highest educational qualification Respondent in Germany,p731801_g1,Highest educational qualification Respondent in Germany (edited),1.0
+2,tx8610,created,dob_in_days_at_Target_survey,DOB (days),1.0
+3,e537110_g1,Place of study Teaching degree course (West/East),e537170_g1,Location: passed the state examination (West/East),1.0
+4,p400500_g2v1,Missing/contradicting imformation about country of birth for generation status,p400500_g2,Missing/contradicting imformation about country of birth for generation status,1.0
+5,p406000,Target child born in Germany?,p406000_g1,Country of birth of target child (Germany/abroad; edited),1.0
+6,t400500_g2v1,Missing/contradicting imformation about country of birth for generation status,t400500_g2,v1 Missing/contradicting imformation about country of birth for generation status,1.0
+7,e227400_D,Class: number of female students (in %),e227401_D,Class: number of male students (in %),0.9999543093772184
+8,tx8620,created,dob_in_days_at_Target_survey,DOB (days),0.9901324313104108
+9,tx8610,created,tx8620,created,0.9897400806535708
+10,p700010,Gender Target child,t700031,Gender,0.9862744897784564
+11,tx80501,List of children/students: Gender Target child,p700010,Gender Target child,0.9820091569747413
+12,tx80501,List of children/students: Gender Target child,t700031,Gender,0.9807712485931696
+13,e537030_D,Federal state higher education entrance qualification (West/East),e537110_g1,Place of study Teaching degree course (West/East),0.978587413581741
+14,e537030_D,Federal state higher education entrance qualification (West/East),e537170_g1,Location: passed the state examination (West/East),0.9775686439484955
+15,org5_sc1a,Orthography (set 1): WLE (corrected),org5_sc1b,Orthography (set 2): WLE (corrected),0.9596722412216657
+16,e53702y_D,Year of university entrance qualification (categorized),e76212y_D,Year of birth (categorized),0.9555866529737512
+17,e53710y_D,Year Study start Teaching degree course (categorized),e53702y_D,Year of university entrance qualification (categorized),0.9334250442907737
+18,e53710y_D,Year Study start Teaching degree course (categorized),e76212y_D,Year of birth (categorized),0.9183898703731672
+19,e537150_D,Year of state examination (categorized),e229820_D,"Work in profession (years, categorized)",0.9026587892421881
+20,e53710y_D,Year Study start Teaching degree course (categorized),e537150_D,Year of state examination (categorized),0.893483430449282
+21,p725000,Held back/repeated grade,t725020,School year repeated,0.8900247456294683
+22,e53710y_D,Year Study start Teaching degree course (categorized),e229820_D,"Work in profession (years, categorized)",0.8896637572321497
+23,e537150_D,Year of state examination (categorized),e76212y_D,Year of birth (categorized),0.8856534409696886
+24,e537150_D,Year of state examination (categorized),e53702y_D,Year of university entrance qualification (categorized),0.8783029045773497
+25,t400280_g1D,Fatherís father: Country of birth (Germany/abroad),t400260_g1D,Fatherís mother: country of birth (Germany/abroad),0.8774642890574104
+26,p406000_g1,Country of birth of target child (Germany/abroad; edited),t400000_g1D,Country of birth (Germany/abroad),0.874171950453231
+27,p406000,Target child born in Germany?,t400000_g1D,Country of birth (Germany/abroad),0.874171950453231
+28,t400280_g1D,Fatherís father: Country of birth (Germany/abroad),t400090_g1D,Father: Country of birth (Germany/abroad),0.8729729958360665
+29,e537110_g1,Place of study Teaching degree course (West/East),p751001_g1,Place of residence (west/east),0.8720541769562957
+30,e537170_g1,Location: passed the state examination (West/East),p751001_g1,Place of residence (west/east),0.8661886176154515
+31,p413040,Ability to speak German Interviewed Parent (auto variable),p413000_g1D,First language/mother tongue Respondent (German/not German),0.8612712175085855
+32,e537030_D,Federal state higher education entrance qualification (West/East),p751001_g1,Place of residence (west/east),0.8604559923793865
+33,e537126,Activity before teaching degree course - another training program started,e537127,Activity before teaching degree course - another training program completed,0.8557881011447965
+34,p400000,Respondent born in Germany?,p413000_g1D,First language/mother tongue Respondent (German/not German),0.8433955951171607
+35,p400000_g1,Country of birth Respondent (Germany/abroad; edited),p413000_g1D,First language/mother tongue Respondent (German/not German),0.8433955951171607
+36,p401110,Citizenship Respondent German since birth,p413000_g1D,First language/mother tongue Respondent (German/not German),0.8381512113802467
+37,p400000,Respondent born in Germany?,t400070_g1D,Mother: Country of birth (Germany/abroad),0.8333376585616662
+38,p400000_g1,Country of birth Respondent (Germany/abroad; edited),t400070_g1D,Mother: Country of birth (Germany/abroad),0.8333376585616662
+39,t400220_g1D,Motherís mother: country of birth (Germany/abroad),t400070_g1D,Mother: Country of birth (Germany/abroad),0.831187863090755
+40,e537124,Activity before teaching degree course - vocational training started,e537125,Activity before teaching degree course - vocational training completed,0.829273483535442
+41,t400260_g1D,Fatherís mother: country of birth (Germany/abroad),t400090_g1D,Father: Country of birth (Germany/abroad),0.822702168009574
+42,e229820_D,"Work in profession (years, categorized)",e76212y_D,Year of birth (categorized),0.8107603104195464
+43,e537122,Activity before teaching degree course - military/civil service,e762110,Gender,0.809526657479005
+44,e229820_D,"Work in profession (years, categorized)",e53702y_D,Year of university entrance qualification (categorized),0.8029929783936179
+45,t400240_g1D,Motherís father: Country of birth (Germany/abroad),t400220_g1D,Motherís mother: country of birth (Germany/abroad),0.8026612418724491
+46,p400000,Respondent born in Germany?,p413040,Ability to speak German Interviewed Parent (auto variable),0.800122389226608
+47,p400000_g1,Country of birth Respondent (Germany/abroad; edited),p413040,Ability to speak German Interviewed Parent (auto variable),0.800122389226608
+48,t400070_g1D,Mother: Country of birth (Germany/abroad),p413000_g1D,First language/mother tongue Respondent (German/not German),0.7773241872116864
+49,t400220_g1D,Motherís mother: country of birth (Germany/abroad),p413000_g1D,First language/mother tongue Respondent (German/not German),0.7724095965482131
+50,e536010,Time Career choice,e536020_D,Age Career choice (categorized),0.7714084213822346
+51,p400000_g1,Country of birth Respondent (Germany/abroad; edited),t400220_g1D,Motherís mother: country of birth (Germany/abroad),0.7650658149607633
+52,p400000,Respondent born in Germany?,t400220_g1D,Motherís mother: country of birth (Germany/abroad),0.7650658149607633
+53,mpg5or01_sc6,Procedural metacognition (orthography set 1): proportion correct,mpg5or02_sc6,Procedural metacognition (orthography set 2): proportion correct,0.7637352965875934
+54,p400000_g1,Country of birth Respondent (Germany/abroad; edited),p731801_g1,Highest educational qualification Respondent in Germany (edited),0.7634458912621851
+55,p400000_g1,Country of birth Respondent (Germany/abroad; edited),p731801,Highest educational qualification Respondent in Germany,0.7634458912621851
+56,p400000,Respondent born in Germany?,p731801_g1,Highest educational qualification Respondent in Germany (edited),0.7634458912621851
+57,p400000,Respondent born in Germany?,p731801,Highest educational qualification Respondent in Germany,0.7634458912621851
+58,p401110,Citizenship Respondent German since birth,p413040,Ability to speak German Interviewed Parent (auto variable),0.7615662643694378
+59,t400240_g1D,Motherís father: Country of birth (Germany/abroad),t400070_g1D,Mother: Country of birth (Germany/abroad),0.7534676106629878
+60,p400000_g1,Country of birth Respondent (Germany/abroad; edited),p401110,Citizenship Respondent German since birth,0.7471487548614093
+61,p400000,Respondent born in Germany?,p401110,Citizenship Respondent German since birth,0.7471487548614093
+62,p731802_g3,Highest educational qualification Respondent (education years = fCASMIN),p731813,(Highest) professional qualification Respondent,0.7371129652568075
+63,p413000_g1D,First language/mother tongue Respondent (German/not German),p410000_g1D,First language/mother tongue Child (German/not German),0.731805096262729
+64,t400280_g1D,Fatherís father: Country of birth (Germany/abroad),t400240_g1D,Motherís father: Country of birth (Germany/abroad),0.7187179047636678
+65,t400240_g1D,Motherís father: Country of birth (Germany/abroad),p413000_g1D,First language/mother tongue Respondent (German/not German),0.7174388318946475
+66,p413040,Ability to speak German Interviewed Parent (auto variable),t400070_g1D,Mother: Country of birth (Germany/abroad),0.7131677972819728
+67,p400000_g1,Country of birth Respondent (Germany/abroad; edited),t400240_g1D,Motherís father: Country of birth (Germany/abroad),0.7053739999034054
+68,p400000,Respondent born in Germany?,t400240_g1D,Motherís father: Country of birth (Germany/abroad),0.7053739999034054
+69,t400260_g1D,Fatherís mother: country of birth (Germany/abroad),t400220_g1D,Motherís mother: country of birth (Germany/abroad),0.7028704943759507
+70,p741001,Size of household,p742001,Persons under the age of 14 in the household,0.7022097041722033
+71,p724101,Grade Annual report card German,t724101,Grade Annual report card - German,0.7016659748579289

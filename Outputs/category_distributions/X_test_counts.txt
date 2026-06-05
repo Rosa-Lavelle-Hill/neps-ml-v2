@@ -1,0 +1,4 @@
+Category counts for categorical variables where minimum category is <= 6.0
+1. t731130: Role of mother ...
+Category: 1 (meine leibliche Mutter): 878
+

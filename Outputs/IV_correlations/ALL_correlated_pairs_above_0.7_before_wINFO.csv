@@ -1,0 +1,32 @@
+,Var1,Var1 name,Var2,Var2 name,Corr
+0,p731851,Highest educational qualification Partner in Germany,p731851_g1,Highest educational qualification Partner in Germany (edited),1.0
+1,tx8610,created,dob_in_days_at_Target_survey,DOB (days),1.0
+2,p731801,Highest educational qualification Respondent in Germany,p731801_g1,Highest educational qualification Respondent in Germany (edited),1.0
+3,t400500_g2v1,Missing/contradicting imformation about country of birth for generation status,t400500_g2,v1 Missing/contradicting imformation about country of birth for generation status,0.9999999991340903
+4,p400500_g2v1,Missing/contradicting imformation about country of birth for generation status,p400500_g2,Missing/contradicting imformation about country of birth for generation status,0.9999999966711137
+5,e227400_D,Class: number of female students (in %),e227401_D,Class: number of male students (in %),0.999926568715631
+6,p700010,Gender Target child,t700031,Gender,0.9870307518115432
+7,tx8610,created,tx8620,created,0.9866946115664829
+8,tx8620,created,dob_in_days_at_Target_survey,DOB (days),0.985958127801302
+9,tx80501,List of children/students: Gender Target child,t700031,Gender,0.9853978003577955
+10,tx80501,List of children/students: Gender Target child,p700010,Gender Target child,0.9793445968537224
+11,org5_sc1a,Orthography (set 1): WLE (corrected),org5_sc1b,Orthography (set 2): WLE (corrected),0.9653280211966974
+12,p406000_g1,Country of birth of target child (Germany/abroad; edited),t400000_g1D,Country of birth (Germany/abroad),0.8933273919441019
+13,p414000_g1D,First language/mother tongue Partner (German/not German),p414040,German language Partner (auto variable),0.8857970208700804
+14,p725000,Held back/repeated grade,t725020,School year repeated,0.8808745196655909
+15,e229820_D,"Work in profession (years, categorized)",e76212y_D,Year of birth (categorized),0.8344542993332785
+16,e537124,Activity before teaching degree course - vocational training started,e537125,Activity before teaching degree course - vocational training completed,0.8019319179360361
+17,p731901,Employment Respondent,p731902,Working hours Respondent,0.7936376557776558
+18,mpg5or01_sc6,Procedural metacognition (orthography set 1): proportion correct,mpg5or02_sc6,Procedural metacognition (orthography set 2): proportion correct,0.7736374399237784
+19,e537126,Activity before teaching degree course - another training program started,e537127,Activity before teaching degree course - another training program completed,0.7667209014592705
+20,p400500_g1,Generation status,p40603,created,0.7642671525763052
+21,p400500_g1v1,Generation status,p40603,created,0.7642671525763052
+22,p731851_g1,Highest educational qualification Partner in Germany (edited),p414040,German language Partner (auto variable),0.7485772586977961
+23,p731851,Highest educational qualification Partner in Germany,p414040,German language Partner (auto variable),0.7470293113243608
+24,p414000_g1D,First language/mother tongue Partner (German/not German),p731851_g1,Highest educational qualification Partner in Germany (edited),0.7442155147014395
+25,p414000_g1D,First language/mother tongue Partner (German/not German),p731851,Highest educational qualification Partner in Germany,0.7426063238994381
+26,e536010,Time Career choice,e536020_D,Age Career choice (categorized),0.7253211464201093
+27,p731117,Relationship Partner to target child,t74305d,Household composition: stepfather or motherís boyfriend,0.7145121513288772
+28,ed1011_pos,created,ed1011_neg,created,0.7093381689252443
+29,t31035a,Idealistic educational aspiration - highest school-leaving qualification,t31135a,Realistic educational aspiration - highest school-leaving qualification,0.7062429478037737
+30,p724101,Grade Annual report card German,t724101,Grade Annual report card - German,0.7033932114168181

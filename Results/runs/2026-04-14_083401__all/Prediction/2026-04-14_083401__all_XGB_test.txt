@@ -1,0 +1,11 @@
+2026-04-14_083401__all: X_train = (3652, 294); X_test = (913, 294)
+XGB: 
+Training done. Time taken: 2:02:03.695539
+params tried:
+{'regressor__max_depth': [5], 'regressor__num_parallel_tree': [50], 'regressor__random_state': [93], 'regressor__learning_rate': [0.1]}
+
+Best training r2 score: 0.457. Best model params:
+{'regressor__learning_rate': 0.1, 'regressor__max_depth': 5, 'regressor__num_parallel_tree': 50, 'regressor__random_state': 93}.
+
+Best XGB model performance on test data (2026-04-14_083401__all):
+R2: 0.487; mae: 1.003

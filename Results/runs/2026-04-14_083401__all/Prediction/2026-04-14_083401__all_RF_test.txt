@@ -1,0 +1,11 @@
+2026-04-14_083401__all: X_train = (3652, 294); X_test = (913, 294)
+RF: 
+Training done. Time taken: 0:02:40.740313
+params tried:
+{'regressor__max_depth': [5], 'regressor__num_parallel_tree': [50], 'regressor__colsample_bynode': [0.2], 'regressor__random_state': [93]}
+
+Best training r2 score: 0.389. Best model params:
+{'regressor__colsample_bynode': 0.2, 'regressor__max_depth': 5, 'regressor__num_parallel_tree': 50, 'regressor__random_state': 93}.
+
+Best RF model performance on test data (2026-04-14_083401__all):
+R2: 0.406; mae: 1.068
