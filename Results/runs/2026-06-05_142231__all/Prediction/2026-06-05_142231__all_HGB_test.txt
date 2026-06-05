@@ -1,0 +1,11 @@
+2026-06-05_142231__all: X_train = (3652, 302); X_test = (913, 302)
+HGB: 
+Training done. Time taken: 0:02:11.805016
+params tried:
+{'regressor__min_samples_leaf': [5], 'regressor__max_depth': [5], 'regressor__random_state': [93], 'regressor__max_iter': [50], 'regressor__learning_rate': [0.1]}
+
+Best training r2 score: 0.447. Best model params:
+{'regressor__learning_rate': 0.1, 'regressor__max_depth': 5, 'regressor__max_iter': 50, 'regressor__min_samples_leaf': 5, 'regressor__random_state': 93}.
+
+Best HGB model performance on test data (2026-06-05_142231__all):
+R2: 0.487; mae: 1.011
