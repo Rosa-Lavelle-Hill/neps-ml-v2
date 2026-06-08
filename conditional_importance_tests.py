@@ -94,7 +94,20 @@ var_info = var_info[var_info["include as predictor"] == 1]
 var_names_dict = dict(zip(var_info['var'], var_info['varname']))
 
 # get block information for grouped importance
-block_dict = dict(zip(var_info['var'], var_info['varsection']))
+groups_info_path = Path("Data/Meta/var_info_used_in_model_final_groups.csv")
+groups_info = pd.read_csv(groups_info_path, encoding="utf-8", sep=None, engine="python")
+groups_info.columns = groups_info.columns.astype(str).str.replace("\ufeff", "", regex=False).str.strip()
+
+required_group_cols = ["var", "Final Groups"]
+missing_group_cols = [c for c in required_group_cols if c not in groups_info.columns]
+if missing_group_cols:
+    raise KeyError(
+        f"Missing required columns {missing_group_cols} in {groups_info_path}. "
+        f"Available columns: {list(groups_info.columns)}"
+    )
+
+groups_info = groups_info[groups_info["include as predictor"] == 1].copy()
+block_dict = dict(zip(groups_info["var"], groups_info["Final Groups"].fillna("Unmapped").astype(str)))
 
 print("Loading data...")
 X_and_y = pd.read_csv(preprocessed_data_path, index_col=[0])
@@ -180,6 +193,39 @@ if missing_value_strategy == "drop":
     y_train = y_train.loc[train_valid].copy()
     X_test = X_test.loc[test_valid].copy()
     y_test = y_test.loc[test_valid].copy()
+
+    if X_train.empty or X_test.empty:
+        print(
+            "Complete-case dropping produced an empty split. "
+            "Falling back to sentinel imputation (-999)."
+        )
+
+        # Recreate original split and impute so model fitting can proceed.
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, random_state=seed, test_size=test_size, shuffle=True
+        )
+
+        cat_cols = X_train.select_dtypes(include='category').columns
+        num_cols = X_train.select_dtypes(exclude='category').columns
+
+        for col in cat_cols:
+            cat_dtype = X_train[col].cat.categories.dtype
+            sentinel = -999 if pd.api.types.is_numeric_dtype(cat_dtype) else '-999'
+
+            if sentinel not in X_train[col].cat.categories:
+                X_train[col] = X_train[col].cat.add_categories([sentinel])
+            X_train[col] = X_train[col].fillna(sentinel)
+
+            if not isinstance(X_test[col].dtype, pd.CategoricalDtype):
+                X_test[col] = X_test[col].astype('category')
+            if sentinel not in X_test[col].cat.categories:
+                X_test[col] = X_test[col].cat.add_categories([sentinel])
+            X_test[col] = X_test[col].fillna(sentinel)
+
+        X_train[num_cols] = X_train[num_cols].fillna(-999)
+        X_test[num_cols] = X_test[num_cols].fillna(-999)
+        y_train = y_train.fillna(-999)
+        y_test = y_test.fillna(-999)
 
 elif missing_value_strategy == "impute":
     print("Imputing missing values with sentinel -999...")

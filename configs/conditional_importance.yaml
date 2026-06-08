@@ -3,7 +3,7 @@ conditional_importance:
   test: CPI
 
   # Must match an existing run folder under Results/runs/<run_id>/
-  run_id: "2026-04-14_083401__all"
+  run_id: "2026-06-05_142231__all"
 
   # Model to evaluate with CIT: DT, RF, HGB, XGB, CAT
   model_name: CAT
@@ -31,7 +31,7 @@ conditional_importance:
   handle_missing: false
 
   # Data prep strategy before fit/infer: drop or impute
-  missing_value_strategy: drop
+  missing_value_strategy: impute
 
   # Output root path for CIT artifacts
   save_root: Sim-CIT
