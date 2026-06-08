@@ -1,0 +1,11 @@
+2026-06-05_142231__prior_reading__student__pedagogical: X_train = (3652, 218); X_test = (913, 218)
+CAT: 
+Training done. Time taken: 0:00:00.421745
+params tried:
+{'regressor__iterations': [50], 'regressor__learning_rate': [0.1], 'regressor__depth': [4]}
+
+Best training r2 score: 0.476. Best model params:
+{'regressor__depth': 4, 'regressor__iterations': 50, 'regressor__learning_rate': 0.1}.
+
+Best CAT model performance on test data (2026-06-05_142231__prior_reading__student__pedagogical):
+R2: 0.498; mae: 0.991

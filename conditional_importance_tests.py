@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 import joblib
 import random
+import yaml
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier, RandomForestRegressor, HistGradientBoostingRegressor 
@@ -12,39 +13,69 @@ from sklearn.model_selection import train_test_split
 from Functions.CIT import diagnose_degenerate_features
 from Functions.pipeline import construct_pipelines_all_no_imputation
 from Functions.preprocessing_functions import drop_cols, remove_variables
-from fixed_params import categorical_features, var_info_sheet, seed, test_size, remove_vars
+from fixed_params import remove_vars
+from Functions.subsets import cfg_get
 from tofi import CIT
+
+
+def load_yaml(path):
+    with open(path, "r") as f:
+        return yaml.safe_load(f) or {}
+
+
+def deep_merge(a, b):
+    out = dict(a)
+    for k, v in b.items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = deep_merge(out[k], v)
+        else:
+            out[k] = v
+    return out
 
 
 # ==============================
 # Script controls / run settings
 # ==============================
-test = "CPI" # Type of test conducted "RPT" or "CPI"
-run_CIT = True # if False will skip CIT and just run diagnostics on 0 SE features; if True will run CIT and then diagnostics on 0 SE features
-sample_features = False # set to true if want to reduce computation time to test code -- will only run for a sample of features
-run_diagnostics = True # whether to run diagnostics on 0 SE features after CIT; can set to False to skip diagnostics and just get CIT results
-n_iter = 1000 # number of iterations for null distribution; only used if test == "RPT" or if test == "CPI" and null_dist == "permutation"; ignored if test == "CPI" and null_dist == "normality"
-start_string = '2026-01-26_173957__all' # must match the run folder id used by ml_pipeline.py under Results/runs/<run_id>/
-test_run = True # controls ONLY the params filename suffix ("_test"); it does NOT modify run_id/path
-model_name = "HGB" # model_names = ["DT", "RF", "HGB", "XGB", "CAT"]
-handle_missing = False # sampler choice in CIT only: False -> RandomForest sampler, True -> HistGradientBoosting sampler
+# Base config + optional CIT override config.
+cfg_base = load_yaml("configs/base.yaml")
+cfg_override_path = Path("configs/conditional_importance.yaml")
+cfg_override = load_yaml(cfg_override_path) if cfg_override_path.exists() else {}
+cfg = deep_merge(cfg_base, cfg_override)
+
+seed = cfg_get(cfg, ["params", "seed"])
+test_size = cfg_get(cfg, ["modelling", "test_size"])
+var_info_sheet = cfg_get(cfg, ["paths", "var_info_csv"])
+preprocessed_data_path = cfg_get(cfg, ["paths", "preprocessed_data"])
+categorical_features_csv = cfg_get(cfg, ["paths", "categorical_features_csv"])
+
+cit_cfg = cfg.get("conditional_importance", {})
+
+test = cit_cfg.get("test", "CPI") # Type of test conducted "RPT" or "CPI"
+run_CIT = cit_cfg.get("run_CIT", True) # if False will skip CIT and just run diagnostics on 0 SE features; if True will run CIT and then diagnostics on 0 SE features
+sample_features = cit_cfg.get("sample_features", False) # set to true if want to reduce computation time to test code -- will only run for a sample of features
+run_diagnostics = cit_cfg.get("run_diagnostics", True) # whether to run diagnostics on 0 SE features after CIT; can set to False to skip diagnostics and just get CIT results
+n_iter = cit_cfg.get("n_iter", 1000) # number of iterations for null distribution; only used if test == "RPT" or if test == "CPI" and null_dist == "permutation"; ignored if test == "CPI" and null_dist == "normality"
+start_string = cit_cfg.get("run_id", "2026-04-14_083401__all") # must match the run folder id used by ml_pipeline.py under Results/runs/<run_id>/
+test_run = cit_cfg.get("test_run", cfg.get("test_run_params", {}).get("test_run", True)) # controls ONLY the params filename suffix ("_test"); it does NOT modify run_id/path
+model_name = cit_cfg.get("model_name", "CAT") # model_names = ["DT", "RF", "HGB", "XGB", "CAT"]
+handle_missing = cit_cfg.get("handle_missing", False) # sampler choice in CIT only: False -> RandomForest sampler, True -> HistGradientBoosting sampler
 
 # Missing-value handling strategy used across train/test preparation.
 # Options:
 # - "drop":   drop rows with any missing value in X or y
 # - "impute": fill missing values with -999 (categoricals get sentinel category)
 # NOTE: this controls learner/CIT input prep, not sampler class choice.
-missing_value_strategy = "drop"
+missing_value_strategy = cit_cfg.get("missing_value_strategy", "drop")
 
 if sample_features == True:
-    n_features = 10 # number of features to sample
+    n_features = cit_cfg.get("n_features", 10) # number of features to sample
 if test_run == True:
     t = '_test'
 else:
     t = ''
 
 start_time = dt.now()
-save_path = Path("Sim-CIT")
+save_path = Path(cit_cfg.get("save_root", "Sim-CIT"))
 
 # NOTE:
 # `start_string` should exactly match the run folder id used by ml_pipeline.py.
@@ -57,7 +88,8 @@ params_path = Path("Results") / "runs" / run_id / "Prediction" / "Best_Params"
 # Load data + metadata
 # ======================
 # Import variable information & meta data:
-var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=';')
+var_info = pd.read_csv(var_info_sheet, encoding="utf-8", sep=None, engine="python")
+var_info.columns = var_info.columns.astype(str).str.replace("\ufeff", "", regex=False).str.strip()
 var_info = var_info[var_info["include as predictor"] == 1]
 var_names_dict = dict(zip(var_info['var'], var_info['varname']))
 
@@ -65,7 +97,7 @@ var_names_dict = dict(zip(var_info['var'], var_info['varname']))
 block_dict = dict(zip(var_info['var'], var_info['varsection']))
 
 print("Loading data...")
-X_and_y = pd.read_csv("Data/Preprocessed/X_and_y.csv", index_col=[0])
+X_and_y = pd.read_csv(preprocessed_data_path, index_col=[0])
 
 X = X_and_y.drop("y", axis=1)
 print("X shape: " + str(X.shape))
@@ -73,7 +105,9 @@ y = X_and_y["y"]
 print("y shape: " + str(y.shape))
 
 # Ensure categorical features actually exist in X
-categorical_features_list = categorical_features.values.flatten().tolist()
+categorical_features_df = pd.read_csv(categorical_features_csv, index_col=[0])
+categorical_features_col = categorical_features_df.columns[0]
+categorical_features_list = categorical_features_df[categorical_features_col].dropna().astype(str).tolist()
 categorical_features = [c for c in categorical_features_list if c in X.columns]
 print(len(categorical_features), "categorical features found in data.")
 

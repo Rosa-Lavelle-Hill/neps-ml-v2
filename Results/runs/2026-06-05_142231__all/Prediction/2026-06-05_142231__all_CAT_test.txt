@@ -1,0 +1,11 @@
+2026-06-05_142231__all: X_train = (3652, 302); X_test = (913, 302)
+CAT: 
+Training done. Time taken: 0:00:00.447256
+params tried:
+{'regressor__iterations': [50], 'regressor__learning_rate': [0.1], 'regressor__depth': [4]}
+
+Best training r2 score: 0.473. Best model params:
+{'regressor__depth': 4, 'regressor__iterations': 50, 'regressor__learning_rate': 0.1}.
+
+Best CAT model performance on test data (2026-06-05_142231__all):
+R2: 0.502; mae: 0.987

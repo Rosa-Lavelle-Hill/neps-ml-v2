@@ -1,0 +1,37 @@
+conditional_importance:
+  # Type of test: CPI or RPT
+  test: CPI
+
+  # Must match an existing run folder under Results/runs/<run_id>/
+  run_id: "2026-04-14_083401__all"
+
+  # Model to evaluate with CIT: DT, RF, HGB, XGB, CAT
+  model_name: CAT
+
+  # If true, runs CIT; if false, skips CIT and only runs diagnostics from saved results
+  run_CIT: true
+
+  # If true, only runs on a random sample of features
+  sample_features: false
+
+  # Number of sampled features when sample_features is true
+  n_features: 10
+
+  # Run degenerate-feature diagnostics
+  run_diagnostics: true
+
+  # Iterations for null distribution (used for RPT or CPI+permutation)
+  n_iter: 1000
+
+  # Controls best-params filename suffix (_test)
+  test_run: true
+
+  # Sampler family in CIT:
+  # false -> RandomForest sampler, true -> HistGradientBoosting sampler
+  handle_missing: false
+
+  # Data prep strategy before fit/infer: drop or impute
+  missing_value_strategy: drop
+
+  # Output root path for CIT artifacts
+  save_root: Sim-CIT
