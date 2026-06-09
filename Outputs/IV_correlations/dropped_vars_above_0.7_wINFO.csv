@@ -9,7 +9,7 @@
 7,297,p700010,Gender Target child,,pParent,pParent,2158.0,effect code,Boy; Girl,1.0,0.0,,,,,,,,,,,
 8,308,p400500_g2,Missing/contradicting imformation about country of birth for generation status,,pParent,pParent,1906.0,categorical,Unique assignment possible; Information for target person unknown; Information for one parent unknown; Information for both parents unknown; Information for one grandparent unknown; Information for two grandparents unknown; Information for three grandparents unknown; Information for four grandparents unknown; no assignment to a generation,1.0,0.0,,,,,,,,,,,
 9,330,p724101,Grade Annual report card German,,pParent,pParent,2234.0,continuous,very good; good; satisfactory; sufficient; inadequate; unsatisfactory; no grade provided,1.0,0.0,,,,,,,,,,,
-10,372,p731801_g1,Highest educational qualification Respondent in Germany (edited),,pParent,pParent,2374.0,effect code,"yes; no; no school-leaving qualification; Germany and another country, not",1.0,0.0,,,,,,,,,,,
+10,371,p731801,Highest educational qualification Respondent in Germany,,pParent,pParent,2373.0,effect code,yes; no; no school-leaving qualification,1.0,0.0,,,,,,,,,,,
 11,391,p731902,Working hours Respondent,,pParent,pParent,2403.0,continuous,,1.0,0.0,,,,,,,,,,,
 12,423,p731117,Relationship Partner to target child,,pParent,pParent,2458.0,categorical,biological mother; biological father; adoptive mother; adoptive father; foster mother; foster father; partner of father/mother; partner of mother/father; stepmother; stepfather; other relationship,1.0,0.0,,,,,,,,,,,
 13,433,p731851_g1,Highest educational qualification Partner in Germany (edited),,pParent,pParent,2490.0,effect code,"yes; no; no school-leaving qualification; Germany and another country, not",1.0,0.0,,,,,,,,,,,

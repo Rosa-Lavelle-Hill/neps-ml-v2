@@ -11,10 +11,10 @@ run:
   run_SHAP: true # runs SHAP, otherwise loads results and plots
   run_grouped_SHAP: true # calculates and plots grouped SHAP
   plot_nice_names: true # plots with nice variable names where possible
-  count_categories: false # counts min categories and notes where <25 ---> must be false if parallel is enabled 
+  count_categories: false # counts min categories and notes where <25 ---> must be false if parallel: enabled: true 
   
 parallel:
-  enabled: true # enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
+  enabled: false # true or false. enables parallel processing of different subsets ---> for true, count_categories must be false; skl_n_jobs must be 1 in modelling
   max_workers: 4 # number of parallel workers (4 or null)
 
 paths:

@@ -12,7 +12,6 @@ run_diagnostics = False
 plot_pos_estimates_only = True
 plot_group_colours = True
 
-
 def normalize_group_name(group_name):
     """Map legacy/source labels to final group names used in plots."""
     if pd.isna(group_name):
@@ -29,10 +28,9 @@ def normalize_group_name(group_name):
     return rename_map.get(raw, raw if raw else "Unknown")
 
 # --- prepare data ---
-# start_string = '26_Nov_2024__16.45'
-start_string = '12_Dec_2024__11.47_test'
+start_string = '2026-06-05_142231__all'
 save_path = "Sim-CIT/"
-model_name = "HGB"
+model_name = "HGB" # "DT", "RF", "HGB", "XGB", "CAT"
 test = "CPI" # "RPT" or "CPI"
 
 if sample_features == True:
@@ -56,6 +54,17 @@ else:
 x = np.arange(1, len(df_sorted) + 1)                       # 1..N features
 y = df_sorted['estimate'].cumsum().to_numpy()              # cumulative estimates
 sig = (df_sorted['p_value'].to_numpy() < 0.05)             # significance mask
+
+# Auto y-limits: 2% padding below min and above max of plotted cumulative data.
+y_min = float(np.nanmin(y))
+y_max = float(np.nanmax(y))
+y_range = y_max - y_min
+if y_range == 0:
+    # Fallback for flat series so the axis still has visible height.
+    pad = max(abs(y_max) * 0.02, 0.01)
+else:
+    pad = y_range * 0.02
+ylims = (y_min - pad, y_max + pad)
 
 # --- optional: map each feature to a variable group for group-colored plot ---
 feature_groups = np.array(["Unknown"] * len(df_sorted), dtype=object)
@@ -123,7 +132,7 @@ ax.plot(x[-1], y[-1], marker='o', markersize=3, linestyle='None', color=('lime' 
 # baseline & cosmetics
 ax.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
 ax.set_xlim(1, len(x))
-ax.set_ylim(1.4, 1.81)
+ax.set_ylim(ylims)
 ax.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
 ax.set_ylabel('Cumulative estimate of performance difference (MSE)')
 ax.set_title(f'Cumulative {test} estimates by feature for {model_name} model')
@@ -166,7 +175,7 @@ if plot_group_colours:
 
     ax2.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
     ax2.set_xlim(1, len(x))
-    ax2.set_ylim(1.4, 1.81)
+    ax2.set_ylim(ylims)
     ax2.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
     ax2.set_ylabel('Cumulative estimate of performance difference (MSE)')
     ax2.set_title(f'Cumulative {test} estimates by feature group for {model_name} model')

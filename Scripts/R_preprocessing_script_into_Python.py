@@ -242,6 +242,7 @@ def main():
         # Drop original cols
         df.drop(columns=[yearvar, mcol], inplace=True, errors="ignore")
         dropped_date_cols += 2
+        
 
     after = df.shape
     print_drop(before[0], before[1], after[0], after[1], "Merge month/year date variables (drops original m/y columns)")

@@ -27,7 +27,7 @@ def run_pipeline(cfg: dict):
 
     from Params.Grids import get_test_param_grids, get_param_grids
 
-    from fixed_params import (remove_vars, school_track, dv_t1_name)
+    from fixed_params import (remove_vars, school_track, dv_t1_name, date_variables)
     
     # =======================================================================================================
     script_start = dt.datetime.now()
@@ -98,7 +98,7 @@ def run_pipeline(cfg: dict):
     # paths:
     var_info_sheet = cfg_get(cfg, ["paths", "var_info_csv"])
     group_info_sheet = cfg.get("paths", {}).get("group_info_xls")
-    group_source_col = cfg.get("paths", {}).get("group_source_col", "Ai_classification")
+    group_source_col = cfg.get("paths", {}).get("group_source_col", "Final_Group")
     categorical_features_csv = cfg_get(cfg, ["paths", "categorical_features_csv"])
     preprocessed_data = cfg_get(cfg, ["paths", "preprocessed_data"])
 
@@ -142,11 +142,20 @@ def run_pipeline(cfg: dict):
 
         if "var" not in group_info.columns:
             raise KeyError(f"Missing required column 'var' in {group_info_sheet}")
-        if group_source_col not in group_info.columns:
-            raise KeyError(f"Missing required column '{group_source_col}' in {group_info_sheet}")
+        final_group_col = None
+        if "Final_Group" in group_info.columns:
+            final_group_col = "Final_Group"
+        elif "Final Groups" in group_info.columns:
+            final_group_col = "Final Groups"
+        elif group_source_col in group_info.columns:
+            final_group_col = group_source_col
+        else:
+            raise KeyError(
+                f"Missing required final group column in {group_info_sheet}; expected 'Final_Group' or '{group_source_col}'"
+            )
 
         group_info["var"] = group_info["var"].astype(str).str.strip()
-        group_info[group_source_col] = group_info[group_source_col].astype(str).str.strip()
+        group_info[final_group_col] = group_info[final_group_col].astype(str).str.strip()
 
         rename_map = {
             "teacher/school": "Pedagogical",
@@ -154,11 +163,11 @@ def run_pipeline(cfg: dict):
             "parents/home": "Home",
         }
         group_map = (
-            group_info[["var", group_source_col]]
+            group_info[["var", final_group_col]]
             .dropna(subset=["var"])
             .drop_duplicates(subset=["var"], keep="last")
         )
-        group_map["Variable_Group_New"] = group_map[group_source_col].replace(rename_map)
+        group_map["Variable_Group_New"] = group_map[final_group_col].replace(rename_map)
 
         def apply_final_group_mapping(df):
             mapped = df.copy()
@@ -194,11 +203,122 @@ def run_pipeline(cfg: dict):
     print("Final X shape is: " + str(X.shape))
 
     # Var info only for where columns exist in data
+    var_info_all["var"] = var_info_all["var"].astype(str).str.strip()
+    var_info["var"] = var_info["var"].astype(str).str.strip()
     var_info = var_info[var_info['var'].isin(X.columns)]
+
+    # Add metadata rows for merged date variables (e.g., p40113m/p40113y -> p40113)
+    #or other newly created variables (based on their root var grouping)
+    # when they exist in X but are absent from var_info.
+    merged_group_overrides = {
+        "p71202": "Student",
+        "p71203": "Student",
+        "p72802": "Student",
+        "p40003": "Home",
+        "p40113": "Home",
+        "p73111": "Home",
+        "p40403": "Home",
+        "td0036": "Pedagogical",
+        "teacher_changed_state": "Pedagogical",
+        "dob_in_days_at_Target_survey": "Student",
+        "p34009": "Home",
+        "td0034": "Pedagogical",
+        "t34009": "Student",
+        "td0042": "Student",
+        "td0033": "Pedagogical",
+        "ed1010": "Pedagogical",
+        "td0032": "Pedagogical",
+        "td0035": "Pedagogical",
+        "td0043": "Student",
+        "td0041": "Student",
+        "ed1011_pos": "Pedagogical",
+        "teacher_stress_factors_avg": "Pedagogical",
+    }
+    created_varname_overrides = {
+        "td0036": "Teacher summarize, draws attention, explains connections",
+        "p34009": "Participation in high culture (parent)",
+        "td0034": "Percieved teacher autonomy",
+        "t34009": "Participation in high culture (student)",
+        "td0042": "Attitudes towards reading",
+        "td0033": "German teacher expectations",
+        "ed1010": "Teacher collaboration",
+        "td0032": "German teacher organisation of learning",
+        "td0035": "German teacher prom. interaction",
+        "td0043": "Self concept reading",
+        "td0041": "Social reading habits",
+        "ed1011_pos": "Positive attitudes towards profession",
+    }
+    missing_in_var_info = set(X.columns) - set(var_info['var'])
+    merged_date_missing = [v for v in date_variables if v in missing_in_var_info]
+    override_missing = [v for v in merged_group_overrides if v in missing_in_var_info]
+    vars_to_add = list(dict.fromkeys(merged_date_missing + override_missing))
+    if vars_to_add:
+        added_rows = []
+        for merged_var in vars_to_add:
+            if merged_var == "dob_in_days_at_Target_survey":
+                source_rows = var_info_all[var_info_all["var"].astype(str).eq(merged_var)]
+                if source_rows.empty:
+                    continue
+                source = source_rows.iloc[0].copy()
+            elif merged_var in date_variables:
+                source_rows = var_info_all[var_info_all["var"].isin([f"{merged_var}m", f"{merged_var}y"])]
+                if source_rows.empty:
+                    continue
+                source = source_rows.iloc[0].copy()
+            else:
+                source_rows = var_info_all[var_info_all["var"].astype(str).eq(merged_var)]
+                if source_rows.empty:
+                    # Explicitly allow override-listed created vars to be added.
+                    source = pd.Series({col: "" for col in var_info_all.columns})
+                    source["varname"] = created_varname_overrides.get(merged_var, merged_var)
+                    source["varsection_orig"] = "created"
+                else:
+                    source = source_rows.iloc[0].copy()
+
+            source["var"] = merged_var
+
+            source_name = str(source.get("varname", "")).strip()
+            if merged_var in date_variables:
+                if source_name:
+                    source_name = re.sub(r"\s*\((month|year)\)", "", source_name, flags=re.IGNORECASE).strip()
+                    source["varname"] = f"{source_name} (combined month/year)"
+                else:
+                    source["varname"] = f"{merged_var} (combined month/year)"
+            elif merged_var == "dob_in_days_at_Target_survey":
+                source["varname"] = "DOB (days)"
+            elif source_name:
+                source_name = re.sub(r"\s*\((month|year)\)", "", source_name, flags=re.IGNORECASE).strip()
+                source["varname"] = source_name
+            else:
+                source["varname"] = merged_var
+
+            source["final classification"] = "continuous"
+            source["labels"] = ""
+            source["date_merge"] = ""
+            # Ensure all auto-added variables are eligible predictors.
+            for predictor_col in ["include as predictor", "include_as_predictor"]:
+                if predictor_col in source.index:
+                    source[predictor_col] = 1.0
+            for id_col in ["include as ID", "include_as_id"]:
+                if id_col in source.index:
+                    source[id_col] = 0.0
+
+            group_value = merged_group_overrides.get(merged_var, source.get("Variable_Group", "Unmapped"))
+            source["Variable_Group"] = group_value
+            if "Final Groups" in source.index:
+                source["Final Groups"] = group_value
+
+            added_rows.append(source)
+
+        if added_rows:
+            var_info = pd.concat([var_info, pd.DataFrame(added_rows)], ignore_index=True)
+
+    # Guard against duplicate metadata rows for the same variable key.
+    var_info = var_info.drop_duplicates(subset=["var"], keep="last").reset_index(drop=True)
+
     print(f"num of variables in var_info and in X: {var_info.shape[0]}")
     vars_not_in_var_info = set(X.columns) - set(var_info['var'])
     print(f"Variables in X but not in var_info: {vars_not_in_var_info}")
-    var_info.to_csv("Data/Meta/var_info_used_in_model_updated.csv", index=False)
     var_info.to_csv("Data/Meta/var_info_used_in_model_final_groups.csv", index=False)
     var_info.to_csv(results_path / "var_info_used_in_model_final_groups.csv", index=False)
 

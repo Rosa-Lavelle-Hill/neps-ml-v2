@@ -6,7 +6,7 @@ conditional_importance:
   run_id: "2026-06-05_142231__all"
 
   # Model to evaluate with CIT: DT, RF, HGB, XGB, CAT
-  model_name: CAT
+  model_name: HGB
 
   # If true, runs CIT; if false, skips CIT and only runs diagnostics from saved results
   run_CIT: true

@@ -160,7 +160,7 @@ p73170y,Date of birth respondent: year,,pParent,Home,2352.0,date_year,,1.0,0.0,,
 p400070_g1D,Country of birth Mother Respondent (Germany/abroad; edited),,pParent,Home,1867.0,categorical,Germany; not Germany; Elternteil nicht vorhanden/unbekannt,1.0,0.0,,,,,,,,,,,,Home
 p400090_g1D,Country of birth Father Respondent (Germany/abroad; edited),,pParent,Home,1860.0,categorical,Germany; not Germany; Elternteil nicht vorhanden/unbekannt,1.0,0.0,,,,,,,,,,,,Home
 p401100,Citizenship Respondent,,pParent,Home,2361.0,categorical,"yes/yes, in the meantime Iíve; no; Question erroneously not asked",1.0,0.0,,,,,,,,,,,,Home
-p731801,Highest educational qualification Respondent in Germany,,pParent,Home,2373.0,effect code,yes; no; no school-leaving qualification,1.0,0.0,,,,,,,,,,,,Home
+p731801_g1,Highest educational qualification Respondent in Germany (edited),,pParent,Unmapped,2374.0,effect code,"yes; no; no school-leaving qualification; Germany and another country, not",1.0,0.0,,,,,,,,,,,,Unmapped
 p731802_g3,Highest educational qualification Respondent (education years = fCASMIN),,pParent,Home,2380.0,continuous,no qualification,1.0,0.0,,,,,,,,,,,,Home
 p731813,(Highest) professional qualification Respondent,,pParent,Home,2394.0,categorical,"completed apprenticeship (administrative, company‐based, industrial, agricultural) journey‐ man’s/journeywoman’s certificate, dual vocational education, GDR: craft certificate;
 master craftsman/craftswoman, technician certificate;
@@ -327,3 +327,25 @@ org5_sc1b,Orthography (set 2): WLE (corrected),,xTargetCompetencies,Student,9388
 mpg5re_sc6,Procedural metacognition (reading total): proportion correct,,xTargetCompetencies,Student,9029.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
 mpg5ma_sc6,Procedural metacognition (mathematics): proportion correct,,xTargetCompetencies,Student,9048.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
 mpg5or01_sc6,Procedural metacognition (orthography set 1): proportion correct,,xTargetCompetencies,Student,9052.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
+p71202,Date of first Kindergarten attendance (combined month/year),,pParent,Student,2168.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
+p71203,Date enrollment target child (combined month/year),,pParent,Student,2171.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
+p72802,Date of determination of special educational needs (combined month/year),,pParent,Student,2217.0,continuous,,1.0,0.0,,,,,,,,,,,,Student
+p40003,Date of respondentís move to Germany (combined month/year),,pParent,Home,2356.0,continuous,,1.0,0.0,,,,,,,,,,,,Home
+p40113,Date when respondent obtained German citizenship (combined month/year),,pParent,Home,2363.0,continuous,,1.0,0.0,,,,,,,,,,,,Home
+p73111,Start living together with partner (combined month/year),,pParent,Home,2454.0,continuous,,1.0,0.0,,,,,,,,,,,,Home
+p40403,"Acquisition German citizenship Partner, date (combined month/year)",,pParent,Home,2481.0,continuous,,1.0,0.0,,,,,,,,,,,,Home
+td0036,"Teacher summarize, draws attention, explains connections",,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+teacher_changed_state,the change of state for the teachers - whether they have ever changed the states (1) or not (0),,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+dob_in_days_at_Target_survey,DOB (days),,created,Student,,continuous,,1.0,0.0,,,,,,,,,,,,Student
+p34009,Participation in high culture (parent),,created,Home,,continuous,,1.0,0.0,,,,,,,,,,,,Home
+td0034,Percieved teacher autonomy,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+t34009,Participation in high culture (student),,created,Student,,continuous,,1.0,0.0,,,,,,,,,,,,Student
+td0042,Attitudes towards reading,,created,Student,,continuous,,1.0,0.0,,,,,,,,,,,,Student
+td0033,German teacher expectations,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+ed1010,Teacher collaboration,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+td0032,German teacher organisation of learning,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+td0035,German teacher prom. interaction,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+td0043,Self concept reading,,created,Student,,continuous,,1.0,0.0,,,,,,,,,,,,Student
+td0041,Social reading habits,,created,Student,,continuous,,1.0,0.0,,,,,,,,,,,,Student
+ed1011_pos,Positive attitudes towards profession,,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical
+teacher_stress_factors_avg,"stress factor of teachers, an average of ed1009b and ed1009c",,created,Pedagogical,,continuous,,1.0,0.0,,,,,,,,,,,,Pedagogical

@@ -32,7 +32,7 @@ For this repository, we keep the full `Results/runs/2026-06-05_142231__*/` famil
 
 Supplementary Online Resources for the Reader:
 
-1. **Variable infomation:** see `Data/Meta/variable_info_agreed_Feb_2_2026.csv` for the information we use in preprocessing and `Data/Meta/var_info_used_in_model_final_groups.csv` for only the variables used in the final model and the groupings.
+1. **Variable infomation:** see `Data/Meta/variable_info_agreed_Feb_2_2026.csv` for the information we used on the raw variables in preprocessing and `Data/Meta/var_info_used_in_model_final_groups.csv` for only the variables used in the final model (including created variables) and their groupings.
 2. **Preprocessing settings and run logs:** see `Outputs/preprocessing_config.yaml` and `Outputs/pre_processing_output.txt`.
 3. **Variables removed during preprocessing:** see `Outputs/dropped_variables_*.csv` and `Outputs/IV_correlations/*dropped_vars*.csv`.
 4. **Correlation screening before and after filtering:** see `Outputs/IV_correlations/*before*` and `Outputs/IV_correlations/*after*`.

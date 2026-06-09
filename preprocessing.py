@@ -855,7 +855,7 @@ categorical_features = [elem for elem in categorical_features if elem in list(df
 categorical_features_series = pd.DataFrame(categorical_features, columns=["Categorical_Variables"])
 categorical_features_series.to_csv("Data/Meta/final_categorical_variables_after_preprocessing.csv")
 
-#---------------------------- (only needed for the mock data) ----------------------------
+#---------------------------- (only needed for the synthetic data) ----------------------------
 if use_synthetic_y == True:
     print("Creating mock y variable for piloting...")
     # create y variable:
