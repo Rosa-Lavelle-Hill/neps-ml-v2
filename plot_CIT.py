@@ -110,92 +110,95 @@ group_palette = {
 }
 group_segment_colors = [group_palette.get(g, group_palette["Unknown"]) for g in feature_groups[:-1]]
 
-fig, ax = plt.subplots(figsize=(8, 5))
-# --- add grey ±SE shading (non-cumulative) ---
-ax.fill_between(
-    x,
-    y - se,
-    y + se,
-    color='gray',
-    alpha=0.8,
-    label='±1 SE',
-)
-# To dod: *2 to make more obvious?
-
-# --- main colored line ---
-lc = LineCollection(segments, colors=segment_colors, linewidths=3)
-ax.add_collection(lc)
-
-# draw last point so it’s visible even though there’s no outgoing segment
-ax.plot(x[-1], y[-1], marker='o', markersize=3, linestyle='None', color=('lime' if sig[-1] else 'red'))
-
-# baseline & cosmetics
-ax.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
-ax.set_xlim(1, len(x))
-ax.set_ylim(ylims)
-ax.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
-ax.set_ylabel('Cumulative estimate of performance difference (MSE)')
-ax.set_title(f'Cumulative {test} estimates by feature for {model_name} model')
-
-# legend
-leg_green = mlines.Line2D([], [], color='lime', linewidth=3, label='Significant (p<0.05)')
-leg_red   = mlines.Line2D([], [], color='red', linewidth=3, label='Not significant')
-leg_gray  = mlines.Line2D([], [], color='gray', linewidth=8, alpha=0.8, label='±1 SE band')
-ax.legend(handles=[leg_green, leg_red, leg_gray], frameon=True, loc='lower right')
-
-plt.tight_layout()
-plt.savefig(fig_save_path + pos +".png", dpi=300)
-
-
 if plot_group_colours:
-    fig2, ax2 = plt.subplots(figsize=(8, 5))
+    fig, (ax_left, ax_right) = plt.subplots(2, 1, figsize=(10, 10), sharex=True, sharey=True)
 
-    # keep the same uncertainty band as reference
-    ax2.fill_between(
-        x,
-        y - se,
-        y + se,
-        color='gray',
-        alpha=0.35,
-        label='±1 SE',
-    )
+    # --- left panel: group-coloured cumulative plot ---
+    lc_left = LineCollection(segments, colors=group_segment_colors, linewidths=6)
+    ax_left.add_collection(lc_left)
 
-    # thicker line so group colours are readable
-    lc2 = LineCollection(segments, colors=group_segment_colors, linewidths=6)
-    ax2.add_collection(lc2)
-
-    # last marker in its feature group colour
     last_group_colour = group_palette.get(feature_groups[-1], group_palette["Unknown"])
-    ax2.plot(x[-1], y[-1], marker='o', markersize=4, linestyle='None', color=last_group_colour)
+    ax_left.plot(x[-1], y[-1], marker='o', markersize=4, linestyle='None', color=last_group_colour)
 
-    # coloured strip under the curve to show per-feature group membership
     for i, group_name in enumerate(feature_groups):
         strip_colour = group_palette.get(group_name, group_palette["Unknown"])
-        ax2.axvspan(i + 0.5, i + 1.5, ymin=0.0, ymax=0.06, facecolor=strip_colour, alpha=0.5, linewidth=0)
+        ax_left.axvspan(i + 0.5, i + 1.5, ymin=0.0, ymax=0.06, facecolor=strip_colour, alpha=0.5, linewidth=0)
 
-    ax2.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
-    ax2.set_xlim(1, len(x))
-    ax2.set_ylim(ylims)
-    ax2.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
-    ax2.set_ylabel('Cumulative estimate of performance difference (MSE)')
-    ax2.set_title(f'Cumulative {test} estimates by feature group for {model_name} model')
+    ax_left.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
+    ax_left.set_xlim(1, len(x))
+    ax_left.set_ylim(ylims)
+    ax_left.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
+    ax_left.set_ylabel('Cumulative estimate of performance difference (MSE)')
 
-    # group legend + SE band legend
+    # Remove "Unknown" from legend as requested.
     group_handles = [
         mlines.Line2D([], [], color=group_palette[g], linewidth=6, label=g)
-        for g in ["Baseline", "Student", "Home", "Pedagogical", "Unknown"]
+        for g in ["Baseline", "Student", "Home", "Pedagogical"]
     ]
-    leg_gray_group = mlines.Line2D([], [], color='gray', linewidth=8, alpha=0.35, label='±1 SE band')
-    # Lift legend above the bottom colour strip so both remain readable.
-    ax2.legend(
-        handles=group_handles + [leg_gray_group],
+    ax_left.legend(
+        handles=group_handles,
         frameon=True,
         loc='lower right',
         bbox_to_anchor=(1.0, 0.16),
     )
 
+    # --- right panel: significance-coloured cumulative plot ---
+    ax_right.fill_between(
+        x,
+        y - se,
+        y + se,
+        color='gray',
+        alpha=0.8,
+        label='±1 SE',
+    )
+
+    lc_right = LineCollection(segments, colors=segment_colors, linewidths=3)
+    ax_right.add_collection(lc_right)
+    ax_right.plot(x[-1], y[-1], marker='o', markersize=3, linestyle='None', color=('lime' if sig[-1] else 'red'))
+
+    ax_right.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
+    ax_right.set_xlim(1, len(x))
+    ax_right.set_ylim(ylims)
+    ax_right.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
+    ax_right.set_ylabel('Cumulative estimate of performance difference (MSE)')
+
+    leg_green = mlines.Line2D([], [], color='lime', linewidth=3, label='Significant (p<0.05)')
+    leg_red = mlines.Line2D([], [], color='red', linewidth=3, label='Not significant')
+    leg_gray = mlines.Line2D([], [], color='gray', linewidth=8, alpha=0.8, label='±1 SE band')
+    ax_right.legend(handles=[leg_green, leg_red, leg_gray], frameon=True, loc='lower right')
+
+    fig.suptitle(f'Cumulative {test} estimates for {model_name} model', y=0.95, fontsize=16)
+    plt.tight_layout(rect=[0, 0, 1, 0.97])
+    plt.savefig(fig_save_path + "_combined_panel" + pos + ".png", dpi=300)
+else:
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.fill_between(
+        x,
+        y - se,
+        y + se,
+        color='gray',
+        alpha=0.8,
+        label='±1 SE',
+    )
+
+    lc = LineCollection(segments, colors=segment_colors, linewidths=3)
+    ax.add_collection(lc)
+    ax.plot(x[-1], y[-1], marker='o', markersize=3, linestyle='None', color=('lime' if sig[-1] else 'red'))
+
+    ax.axhline(0, linewidth=1, linestyle='--', color='gray', alpha=0.6)
+    ax.set_xlim(1, len(x))
+    ax.set_ylim(ylims)
+    ax.set_xlabel('Features sorted by most to least informative (by MSE difference estimate)')
+    ax.set_ylabel('Cumulative estimate of performance difference (MSE)')
+    ax.set_title(f'Cumulative {test} estimates by feature for {model_name} model')
+
+    leg_green = mlines.Line2D([], [], color='lime', linewidth=3, label='Significant (p<0.05)')
+    leg_red = mlines.Line2D([], [], color='red', linewidth=3, label='Not significant')
+    leg_gray = mlines.Line2D([], [], color='gray', linewidth=8, alpha=0.8, label='±1 SE band')
+    ax.legend(handles=[leg_green, leg_red, leg_gray], frameon=True, loc='lower right')
+
     plt.tight_layout()
-    plt.savefig(fig_save_path + "_group_colours" + pos + ".png", dpi=300)
+    plt.savefig(fig_save_path + pos + ".png", dpi=300)
 
 # run diagnostics on 0 SE:
 if run_diagnostics == True:
